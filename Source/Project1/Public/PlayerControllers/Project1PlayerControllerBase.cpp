@@ -115,10 +115,15 @@ void AProject1PlayerControllerBase::OnAnyKeyInput(const FKey& Key, EInputEvent I
 	InputKeyStateController.SetKeyState(Key, NewKeyState);
 
 	// Handle the input
+	ReceiveAnyKeyInput(Key, InputEvent);
+}
+
+void AProject1PlayerControllerBase::ReceiveAnyKeyInput(const FKey& Key, EInputEvent InputEvent)
+{
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("%s AnyKeyInput: Key %s, InputEvent %s"),
 		*UKismetSystemLibrary::GetDisplayName(this), *Key.GetDisplayName().ToString(), *UEnum::GetDisplayValueAsText(InputEvent).ToString()));
 
-	ReceiveAnyKeyInput(Key, InputEvent);
+	OnPlayerInputDelegate.Broadcast(Key, InputEvent);
 }
 
 bool AProject1PlayerControllerBase::IsMouseCursorVisible() const

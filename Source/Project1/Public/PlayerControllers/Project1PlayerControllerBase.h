@@ -15,6 +15,8 @@ enum class EMouseCursorVisibility : uint8
 	Hidden
 };
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPlayerInputDelegateSignature, const FKey& /* Key */, EInputEvent /* InputEvent */);
+
 /**
  * 
  */
@@ -33,18 +35,21 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	bool DefaultCenterCursorInViewportOnBecomeVisible{ true };
 
+	FOnPlayerInputDelegateSignature OnPlayerInputDelegate{};
+
 	TObjectPtr<UProject1GameInstanceBase> ProjectGameInstance{ nullptr };
 
 public:
 	void SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible);
 
+	FOnPlayerInputDelegateSignature& GetOnPlayerInputDelegate() { return OnPlayerInputDelegate; }
+
 protected:
 	void SetupInputComponent() override;
 	void BeginPlay() override;
 
-	virtual void ReceiveAnyKeyInput(const FKey& Key, EInputEvent InputEvent) {};
-
 private:
 	void OnAnyKeyInput(const FKey& Key, EInputEvent InputEvent);
+	void ReceiveAnyKeyInput(const FKey& Key, EInputEvent InputEvent);
 	bool IsMouseCursorVisible() const;
 };
