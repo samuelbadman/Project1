@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "InputKeyStateManager.generated.h"
+#include "InputKeyStateController.generated.h"
 
 enum class EInputKeyState : uint8
 {
@@ -16,7 +16,7 @@ enum class EInputKeyState : uint8
  * 
  */
 UCLASS()
-class PROJECT1_API UInputKeyStateManager : public UObject
+class PROJECT1_API UInputKeyStateController : public UObject
 {
 	GENERATED_BODY()
 	

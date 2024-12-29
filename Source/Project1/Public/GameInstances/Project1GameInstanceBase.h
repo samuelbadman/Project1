@@ -6,7 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "Project1GameInstanceBase.generated.h"
 
-class UInputKeyStateManager;
+class UInputKeyStateController;
 
 /**
  * 
@@ -18,10 +18,10 @@ class PROJECT1_API UProject1GameInstanceBase : public UGameInstance
 	
 private:
 	UPROPERTY()
-	TObjectPtr<UInputKeyStateManager> InputKeyStateManager{nullptr};
+	TObjectPtr<UInputKeyStateController> InputKeyStateController{nullptr};
 
 public:
 	UProject1GameInstanceBase();
 
-	FORCEINLINE UInputKeyStateManager& GetInputKeyStateManager() const { return *InputKeyStateManager; }
+	FORCEINLINE UInputKeyStateController& GetInputKeyStateController() const { return *InputKeyStateController; }
 };

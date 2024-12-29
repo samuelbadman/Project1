@@ -2,9 +2,9 @@
 
 
 #include "Project1GameInstanceBase.h"
-#include "ProjectInput/InputKeyStateManager.h"
+#include "ProjectInput/InputKeyStateController.h"
 
 UProject1GameInstanceBase::UProject1GameInstanceBase()
 {
-	InputKeyStateManager = CreateDefaultSubobject<UInputKeyStateManager>(FName(TEXT("InputKeyStateManager")));
+	InputKeyStateController = CreateDefaultSubobject<UInputKeyStateController>(FName(TEXT("InputKeyStateController")));
 }

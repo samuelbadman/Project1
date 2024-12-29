@@ -4,14 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "PlayerControllers/Project1PlayerControllerBase.h"
-#include "CharacterPlayerController.generated.h"
+#include "GamePlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT1_API ACharacterPlayerController : public AProject1PlayerControllerBase
+class PROJECT1_API AGamePlayerController : public AProject1PlayerControllerBase
 {
 	GENERATED_BODY()
 	
+private:
+	void ReceiveAnyKeyInput(const FKey& Key, EInputEvent InputEvent) override;
 };
