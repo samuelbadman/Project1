@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Engine/StreamableManager.h"
 #include "Project1GameInstanceBase.generated.h"
 
 class UInputKeyStateController;
@@ -20,8 +21,12 @@ private:
 	UPROPERTY()
 	TObjectPtr<UInputKeyStateController> InputKeyStateController{nullptr};
 
+	FStreamableManager StreamableManager{};
+
 public:
 	UProject1GameInstanceBase();
 
-	FORCEINLINE UInputKeyStateController& GetInputKeyStateController() const { return *InputKeyStateController; }
+	UInputKeyStateController& GetInputKeyStateController() const;
+
+	FORCEINLINE FStreamableManager& GetStreamableManager() { return StreamableManager; }
 };

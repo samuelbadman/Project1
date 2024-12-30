@@ -2,20 +2,20 @@
 
 
 #include "TitleScreenHUD.h"
-#include "UserWidgets/TitleScreenMasterUserWidget.h"
+#include "UserWidgets/PrimaryLayouts/PrimaryLayoutUserWidgetBase.h"
 
 void ATitleScreenHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Create title screen master widget
-	TitleScreenMasterWidget = CreateWidget<UTitleScreenMasterUserWidget>(GetOwningPlayerController(), TitleScreenMasterWidgetClass);
+	// Create title screen primary layout widget, cache it and add it to the viewport
+	TitleScreenPrimaryLayoutWidget = CreateWidget<UPrimaryLayoutUserWidgetBase>(GetOwningPlayerController(), TitleScreenPrimaryLayoutWidgetClass);
 #if WITH_EDITOR
-	if (!IsValid(TitleScreenMasterWidget))
+	if (!IsValid(TitleScreenPrimaryLayoutWidget))
 	{
-		UE_LOG(LogTemp, Error, TEXT("TitleScreenMasterWidget failed to create. Is a class set to create for the title screen widget in the title screen player controller?"));
+		UE_LOG(LogTemp, Error, TEXT("TitleScreenPrimaryLayoutWidget failed to create. Is a class set in the title screen HUD blueprint?"));
 		return;
 	}
 #endif
-	TitleScreenMasterWidget->AddToViewport();
+	TitleScreenPrimaryLayoutWidget->AddToViewport();
 }

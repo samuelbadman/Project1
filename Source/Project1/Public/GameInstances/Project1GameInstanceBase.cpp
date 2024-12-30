@@ -8,3 +8,8 @@ UProject1GameInstanceBase::UProject1GameInstanceBase()
 {
 	InputKeyStateController = CreateDefaultSubobject<UInputKeyStateController>(FName(TEXT("InputKeyStateController")));
 }
+
+UInputKeyStateController& UProject1GameInstanceBase::GetInputKeyStateController() const
+{
+	return *InputKeyStateController;
+}

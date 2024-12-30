@@ -6,7 +6,7 @@
 #include "HUDs/Project1HUDBase.h"
 #include "TitleScreenHUD.generated.h"
 
-class UTitleScreenMasterUserWidget;
+class UPrimaryLayoutUserWidgetBase;
 
 /**
  * 
@@ -18,9 +18,10 @@ class PROJECT1_API ATitleScreenHUD : public AProject1HUDBase
 	
 private:
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UTitleScreenMasterUserWidget> TitleScreenMasterWidgetClass{ nullptr };
+	TSubclassOf<UPrimaryLayoutUserWidgetBase> TitleScreenPrimaryLayoutWidgetClass{ nullptr };
 
-	TObjectPtr<UTitleScreenMasterUserWidget> TitleScreenMasterWidget{ nullptr };
+	UPROPERTY(BlueprintReadOnly, meta =(AllowPrivateAccess = "true"))
+	TObjectPtr<UPrimaryLayoutUserWidgetBase> TitleScreenPrimaryLayoutWidget{ nullptr };
 
 private:
 	void BeginPlay() override;
