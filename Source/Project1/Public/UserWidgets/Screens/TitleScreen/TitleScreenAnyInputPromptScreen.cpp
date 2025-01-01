@@ -4,6 +4,8 @@
 #include "TitleScreenAnyInputPromptScreen.h"
 #include "ProjectInput/UserInterfaceInput/UIInputActionValue.h"
 
+#include "Kismet/GameplayStatics.h"
+
 void UTitleScreenAnyInputPromptScreen::SetupUIInputActionEvents()
 {
 	BindUIInputActionEvent(LeftClickUIInputAction, this, &UTitleScreenAnyInputPromptScreen::OnLeftClickUIInput);

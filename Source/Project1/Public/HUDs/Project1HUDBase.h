@@ -7,6 +7,7 @@
 #include "Project1HUDBase.generated.h"
 
 class UPrimaryLayoutUserWidgetBase;
+class UUIInputActionMapping;
 
 /**
  * 
@@ -17,6 +18,9 @@ class PROJECT1_API AProject1HUDBase : public AHUD
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "UI Input Action Mapping Asset"))
+	TObjectPtr<UUIInputActionMapping> UIInputActionMapping{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidgetClass{ nullptr };
 
@@ -24,8 +28,7 @@ private:
 	TObjectPtr<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidget{ nullptr };
 
 public:
-	// Make virtual to allow sub HUDs to extend input implementation. Possibly to support multiple primary layout widgets?
-	void ReceiveRawPlayerInput(const FKey& Key, EInputEvent InputEvent);
+	FORCEINLINE TObjectPtr<const UUIInputActionMapping> GetUIInputActionMapping() const { return UIInputActionMapping; }
 
 private:
 	void BeginPlay() override;

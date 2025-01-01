@@ -4,11 +4,6 @@
 #include "Project1HUDBase.h"
 #include "UserWidgets/PrimaryLayouts/PrimaryLayoutUserWidgetBase.h"
 
-void AProject1HUDBase::ReceiveRawPlayerInput(const FKey& Key, EInputEvent InputEvent)
-{
-	PrimaryLayoutWidget->ReceiveRawInput(Key, InputEvent);
-}
-
 void AProject1HUDBase::BeginPlay()
 {
 	Super::BeginPlay();

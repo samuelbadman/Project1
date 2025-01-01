@@ -12,8 +12,14 @@ struct FUIInputActionKeyMapping
 	FKey Key{};
 
 	UPROPERTY(EditDefaultsOnly)
+	float ValueScale{ 1.0f };
+
+	UPROPERTY(EditDefaultsOnly)
 	bool bAcceptRepeatInputs{ false };
 
 	UPROPERTY(EditDefaultsOnly)
-	float ValueScale{ 1.0f };
+	bool bConsumeInput{ true };
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bExecuteWhenPaused{ true };
 };
