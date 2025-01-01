@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HUDs/Project1HUDBase.h"
-#include "TitleScreenHUD.generated.h"
+#include "Engine/DataAsset.h"
+#include "UIInputAction.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class PROJECT1_API ATitleScreenHUD : public AProject1HUDBase
+UCLASS(meta = (DisplayName = "UI Input Action"))
+class UUIInputAction : public UDataAsset
 {
 	GENERATED_BODY()
 	

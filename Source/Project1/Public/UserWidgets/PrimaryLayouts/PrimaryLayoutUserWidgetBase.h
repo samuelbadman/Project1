@@ -9,6 +9,7 @@
 
 class ULayerUserWidgetBase;
 class UScreenUserWidgetBase;
+class UUIInputActionMapping;
 
 /**
  * 
@@ -19,7 +20,17 @@ class PROJECT1_API UPrimaryLayoutUserWidgetBase : public UProject1UserWidgetBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "PrimaryLayoutUserWidgetBase|Input", meta = (DisplayName = "UI Input Action Mapping Asset"))
+	TObjectPtr<UUIInputActionMapping> UIInputActionMapping{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "PrimaryLayoutUserWidgetBase|Input|RawInput")
+	bool bReceiveRawInput{ false };
+
+	UPROPERTY(EditDefaultsOnly, Category = "PrimaryLayoutUserWidgetBase|Input|RawInput", meta = (EditCondition = "bReceiveRawInput"))
+	bool bRawInputConsumesUIInput{ false };
+
 	TMap<FGameplayTag, TObjectPtr<ULayerUserWidgetBase>> Layers{};
+	FGameplayTag ActiveInputLayerName{};
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -36,4 +47,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	ULayerUserWidgetBase* GetRegisteredLayer(const FGameplayTag& LayerName);
+
+	UFUNCTION(BlueprintCallable)
+	void SetActiveInputLayer(const FGameplayTag& LayerName);
+
+	void ReceiveRawInput(const FKey& Key, EInputEvent InputEvent);
 };

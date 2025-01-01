@@ -5,7 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameInstances/Project1GameInstanceBase.h"
 #include "ProjectInput/InputKeyStateController.h"
-#include "Kismet/KismetSystemLibrary.h"
+#include "HUDs/Project1HUDBase.h"
 
 void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible)
 {
@@ -21,9 +21,7 @@ void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibil
 
 		if (CenterCursorInViewportOnBecomeVisible)
 		{
-			int32 ViewportX{ 0 }, ViewportY{ 0 };
-			GetViewportSize(ViewportX, ViewportY);
-			SetMouseLocation(ViewportX / 2, ViewportY / 2);
+			CenterMouseCursorInViewport();
 		}
 
 		break;
@@ -88,6 +86,9 @@ void AProject1PlayerControllerBase::BeginPlay()
 	// Get game instance reference as project game instance to access input key state manager object
 	ProjectGameInstance = CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this));
 
+	// Get HUD reference as project HUD reference to forward legacy player inputs to for UI input
+	ProjectHUD = CastChecked<AProject1HUDBase>(GetHUD());
+
 	// Set default mouse cursor visibility
 	SetMouseCursorVisibility(DefaultMouseCursorVisibility, DefaultLockMouseCursorToViewportWhenVisible, DefaultCenterCursorInViewportOnBecomeVisible);
 }
@@ -120,13 +121,19 @@ void AProject1PlayerControllerBase::OnAnyKeyInput(const FKey& Key, EInputEvent I
 
 void AProject1PlayerControllerBase::ReceiveAnyKeyInput(const FKey& Key, EInputEvent InputEvent)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("%s AnyKeyInput: Key %s, InputEvent %s"),
-		*UKismetSystemLibrary::GetDisplayName(this), *Key.GetDisplayName().ToString(), *UEnum::GetDisplayValueAsText(InputEvent).ToString()));
+	ProjectHUD->ReceiveRawPlayerInput(Key, InputEvent);
 
-	OnPlayerInputDelegate.Broadcast(Key, InputEvent);
+	//OnPlayerInputDelegate.Broadcast(Key, InputEvent);
 }
 
 bool AProject1PlayerControllerBase::IsMouseCursorVisible() const
 {
 	return bShowMouseCursor;
+}
+
+void AProject1PlayerControllerBase::CenterMouseCursorInViewport()
+{
+	int32 ViewportX{ 0 }, ViewportY{ 0 };
+	GetViewportSize(ViewportX, ViewportY);
+	SetMouseLocation(ViewportX / 2, ViewportY / 2);
 }
