@@ -2,4 +2,9 @@
 
 
 #include "TitleScreenMainMenuScreen.h"
+#include "ProjectInput/UserInterfaceInput/UIInputActionValue.h"
 
+void UTitleScreenMainMenuScreen::SetupUIInputActionEvents()
+{
+
+}

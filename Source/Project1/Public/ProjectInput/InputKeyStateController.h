@@ -29,4 +29,5 @@ public:
 	bool IsKeyPressed(const FKey& Key) const;
 	EInputKeyState GetInputKeyStateFromInputEvent(const EInputEvent InputEvent) const;
 	EInputKeyState GetKeyState(const FKey& Key) const;
+	void ResetKeyStates();
 };

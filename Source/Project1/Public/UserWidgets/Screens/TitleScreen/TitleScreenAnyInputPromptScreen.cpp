@@ -4,8 +4,6 @@
 #include "TitleScreenAnyInputPromptScreen.h"
 #include "ProjectInput/UserInterfaceInput/UIInputActionValue.h"
 
-#include "Kismet/GameplayStatics.h"
-
 void UTitleScreenAnyInputPromptScreen::SetupUIInputActionEvents()
 {
 	BindUIInputActionEvent(LeftClickUIInputAction, this, &UTitleScreenAnyInputPromptScreen::OnLeftClickUIInput);
@@ -13,5 +11,5 @@ void UTitleScreenAnyInputPromptScreen::SetupUIInputActionEvents()
 
 void UTitleScreenAnyInputPromptScreen::OnLeftClickUIInput(const FUIInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("TitleScreenAnyInputPromptScreen OnLeftClickUIInput with value: %f"), Value.Value));
+	GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::White, FString::Printf(TEXT("TitleScreen AnyInputPrompt Screen OnLeftClickUIInput called with value: %f"), Value.Value));
 }

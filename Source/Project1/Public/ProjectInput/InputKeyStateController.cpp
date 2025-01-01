@@ -27,3 +27,8 @@ EInputKeyState UInputKeyStateController::GetKeyState(const FKey& Key) const
 {
 	return KeyStates.FindRef(Key);
 }
+
+void UInputKeyStateController::ResetKeyStates()
+{
+	KeyStates.Empty();
+}

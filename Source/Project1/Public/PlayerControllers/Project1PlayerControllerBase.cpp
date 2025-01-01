@@ -53,32 +53,6 @@ void AProject1PlayerControllerBase::BeginPlay()
 	SetMouseCursorVisibility(DefaultMouseCursorVisibility, DefaultLockMouseCursorToViewportWhenVisible, DefaultCenterCursorInViewportOnBecomeVisible);
 }
 
-//void AProject1PlayerControllerBase::OnAnyKeyInput(const FKey& Key, EInputEvent InputEvent)
-//{
-//	// Get input key state manager from game instance
-//	UInputKeyStateController& InputKeyStateController{ ProjectGameInstance->GetInputKeyStateController() };
-//
-//	// Get new key state for the input key
-//	const EInputKeyState NewKeyState{ InputKeyStateController.GetInputKeyStateFromInputEvent(InputEvent) };
-//
-//	// Ignore the input if the key is already in the corresponding key state. This prevents incorrect input events being generated when a key is held while opening levels
-//	if ((InputEvent == EInputEvent::IE_Pressed) ||
-//		(InputEvent == EInputEvent::IE_Released))
-//	{
-//		// If the key is already in the new key state, ignore the input
-//		if (InputKeyStateController.GetKeyState(Key) == NewKeyState)
-//		{
-//			return;
-//		}
-//	}
-//
-//	// Update input key state
-//	InputKeyStateController.SetKeyState(Key, NewKeyState);
-//
-//	// Handle the input
-//	ReceiveAnyKeyInput(Key, InputEvent);
-//}
-
 void AProject1PlayerControllerBase::CenterMouseCursorInViewport()
 {
 	int32 ViewportX{ 0 }, ViewportY{ 0 };

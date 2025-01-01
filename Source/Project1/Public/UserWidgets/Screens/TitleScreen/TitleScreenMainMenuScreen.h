@@ -6,6 +6,8 @@
 #include "UserWidgets/Screens/ScreenUserWidgetBase.h"
 #include "TitleScreenMainMenuScreen.generated.h"
 
+class UUIInputAction;
+
 /**
  * 
  */
@@ -13,5 +15,7 @@ UCLASS()
 class UTitleScreenMainMenuScreen : public UScreenUserWidgetBase
 {
 	GENERATED_BODY()
-	
+
+private:
+	void SetupUIInputActionEvents() override;
 };
