@@ -23,5 +23,5 @@ private:
 private:
 	void SetupUIInputActionEvents() override;
 
-	void OnLeftClickUIInput(const FUIInputActionValue& Value);
+	void OnUILeftClick(const FUIInputActionValue& Value);
 };

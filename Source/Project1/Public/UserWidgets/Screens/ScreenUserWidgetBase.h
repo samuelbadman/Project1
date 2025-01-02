@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "HUDs/Project1HUDBase.h"
 #include "PlayerControllers/Project1PlayerControllerBase.h"
+#include "ProjectInput/UserInterfaceInput/UIInputAction.h"
 #include "ProjectInput/UserInterfaceInput/UIInputActionMapping.h"
 #include "ProjectInput/UserInterfaceInput/UIInputActionValue.h"
 #include "GameInstances/Project1GameInstanceBase.h"
@@ -33,6 +34,12 @@ protected:
 	template <typename T>
 	void BindUIInputActionEvent(TObjectPtr<UUIInputAction> UIInputAction, T* UserObject, void (T::* Event)(const FUIInputActionValue&))
 	{
+		// Do not bind if UI input action is invalid
+		if (!IsValid(UIInputAction))
+		{
+			return;
+		}
+
 		// Get keys mapped to input action from input action mapping. The mapping is stored in the primary layout widget that exists in the HUD
 		const TObjectPtr<AProject1PlayerControllerBase> PlayerController{ CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0)) };
 		const TObjectPtr<AProject1HUDBase> HUD{ CastChecked<AProject1HUDBase>(PlayerController->GetHUD()) };

@@ -6,11 +6,11 @@
 
 void UTitleScreenAnyInputPromptScreen::SetupUIInputActionEvents()
 {
-	BindUIInputActionEvent(LeftClickUIInputAction, this, &UTitleScreenAnyInputPromptScreen::OnLeftClickUIInput);
+	BindUIInputActionEvent(LeftClickUIInputAction, this, &UTitleScreenAnyInputPromptScreen::OnUILeftClick);
 }
 
-void UTitleScreenAnyInputPromptScreen::OnLeftClickUIInput(const FUIInputActionValue& Value)
+void UTitleScreenAnyInputPromptScreen::OnUILeftClick(const FUIInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("TitleScreen AnyInputPrompt Screen OnLeftClickUIInput called with value: %s"),
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("TitleScreen AnyInputPrompt Screen OnUILeftClick called with value: %s"),
 		*Value.Get<FVector2D>().ToString()));
 }
