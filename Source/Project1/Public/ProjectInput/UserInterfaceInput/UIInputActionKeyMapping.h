@@ -15,6 +15,9 @@ struct FUIInputActionKeyMapping
 	float ValueScale{ 1.0f };
 
 	UPROPERTY(EditDefaultsOnly)
+	bool bMapInputTo2DAxis{ false };
+
+	UPROPERTY(EditDefaultsOnly)
 	bool bAcceptRepeatInputs{ false };
 
 	UPROPERTY(EditDefaultsOnly)

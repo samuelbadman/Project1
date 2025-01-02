@@ -38,14 +38,23 @@ protected:
 		// priorities similiar to the enhanced input system
 		const TObjectPtr<const UUIInputActionMapping> InputActionMapping{ HUD->GetUIInputActionMapping() };
 
-		const auto& ActionMapping{ InputActionMapping->GetActionMapping() };
-		const FUIInputActionMappingValue* pActionMappingValue{ ActionMapping.Find(UIInputAction) };
-		for (const auto& KeyMapping : pActionMappingValue->Mapping)
+		if (!IsValid(InputActionMapping))
 		{
+			return;
+		}
+
+		const auto& ActionMapping{ InputActionMapping->GetActionMapping() };
+
+		// For each value mapped to the input action
+		const FUIInputActionMappingValue* pActionMappingValue{ ActionMapping.Find(UIInputAction) };
+		for (const auto& KeyMapping : pActionMappingValue->Mapping) // KeyMapping is the value of the ActionMapping key value map
+		{
+			// Bind to input key events for the key in the mapping
+			// Pressed binding
 			FInputKeyBinding AnyKeyPressedBinding(KeyMapping.Key, EInputEvent::IE_Pressed);
 			AnyKeyPressedBinding.bConsumeInput = KeyMapping.bConsumeInput;
 			AnyKeyPressedBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
-			AnyKeyPressedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([GameInstance, UserObject, Event, KeyMapping](const FKey& Key)
+			AnyKeyPressedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, GameInstance, UserObject, Event, KeyMapping](const FKey& Key)
 				{
 					// The mapped key was pressed
 					// Get input key state manager from game instance
@@ -65,18 +74,21 @@ protected:
 
 					// Handle the input
 					FUIInputActionValue Value{};
-					// Determine value from pressed/released input event. Pressed = 1, released = 0
-					Value.Value = 1.0f * KeyMapping.ValueScale;
+					// Determine value
+					SetUIInputActionValue(Value, KeyMapping, FUIInputActionValue::PressedValue);
 
 					// Call bound event on screen widget
 					(UserObject->*Event)(Value);
 				}
 			);
 
+			PlayerController->InputComponent->KeyBindings.Add(AnyKeyPressedBinding);
+
+			// Released binding
 			FInputKeyBinding AnyKeyReleasedBinding(KeyMapping.Key, EInputEvent::IE_Released);
 			AnyKeyReleasedBinding.bConsumeInput = KeyMapping.bConsumeInput;
 			AnyKeyReleasedBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
-			AnyKeyReleasedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([GameInstance, UserObject, Event, KeyMapping](const FKey& Key)
+			AnyKeyReleasedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, GameInstance, UserObject, Event, KeyMapping](const FKey& Key)
 				{
 					// The mapped key was released
 					// Get input key state manager from game instance
@@ -96,29 +108,29 @@ protected:
 
 					// Handle the input
 					FUIInputActionValue Value{};
-					// Determine value from pressed/released input event. Pressed = 1, released = 0
-					Value.Value = 0.0f;
+					// Determine value
+					SetUIInputActionValue(Value, KeyMapping, FUIInputActionValue::ReleasedValue);
 
 					// Call bound event on screen widget
 					(UserObject->*Event)(Value);
 				}
 			);
 
-			PlayerController->InputComponent->KeyBindings.Add(AnyKeyPressedBinding);
 			PlayerController->InputComponent->KeyBindings.Add(AnyKeyReleasedBinding);
 
+			// Repeat bindings
 			if (KeyMapping.bAcceptRepeatInputs)
 			{
 				FInputKeyBinding AnyKeyRepeatBinding(KeyMapping.Key, EInputEvent::IE_Repeat);
 				AnyKeyRepeatBinding.bConsumeInput = KeyMapping.bConsumeInput;
 				AnyKeyRepeatBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
-				AnyKeyRepeatBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([UserObject, Event, KeyMapping](const FKey& Key)
+				AnyKeyRepeatBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, UserObject, Event, KeyMapping](const FKey& Key)
 					{
 						// The mapped key was repeated
 						// Handle the input
 						FUIInputActionValue Value{};
-						// Determine value from pressed/released input event. Pressed = 1, released = 0
-						Value.Value = 1.0f * KeyMapping.ValueScale;
+						// Determine value
+						SetUIInputActionValue(Value, KeyMapping, FUIInputActionValue::PressedValue);
 
 						// Call bound event on screen widget
 						(UserObject->*Event)(Value);
@@ -134,4 +146,6 @@ private:
 	void NativeOnInitialized() override;
 
 	virtual void SetupUIInputActionEvents() {};
+
+	void SetUIInputActionValue(FUIInputActionValue& Value, const FUIInputActionKeyMapping& Mapping, float Data);
 };
