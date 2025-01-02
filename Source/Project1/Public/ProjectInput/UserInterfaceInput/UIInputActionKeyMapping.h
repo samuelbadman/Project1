@@ -3,6 +3,13 @@
 #include "CoreMinimal.h"
 #include "UIInputActionKeyMapping.generated.h"
 
+UENUM()
+enum class EUIInputAxisSwizzle : uint8
+{
+	XY UMETA(DisplayName = "XY"),
+	YX UMETA(DisplayName = "YX")
+};
+
 USTRUCT()
 struct FUIInputActionKeyMapping
 {
@@ -12,10 +19,7 @@ struct FUIInputActionKeyMapping
 	FKey Key{};
 
 	UPROPERTY(EditDefaultsOnly)
-	float ValueScale{ 1.0f };
-
-	UPROPERTY(EditDefaultsOnly)
-	bool bMapInputTo2DAxis{ false };
+	float InputValueScale{ 1.0f };
 
 	UPROPERTY(EditDefaultsOnly)
 	bool bAcceptRepeatInputs{ false };
@@ -25,4 +29,7 @@ struct FUIInputActionKeyMapping
 
 	UPROPERTY(EditDefaultsOnly)
 	bool bExecuteWhenPaused{ true };
+
+	UPROPERTY(EditDefaultsOnly)
+	EUIInputAxisSwizzle InputAxisSwizzle{ EUIInputAxisSwizzle::XY };
 };

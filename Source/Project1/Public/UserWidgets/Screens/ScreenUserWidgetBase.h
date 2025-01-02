@@ -12,6 +12,7 @@
 #include "ProjectInput/UserInterfaceInput/UIInputActionValue.h"
 #include "GameInstances/Project1GameInstanceBase.h"
 #include "ProjectInput/InputKeyStateController.h"
+#include "ProjectInput/UserInterfaceInput/UIInputBinding.h"
 #include "ScreenUserWidgetBase.generated.h"
 
 class UUIInputAction;
@@ -24,6 +25,9 @@ UCLASS()
 class PROJECT1_API UScreenUserWidgetBase : public UProject1UserWidgetBase
 {
 	GENERATED_BODY()
+
+private:
+	TArray<FUIInputBinding> InputBindings{};
 
 protected:
 	template <typename T>
@@ -43,6 +47,12 @@ protected:
 			return;
 		}
 
+		// Add new input binding
+		const int32 BindingIndex{ InputBindings.Add(FUIInputBinding()) };
+		InputBindings[BindingIndex].InputAction = UIInputAction;
+		InputBindings[BindingIndex].Event.BindUObject(UserObject, Event);
+
+		// Get action mapping from input action mapping. The action mapping contains the actual mapping of keys to UI input action
 		const auto& ActionMapping{ InputActionMapping->GetActionMapping() };
 
 		// For each value mapped to the input action
@@ -54,31 +64,9 @@ protected:
 			FInputKeyBinding AnyKeyPressedBinding(KeyMapping.Key, EInputEvent::IE_Pressed);
 			AnyKeyPressedBinding.bConsumeInput = KeyMapping.bConsumeInput;
 			AnyKeyPressedBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
-			AnyKeyPressedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, GameInstance, UserObject, Event, KeyMapping](const FKey& Key)
+			AnyKeyPressedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, BindingIndex, GameInstance, KeyMapping](const FKey& Key)
 				{
-					// The mapped key was pressed
-					// Get input key state manager from game instance
-					UInputKeyStateController& InputKeyStateController{ GameInstance->GetInputKeyStateController() };
-
-					// Get new key state for the input key
-					const EInputKeyState NewKeyState{ InputKeyStateController.GetInputKeyStateFromInputEvent(EInputEvent::IE_Pressed) };
-
-					// If the key is already in the new key state, ignore the input
-					if (InputKeyStateController.GetKeyState(Key) == NewKeyState)
-					{
-						return;
-					}
-
-					// Update input key state
-					InputKeyStateController.SetKeyState(Key, NewKeyState);
-
-					// Handle the input
-					FUIInputActionValue Value{};
-					// Determine value
-					SetUIInputActionValue(Value, KeyMapping, FUIInputActionValue::PressedValue);
-
-					// Call bound event on screen widget
-					(UserObject->*Event)(Value);
+					InputBindings[BindingIndex].OnBoundUIInputActionInput(GameInstance->GetInputKeyStateController(), EInputEvent::IE_Pressed, KeyMapping);
 				}
 			);
 
@@ -88,31 +76,9 @@ protected:
 			FInputKeyBinding AnyKeyReleasedBinding(KeyMapping.Key, EInputEvent::IE_Released);
 			AnyKeyReleasedBinding.bConsumeInput = KeyMapping.bConsumeInput;
 			AnyKeyReleasedBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
-			AnyKeyReleasedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, GameInstance, UserObject, Event, KeyMapping](const FKey& Key)
+			AnyKeyReleasedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, BindingIndex, GameInstance, KeyMapping](const FKey& Key)
 				{
-					// The mapped key was released
-					// Get input key state manager from game instance
-					UInputKeyStateController& InputKeyStateController{ GameInstance->GetInputKeyStateController() };
-
-					// Get new key state for the input key
-					const EInputKeyState NewKeyState{ InputKeyStateController.GetInputKeyStateFromInputEvent(EInputEvent::IE_Released) };
-
-					// If the key is already in the new key state, ignore the input
-					if (InputKeyStateController.GetKeyState(Key) == NewKeyState)
-					{
-						return;
-					}
-
-					// Update input key state
-					InputKeyStateController.SetKeyState(Key, NewKeyState);
-
-					// Handle the input
-					FUIInputActionValue Value{};
-					// Determine value
-					SetUIInputActionValue(Value, KeyMapping, FUIInputActionValue::ReleasedValue);
-
-					// Call bound event on screen widget
-					(UserObject->*Event)(Value);
+					InputBindings[BindingIndex].OnBoundUIInputActionInput(GameInstance->GetInputKeyStateController(), EInputEvent::IE_Released, KeyMapping);
 				}
 			);
 
@@ -124,16 +90,9 @@ protected:
 				FInputKeyBinding AnyKeyRepeatBinding(KeyMapping.Key, EInputEvent::IE_Repeat);
 				AnyKeyRepeatBinding.bConsumeInput = KeyMapping.bConsumeInput;
 				AnyKeyRepeatBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
-				AnyKeyRepeatBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, UserObject, Event, KeyMapping](const FKey& Key)
+				AnyKeyRepeatBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, BindingIndex, GameInstance, KeyMapping](const FKey& Key)
 					{
-						// The mapped key was repeated
-						// Handle the input
-						FUIInputActionValue Value{};
-						// Determine value
-						SetUIInputActionValue(Value, KeyMapping, FUIInputActionValue::PressedValue);
-
-						// Call bound event on screen widget
-						(UserObject->*Event)(Value);
+						InputBindings[BindingIndex].OnBoundUIInputActionInput(GameInstance->GetInputKeyStateController(), EInputEvent::IE_Repeat, KeyMapping);
 					}
 				);
 
@@ -146,6 +105,4 @@ private:
 	void NativeOnInitialized() override;
 
 	virtual void SetupUIInputActionEvents() {};
-
-	void SetUIInputActionValue(FUIInputActionValue& Value, const FUIInputActionKeyMapping& Mapping, float Data);
 };

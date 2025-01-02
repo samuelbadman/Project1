@@ -8,18 +8,20 @@ struct FUIInputActionValue
 {
 	GENERATED_BODY()
 
-	friend class UScreenUserWidgetBase;
+	friend struct FUIInputBinding;
 
 private:
-	static constexpr float InvalidValue{ -1.0f };
 	static constexpr float PressedValue{ 1.0f };
 	static constexpr float ReleasedValue{ 0.0f };
 
 private:
-	float Default1DAxis{ InvalidValue };
-	float Axis2D{ InvalidValue };
+	float Default1DAxis{ ReleasedValue };
+	float Axis2D{ ReleasedValue };
 
 public:
 	template <typename T>
 	T Get() const;
+
+private:
+	void Reset();
 };
