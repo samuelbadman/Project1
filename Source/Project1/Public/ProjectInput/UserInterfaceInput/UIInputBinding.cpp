@@ -24,10 +24,9 @@ void FUIInputBinding::OnBoundUIInputActionInput(UInputKeyStateController& InputK
 
 	// Handle the input
 	// Determine input value
-	// Get input value type from the bound input action
-	switch (InputAction->GetInputValueType())
+	switch (KeyMapping.InputAxisSwizzle)
 	{
-	case EUIInputValueType::Float1D:
+	case EUIInputAxisSwizzle::XY:
 		switch (InputEvent)
 		{
 		case EInputEvent::IE_Pressed: InputValue.Default1DAxis = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
@@ -37,29 +36,15 @@ void FUIInputBinding::OnBoundUIInputActionInput(UInputKeyStateController& InputK
 		}
 		break;
 
-	case EUIInputValueType::FVector2D:
-		switch (KeyMapping.InputAxisSwizzle)
+	case EUIInputAxisSwizzle::YX:
+		switch (InputEvent)
 		{
-		case EUIInputAxisSwizzle::XY:
-			switch (InputEvent)
-			{
-			case EInputEvent::IE_Pressed: InputValue.Default1DAxis = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
-			case EInputEvent::IE_Released: InputValue.Default1DAxis = FUIInputActionValue::ReleasedValue * KeyMapping.InputValueScale; break;
-			case EInputEvent::IE_Repeat: InputValue.Default1DAxis = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
-			default: break;
-			}
-			break;
-
-		case EUIInputAxisSwizzle::YX:
-			switch (InputEvent)
-			{
-			case EInputEvent::IE_Pressed: InputValue.Axis2D = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
-			case EInputEvent::IE_Released: InputValue.Axis2D = FUIInputActionValue::ReleasedValue * KeyMapping.InputValueScale; break;
-			case EInputEvent::IE_Repeat: InputValue.Axis2D = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
-			default: break;
-			}
-			break;
+		case EInputEvent::IE_Pressed: InputValue.Axis2D = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
+		case EInputEvent::IE_Released: InputValue.Axis2D = FUIInputActionValue::ReleasedValue * KeyMapping.InputValueScale; break;
+		case EInputEvent::IE_Repeat: InputValue.Axis2D = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
+		default: break;
 		}
+		break;
 	}
 
 	// Call bound event with value

@@ -11,5 +11,6 @@ void UTitleScreenAnyInputPromptScreen::SetupUIInputActionEvents()
 
 void UTitleScreenAnyInputPromptScreen::OnLeftClickUIInput(const FUIInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("TitleScreen AnyInputPrompt Screen OnLeftClickUIInput called with value: %f"), Value.Get<float>()));
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("TitleScreen AnyInputPrompt Screen OnLeftClickUIInput called with value: %s"),
+		*Value.Get<FVector2D>().ToString()));
 }
