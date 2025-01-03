@@ -21,5 +21,5 @@ private:
 	FUIInputActionValue InputValue{};
 
 public:
-	void OnBoundUIInputActionInput(UInputKeyStateController& InputKeyStateController, EInputEvent InputEvent, const FUIInputActionKeyMapping& KeyMapping);
+	void OnBoundUIInputActionInput(UInputKeyStateController& InputKeyStateController, const FKey& InputKey, EInputEvent InputEvent, const FUIInputActionKeyMapping& KeyMapping);
 };

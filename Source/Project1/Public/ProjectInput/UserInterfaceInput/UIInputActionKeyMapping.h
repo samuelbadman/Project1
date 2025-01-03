@@ -32,4 +32,10 @@ struct FUIInputActionKeyMapping
 
 	UPROPERTY(EditDefaultsOnly)
 	EUIInputAxisSwizzle InputAxisSwizzle{ EUIInputAxisSwizzle::XY };
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bExcludeInputKeys{ false };
+
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bExcludeInputKeys"))
+	TArray<FKey> ExcludedKeys{};
 };

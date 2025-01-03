@@ -73,7 +73,7 @@ protected:
 			AnyKeyPressedBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
 			AnyKeyPressedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, BindingIndex, GameInstance, KeyMapping](const FKey& Key)
 				{
-					InputBindings[BindingIndex].OnBoundUIInputActionInput(GameInstance->GetInputKeyStateController(), EInputEvent::IE_Pressed, KeyMapping);
+					InputBindings[BindingIndex].OnBoundUIInputActionInput(GameInstance->GetInputKeyStateController(), Key, EInputEvent::IE_Pressed, KeyMapping);
 				}
 			);
 
@@ -85,7 +85,7 @@ protected:
 			AnyKeyReleasedBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
 			AnyKeyReleasedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, BindingIndex, GameInstance, KeyMapping](const FKey& Key)
 				{
-					InputBindings[BindingIndex].OnBoundUIInputActionInput(GameInstance->GetInputKeyStateController(), EInputEvent::IE_Released, KeyMapping);
+					InputBindings[BindingIndex].OnBoundUIInputActionInput(GameInstance->GetInputKeyStateController(), Key, EInputEvent::IE_Released, KeyMapping);
 				}
 			);
 
@@ -99,7 +99,7 @@ protected:
 				AnyKeyRepeatBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
 				AnyKeyRepeatBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, BindingIndex, GameInstance, KeyMapping](const FKey& Key)
 					{
-						InputBindings[BindingIndex].OnBoundUIInputActionInput(GameInstance->GetInputKeyStateController(), EInputEvent::IE_Repeat, KeyMapping);
+						InputBindings[BindingIndex].OnBoundUIInputActionInput(GameInstance->GetInputKeyStateController(), Key, EInputEvent::IE_Repeat, KeyMapping);
 					}
 				);
 

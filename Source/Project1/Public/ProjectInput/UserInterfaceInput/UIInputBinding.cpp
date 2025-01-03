@@ -3,8 +3,22 @@
 #include "ProjectInput/UserInterfaceInput/UIInputAction.h"
 #include "ProjectInput/UserInterfaceInput/UIInputActionKeyMapping.h"
 
-void FUIInputBinding::OnBoundUIInputActionInput(UInputKeyStateController& InputKeyStateController, EInputEvent InputEvent, const FUIInputActionKeyMapping& KeyMapping)
+void FUIInputBinding::OnBoundUIInputActionInput(
+	UInputKeyStateController& InputKeyStateController, 
+	const FKey& InputKey,
+	EInputEvent InputEvent, 
+	const FUIInputActionKeyMapping& KeyMapping
+)
 {
+	// Ignore input from exluded keys
+	if (KeyMapping.bExcludeInputKeys)
+	{
+		if (KeyMapping.ExcludedKeys.Contains(InputKey))
+		{
+			return;
+		}
+	}
+
 	// Get new key state for the input key
 	const EInputKeyState NewKeyState{ InputKeyStateController.GetInputKeyStateFromInputEvent(InputEvent) };
 
@@ -13,14 +27,14 @@ void FUIInputBinding::OnBoundUIInputActionInput(UInputKeyStateController& InputK
 	if ((InputEvent == IE_Pressed) ||
 		(InputEvent == IE_Released))
 	{
-		if (InputKeyStateController.GetKeyState(KeyMapping.Key) == NewKeyState)
+		if (InputKeyStateController.GetKeyState(InputKey) == NewKeyState)
 		{
 			return;
 		}
 	}
 
 	// Update input key state
-	InputKeyStateController.SetKeyState(KeyMapping.Key, NewKeyState);
+	InputKeyStateController.SetKeyState(InputKey, NewKeyState);
 
 	// Handle the input
 	// Determine input value

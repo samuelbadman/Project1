@@ -18,10 +18,10 @@ class UTitleScreenAnyInputPromptScreen : public UScreenUserWidgetBase
 	
 private:
 	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UUIInputAction> LeftClickUIInputAction{ nullptr };
+	TObjectPtr<UUIInputAction> AnyInputUIInputAction{ nullptr };
 
 private:
 	void SetupUIInputActionEvents() override;
 
-	void OnUILeftClick(const FUIInputActionValue& Value);
+	void OnAnyInputUIInput(const FUIInputActionValue& Value);
 };
