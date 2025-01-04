@@ -35,6 +35,8 @@ public:
 	void PopContentFromPrimaryLayoutLayer(const FGameplayTag& LayerName);
 	ULayerUserWidgetBase* GetRegisteredPrimaryLayoutLayer(const FGameplayTag& LayerName);
 	void SetActiveInputPrimaryLayoutLayer(const FGameplayTag& LayerName);
+	const FGameplayTag& GetActiveInputPrimaryLayoutLayerName() const;
+	bool IsContentOnTopOfPrimaryLayoutLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget) const;
 
 	FORCEINLINE TObjectPtr<const UUIInputActionMapping> GetUIInputActionMapping() const { return UIInputActionMapping; }
 

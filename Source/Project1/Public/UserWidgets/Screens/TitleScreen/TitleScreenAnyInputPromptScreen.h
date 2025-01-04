@@ -21,6 +21,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UUIInputAction> AnyInputUIInputAction{ nullptr };
 
+
+	// TODO: Create a struct FScreenWidgetReference to hold the below two properties as they will often be needed together
 	// The name of the widget layer the main menu screen widget will be added to
 	UPROPERTY(EditDefaultsOnly, Category = "Screens")
 	FGameplayTag TitleScreenMainMenuScreenPrimaryLayoutLayerName{};

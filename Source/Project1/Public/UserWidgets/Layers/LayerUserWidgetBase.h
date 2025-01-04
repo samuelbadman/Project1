@@ -28,6 +28,7 @@ private:
 	UPROPERTY(BlueprintAssignable)
 	FOnContentPoppedFromLayerDelegateSignature OnContentPoppedFromLayerDelegate{};
 
+	FGameplayTag LayerName{};
 	TArray<TObjectPtr<UScreenUserWidgetBase>> WidgetStack{};
 	
 	UPROPERTY()
@@ -37,6 +38,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	UPanelWidget* GetPanelWidget() const;
 
+	void SetLayerName(const FGameplayTag& Name);
 	void PushContent(const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass);
 	void PopContent();
 	TObjectPtr<UScreenUserWidgetBase> Peek() const;

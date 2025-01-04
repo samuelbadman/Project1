@@ -17,5 +17,11 @@ class UTitleScreenMainMenuScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UUIInputAction> CancelUIInputAction{ nullptr };
+
+private:
 	void SetupUIInputActionEvents() override;
+
+	void OnCancelUIInput(const FUIInputActionValue& Value);
 };

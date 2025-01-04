@@ -40,4 +40,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetActiveInputLayer(const FGameplayTag& LayerName);
+
+	bool IsContentOnTopOfLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget);
+
+	FORCEINLINE const FGameplayTag& GetActiveInputLayerName() const { return ActiveInputLayerName; }
 };

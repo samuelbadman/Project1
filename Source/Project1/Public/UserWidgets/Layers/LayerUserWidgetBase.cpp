@@ -8,6 +8,11 @@
 #include "UserWidgets/Screens/ScreenUserWidgetBase.h"
 #include "Components/PanelWidget.h"
 
+void ULayerUserWidgetBase::SetLayerName(const FGameplayTag& Name)
+{
+	LayerName = Name;
+}
+
 void ULayerUserWidgetBase::PushContent(const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass)
 {
 	if (UKismetSystemLibrary::IsValidSoftClassReference(WidgetClass))
@@ -31,7 +36,9 @@ void ULayerUserWidgetBase::PopContent()
 		return;
 	}
 
+	// Set top to the current widget on top of the stack
 	TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	Top->SetOwningLayerName({});
 	Top->RemoveFromParent();
 	WidgetStack.RemoveAt(WidgetStack.Num() - 1);
 
@@ -40,6 +47,7 @@ void ULayerUserWidgetBase::PopContent()
 
 	OnContentPoppedFromLayerDelegate.Broadcast(Top);
 
+	// Update top to the new widget that is currently on top of the stack. There may not be one so this can be null
 	Top = Peek();
 	if (IsValid(Top))
 	{
@@ -97,6 +105,7 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 	WidgetStack.Add(PushedWidget);
 	PanelWidget->AddChild(PushedWidget);
 
+	PushedWidget->SetOwningLayerName(LayerName);
 	PushedWidget->NativeOnPushedToLayerStack();
 	PushedWidget->OnPushedToLayerStack();
 

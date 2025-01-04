@@ -24,6 +24,16 @@ void AProject1HUDBase::SetActiveInputPrimaryLayoutLayer(const FGameplayTag& Laye
 	PrimaryLayoutWidget->SetActiveInputLayer(LayerName);
 }
 
+const FGameplayTag& AProject1HUDBase::GetActiveInputPrimaryLayoutLayerName() const
+{
+	return PrimaryLayoutWidget->GetActiveInputLayerName();
+}
+
+bool AProject1HUDBase::IsContentOnTopOfPrimaryLayoutLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget) const
+{
+	return PrimaryLayoutWidget->IsContentOnTopOfLayer(LayerName, Widget);
+}
+
 void AProject1HUDBase::BeginPlay()
 {
 	Super::BeginPlay();

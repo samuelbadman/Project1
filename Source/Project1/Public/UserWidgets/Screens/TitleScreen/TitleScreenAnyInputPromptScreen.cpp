@@ -28,6 +28,10 @@ void UTitleScreenAnyInputPromptScreen::OnAnyInputUIInput(const FUIInputActionVal
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("TitleScreen AnyInputPromptScreen OnAnyInputUIInput called with value: %s"),
 		*Value.Get<FVector2D>().ToString()));
 
-	// Push main menu widget onto screen
-	ProjectHUD->PushContentToPrimaryLayoutLayer(TitleScreenMainMenuScreenPrimaryLayoutLayerName, TitleScreenMainMenuScreenClass);
+	// Push main menu widget onto screen if the input was pressed
+	// TODO: Add triggers to UI input actions/mapping so that do not need to keep checking if the key was pressed/released in code
+	if (Value.Get<float>() > 0.0)
+	{
+		ProjectHUD->PushContentToPrimaryLayoutLayer(TitleScreenMainMenuScreenPrimaryLayoutLayerName, TitleScreenMainMenuScreenClass);
+	}
 }
