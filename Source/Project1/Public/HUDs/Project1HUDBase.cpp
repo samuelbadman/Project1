@@ -4,6 +4,26 @@
 #include "Project1HUDBase.h"
 #include "UserWidgets/PrimaryLayouts/PrimaryLayoutUserWidgetBase.h"
 
+void AProject1HUDBase::PushContentToPrimaryLayoutLayer(const FGameplayTag& LayerName, const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass)
+{
+	PrimaryLayoutWidget->PushContentToLayer(LayerName, WidgetClass);
+}
+
+void AProject1HUDBase::PopContentFromPrimaryLayoutLayer(const FGameplayTag& LayerName)
+{
+	PrimaryLayoutWidget->PopContentFromLayer(LayerName);
+}
+
+ULayerUserWidgetBase* AProject1HUDBase::GetRegisteredPrimaryLayoutLayer(const FGameplayTag& LayerName)
+{
+	return PrimaryLayoutWidget->GetRegisteredLayer(LayerName);
+}
+
+void AProject1HUDBase::SetActiveInputPrimaryLayoutLayer(const FGameplayTag& LayerName)
+{
+	PrimaryLayoutWidget->SetActiveInputLayer(LayerName);
+}
+
 void AProject1HUDBase::BeginPlay()
 {
 	Super::BeginPlay();

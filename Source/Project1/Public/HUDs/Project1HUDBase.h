@@ -8,6 +8,9 @@
 
 class UPrimaryLayoutUserWidgetBase;
 class UUIInputActionMapping;
+struct FGameplayTag;
+class UScreenUserWidgetBase;
+class ULayerUserWidgetBase;
 
 /**
  * 
@@ -28,6 +31,11 @@ private:
 	TObjectPtr<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidget{ nullptr };
 
 public:
+	void PushContentToPrimaryLayoutLayer(const FGameplayTag& LayerName, const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass);
+	void PopContentFromPrimaryLayoutLayer(const FGameplayTag& LayerName);
+	ULayerUserWidgetBase* GetRegisteredPrimaryLayoutLayer(const FGameplayTag& LayerName);
+	void SetActiveInputPrimaryLayoutLayer(const FGameplayTag& LayerName);
+
 	FORCEINLINE TObjectPtr<const UUIInputActionMapping> GetUIInputActionMapping() const { return UIInputActionMapping; }
 
 private:

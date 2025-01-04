@@ -3,6 +3,15 @@
 
 #include "TitleScreenAnyInputPromptScreen.h"
 #include "ProjectInput/UserInterfaceInput/UIInputActionValue.h"
+#include "Kismet/GameplayStatics.h"
+#include "HUDs/Project1HUDBase.h"
+
+void UTitleScreenAnyInputPromptScreen::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	ProjectHUD = CastChecked<AProject1HUDBase>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+}
 
 void UTitleScreenAnyInputPromptScreen::SetupUIInputActionEvents()
 {
@@ -20,4 +29,5 @@ void UTitleScreenAnyInputPromptScreen::OnAnyInputUIInput(const FUIInputActionVal
 		*Value.Get<FVector2D>().ToString()));
 
 	// Push main menu widget onto screen
+	ProjectHUD->PushContentToPrimaryLayoutLayer(TitleScreenMainMenuScreenPrimaryLayoutLayerName, TitleScreenMainMenuScreenClass);
 }

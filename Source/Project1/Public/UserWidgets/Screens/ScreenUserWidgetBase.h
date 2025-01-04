@@ -48,6 +48,8 @@ public:
 	virtual void NativeOnCollapsed() {};
 
 protected:
+	void NativeOnInitialized() override;
+
 	template <typename T>
 	void BindUIInputActionEvent(TObjectPtr<UUIInputAction> UIInputAction, T* UserObject, void (T::* Event)(const FUIInputActionValue&))
 	{
@@ -126,7 +128,5 @@ protected:
 	}
 
 private:
-	void NativeOnInitialized() override;
-
 	virtual void SetupUIInputActionEvents() {};
 };
