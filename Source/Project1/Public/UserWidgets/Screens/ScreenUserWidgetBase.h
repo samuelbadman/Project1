@@ -30,6 +30,23 @@ class PROJECT1_API UScreenUserWidgetBase : public UProject1UserWidgetBase
 private:
 	TArray<FUIInputBinding> InputBindings{};
 
+public:
+	UFUNCTION(BlueprintCallable)
+	void OnPushedToLayerStack() {};
+
+	UFUNCTION(BlueprintCallable)
+	void OnShown() {};
+
+	UFUNCTION(BlueprintCallable)
+	void OnCollapsed() {};
+
+	// Called when the widget is pushed to a widget layer stack
+	virtual void NativeOnPushedToLayerStack() {};
+	// Called when the widget is manually shown on top of a widget layer stack by calling ShowTop on the layer
+	virtual void NativeOnShown() {};
+	// Called when the widget is manually collapsed on top of a widget layer stack by calling CollapseTop on the layer
+	virtual void NativeOnCollapsed() {};
+
 protected:
 	template <typename T>
 	void BindUIInputActionEvent(TObjectPtr<UUIInputAction> UIInputAction, T* UserObject, void (T::* Event)(const FUIInputActionValue&))

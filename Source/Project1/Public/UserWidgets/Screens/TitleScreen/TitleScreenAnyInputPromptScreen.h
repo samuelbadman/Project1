@@ -22,6 +22,8 @@ private:
 
 private:
 	void SetupUIInputActionEvents() override;
+	// Called when the widget is manually shown on top of a widget layer stack by calling ShowTop on the layer
+	void NativeOnShown() override;
 
 	void OnAnyInputUIInput(const FUIInputActionValue& Value);
 };

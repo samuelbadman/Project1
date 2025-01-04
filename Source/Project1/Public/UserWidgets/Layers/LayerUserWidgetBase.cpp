@@ -64,6 +64,8 @@ void ULayerUserWidgetBase::CollapseTop()
 	if (IsValid(Top))
 	{
 		Top->SetVisibility(ESlateVisibility::Collapsed);
+		Top->NativeOnCollapsed();
+		Top->OnCollapsed();
 	}
 }
 
@@ -73,6 +75,8 @@ void ULayerUserWidgetBase::ShowTop()
 	if (IsValid(Top))
 	{
 		Top->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		Top->NativeOnShown();
+		Top->OnShown();
 	}
 }
 
@@ -92,6 +96,9 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 
 	WidgetStack.Add(PushedWidget);
 	PanelWidget->AddChild(PushedWidget);
+
+	PushedWidget->NativeOnPushedToLayerStack();
+	PushedWidget->OnPushedToLayerStack();
 
 	ShowTop();
 
