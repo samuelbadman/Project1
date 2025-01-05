@@ -3,8 +3,6 @@
 
 #include "TitleScreenAnyInputPromptScreen.h"
 #include "ProjectInput/UserInterfaceInput/UIInputActionValue.h"
-#include "Kismet/GameplayStatics.h"
-#include "HUDs/Project1HUDBase.h"
 
 void UTitleScreenAnyInputPromptScreen::NativeOnInitialized()
 {
@@ -15,23 +13,16 @@ void UTitleScreenAnyInputPromptScreen::NativeOnInitialized()
 
 void UTitleScreenAnyInputPromptScreen::SetupUIInputActionEvents()
 {
-	BindUIInputActionEvent(AnyInputUIInputAction, this, &UTitleScreenAnyInputPromptScreen::OnAnyInputUIInput);
+	BindUIInputActionEvent(AnyInputUIInputAction, this, &UTitleScreenAnyInputPromptScreen::OnAnyInputUIInputTriggered);
 }
 
 void UTitleScreenAnyInputPromptScreen::NativeOnShown()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("AnyInputPromptScreen: Shown")));
+	// TODO: Play animation to fade in UI
 }
 
-void UTitleScreenAnyInputPromptScreen::OnAnyInputUIInput(const FUIInputActionValue& Value)
+void UTitleScreenAnyInputPromptScreen::OnAnyInputUIInputTriggered(const FUIInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("TitleScreen AnyInputPromptScreen OnAnyInputUIInput called with value: %s"),
-		*Value.Get<FVector2D>().ToString()));
-
 	// Push main menu widget onto screen if the input was pressed
-	// TODO: Add triggers to UI input actions/mapping so that do not need to keep checking if the key was pressed/released in code
-	if (Value.Get<float>() > 0.0)
-	{
-		ProjectHUD->PushContentToPrimaryLayoutLayer(TitleScreenMainMenuScreenPrimaryLayoutLayerName, TitleScreenMainMenuScreenClass);
-	}
+	ProjectHUD->PushContentToPrimaryLayoutLayer(PrimaryLayoutLayerNameToAddMainMenuScreenTo, TitleScreenMainMenuScreenClass);
 }

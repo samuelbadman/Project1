@@ -29,6 +29,8 @@ private:
 	FOnContentPoppedFromLayerDelegateSignature OnContentPoppedFromLayerDelegate{};
 
 	FGameplayTag LayerName{};
+
+	UPROPERTY()
 	TArray<TObjectPtr<UScreenUserWidgetBase>> WidgetStack{};
 	
 	UPROPERTY()
@@ -47,4 +49,6 @@ public:
 	bool IsEmpty() const;
 
 	void OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLayerClassASyncLoadHandle> Handle);
+
+	void ReceiveInput(const FKey& Key, const EInputEvent Event) const;
 };

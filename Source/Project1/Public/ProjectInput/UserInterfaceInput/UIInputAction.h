@@ -6,6 +6,8 @@
 #include "Engine/DataAsset.h"
 #include "UIInputAction.generated.h"
 
+class UUIInputActionTriggerBase;
+
 /**
  * 
  */
@@ -14,4 +16,10 @@ class UUIInputAction : public UDataAsset
 {
 	GENERATED_BODY()
 	
+private:
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TObjectPtr<UUIInputActionTriggerBase>> Triggers{};
+
+public:
+	FORCEINLINE const TArray<TObjectPtr<UUIInputActionTriggerBase>>& GetTriggers() const { return Triggers; }
 };

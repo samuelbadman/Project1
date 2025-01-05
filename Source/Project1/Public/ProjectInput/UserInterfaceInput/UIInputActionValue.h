@@ -10,7 +10,7 @@ struct FUIInputActionValue
 
 	friend struct FUIInputBinding;
 
-private:
+public:
 	static constexpr float PressedValue{ 1.0f };
 	static constexpr float ReleasedValue{ 0.0f };
 

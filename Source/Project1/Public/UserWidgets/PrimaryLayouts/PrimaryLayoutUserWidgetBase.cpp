@@ -82,3 +82,16 @@ bool UPrimaryLayoutUserWidgetBase::IsContentOnTopOfLayer(const FGameplayTag& Lay
 
 	return (Widget == (*pLayer)->Peek());
 }
+
+void UPrimaryLayoutUserWidgetBase::RouteInputToActiveInputLayer(const FKey& Key, const EInputEvent Event)
+{
+	TObjectPtr<ULayerUserWidgetBase>* const pActiveInputLayer{ Layers.Find(ActiveInputLayerName) };
+
+	if (!pActiveInputLayer)
+	{
+		// A layer with the name active input layer name is set to has not been registered with the primary layout widget
+		return;
+	}
+
+	(*pActiveInputLayer)->ReceiveInput(Key, Event);
+}

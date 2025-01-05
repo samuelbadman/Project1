@@ -21,14 +21,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UUIInputAction> AnyInputUIInputAction{ nullptr };
 
-
-	// TODO: Create a struct FScreenWidgetReference to hold the below two properties as they will often be needed together
-	// The name of the widget layer the main menu screen widget will be added to
-	UPROPERTY(EditDefaultsOnly, Category = "Screens")
-	FGameplayTag TitleScreenMainMenuScreenPrimaryLayoutLayerName{};
-
 	UPROPERTY(EditDefaultsOnly, Category = "Screens")
 	TSoftClassPtr<UScreenUserWidgetBase> TitleScreenMainMenuScreenClass{ nullptr };
+
+	// The name of the widget layer the main menu screen widget will be added to
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTag PrimaryLayoutLayerNameToAddMainMenuScreenTo{};
 
 	TObjectPtr<AProject1HUDBase> ProjectHUD{ nullptr };
 
@@ -38,5 +36,5 @@ private:
 	// Called when the widget is manually shown on top of a widget layer stack by calling ShowTop on the layer
 	void NativeOnShown() override;
 
-	void OnAnyInputUIInput(const FUIInputActionValue& Value);
+	void OnAnyInputUIInputTriggered(const FUIInputActionValue& Value);
 };

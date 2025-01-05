@@ -23,5 +23,5 @@ private:
 private:
 	void SetupUIInputActionEvents() override;
 
-	void OnCancelUIInput(const FUIInputActionValue& Value);
+	void OnCancelUIInputTriggered(const FUIInputActionValue& Value);
 };

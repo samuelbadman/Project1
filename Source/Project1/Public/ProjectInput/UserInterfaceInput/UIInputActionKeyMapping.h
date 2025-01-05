@@ -1,14 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UIInputAxisSwizzle.h"
 #include "UIInputActionKeyMapping.generated.h"
-
-UENUM()
-enum class EUIInputAxisSwizzle : uint8
-{
-	XY UMETA(DisplayName = "XY"),
-	YX UMETA(DisplayName = "YX")
-};
 
 USTRUCT()
 struct FUIInputActionKeyMapping
@@ -23,12 +17,6 @@ struct FUIInputActionKeyMapping
 
 	UPROPERTY(EditDefaultsOnly)
 	bool bAcceptRepeatInputs{ false };
-
-	UPROPERTY(EditDefaultsOnly)
-	bool bConsumeInput{ true };
-
-	UPROPERTY(EditDefaultsOnly)
-	bool bExecuteWhenPaused{ true };
 
 	UPROPERTY(EditDefaultsOnly)
 	EUIInputAxisSwizzle InputAxisSwizzle{ EUIInputAxisSwizzle::XY };

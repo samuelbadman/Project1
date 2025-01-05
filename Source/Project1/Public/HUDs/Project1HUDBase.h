@@ -11,15 +11,16 @@ class UUIInputActionMapping;
 struct FGameplayTag;
 class UScreenUserWidgetBase;
 class ULayerUserWidgetBase;
+class UProject1GameInstanceBase;
 
 /**
- * 
+ *
  */
 UCLASS()
 class PROJECT1_API AProject1HUDBase : public AHUD
 {
 	GENERATED_BODY()
-	
+
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "UI Input Action Mapping Asset"))
 	TObjectPtr<UUIInputActionMapping> UIInputActionMapping{ nullptr };
@@ -29,6 +30,8 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidget{ nullptr };
+
+	TObjectPtr<UProject1GameInstanceBase> Project1GameInstance{ nullptr };
 
 public:
 	void PushContentToPrimaryLayoutLayer(const FGameplayTag& LayerName, const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass);
@@ -42,4 +45,6 @@ public:
 
 private:
 	void BeginPlay() override;
+
+	void ControllerAnyKeyInputBinding(const FKey& Key, const EInputEvent Event);
 };

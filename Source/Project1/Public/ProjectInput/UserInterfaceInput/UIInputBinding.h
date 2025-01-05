@@ -1,12 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/NoExportTypes.h"
 #include "UIInputActionValue.h"
+#include "UIInputActionKeyMapping.h"
 #include "UIInputBinding.generated.h"
 
 class UUIInputAction;
 class UInputKeyStateController;
-struct FUIInputActionKeyMapping;
 
 USTRUCT()
 struct FUIInputBinding
@@ -16,10 +17,11 @@ struct FUIInputBinding
 public:
 	TObjectPtr<UUIInputAction> InputAction{ nullptr };
 	TDelegate<void(const FUIInputActionValue&)> Event{ nullptr };
+	TArray<FUIInputActionKeyMapping> KeyMappings{};
 
 private:
 	FUIInputActionValue InputValue{};
 
 public:
-	void OnBoundUIInputActionInput(UInputKeyStateController& InputKeyStateController, const FKey& InputKey, EInputEvent InputEvent, const FUIInputActionKeyMapping& KeyMapping);
+	void OnBoundUIInputActionInput(const FKey& InputKey, EInputEvent InputEvent, const FUIInputActionKeyMapping& KeyMapping);
 };

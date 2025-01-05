@@ -42,6 +42,7 @@ public:
 	void SetActiveInputLayer(const FGameplayTag& LayerName);
 
 	bool IsContentOnTopOfLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget);
+	void RouteInputToActiveInputLayer(const FKey& Key, const EInputEvent Event);
 
 	FORCEINLINE const FGameplayTag& GetActiveInputLayerName() const { return ActiveInputLayerName; }
 };

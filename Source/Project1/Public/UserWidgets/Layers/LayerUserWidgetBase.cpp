@@ -45,6 +45,9 @@ void ULayerUserWidgetBase::PopContent()
 	const TObjectPtr<UPanelWidget> PanelWidget{ GetPanelWidget() };
 	PanelWidget->ClearChildren();
 
+	Top->NativeOnPoppedFromLayerStack();
+	Top->OnPoppedFromLayerStack();
+
 	OnContentPoppedFromLayerDelegate.Broadcast(Top);
 
 	// Update top to the new widget that is currently on top of the stack. There may not be one so this can be null
@@ -114,4 +117,17 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 	PushedContentClassASyncLoadHandles.Remove(Handle);
 
 	OnContentPushedToLayerDelegate.Broadcast(PushedWidget);
+}
+
+void ULayerUserWidgetBase::ReceiveInput(const FKey& Key, const EInputEvent Event) const
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+
+	if (!IsValid(Top))
+	{
+		// There is not a valid widget on top of the layer stack
+		return;
+	}
+
+	Top->ProcessInput(Key, Event);
 }

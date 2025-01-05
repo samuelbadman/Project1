@@ -41,14 +41,17 @@ private:
 public:
 	void SetOwningLayerName(const FGameplayTag& LayerName);
 
-	UFUNCTION(BlueprintCallable)
-	void OnPushedToLayerStack() {};
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPushedToLayerStack();
 
-	UFUNCTION(BlueprintCallable)
-	void OnShown() {};
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnShown();
 
-	UFUNCTION(BlueprintCallable)
-	void OnCollapsed() {};
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnCollapsed();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPoppedFromLayerStack();
 
 	// Called when the widget is pushed to a widget layer stack
 	virtual void NativeOnPushedToLayerStack() {};
@@ -56,6 +59,10 @@ public:
 	virtual void NativeOnShown() {};
 	// Called when the widget is manually collapsed on top of a widget layer stack by calling CollapseTop on the layer
 	virtual void NativeOnCollapsed() {};
+	// Called when widget is popped from a widget layer stack
+	virtual void NativeOnPoppedFromLayerStack() {};
+
+	void ProcessInput(const FKey& Key, const EInputEvent Event);
 
 protected:
 	void NativeOnInitialized() override;
@@ -73,7 +80,7 @@ protected:
 
 		// Get keys mapped to input action from input action mapping. The mapping is stored in the primary layout widget that exists in the HUD
 		// Get the UI input action mapping. This is where inputs can be disabled by implementing a system that uses multiple input mapping assets with
-		// priorities similiar to the enhanced input system
+		// priorities similiar to Unreal's enhanced input system
 		const TObjectPtr<const UUIInputActionMapping> InputActionMapping{ Project1HUD->GetUIInputActionMapping() };
 
 		if (!IsValid(InputActionMapping))
@@ -89,71 +96,11 @@ protected:
 		// Get action mapping from input action mapping. The action mapping contains the actual mapping of keys to UI input action
 		const auto& ActionMapping{ InputActionMapping->GetActionMapping() };
 
-		// For each value mapped to the input action
+		// Get action mapping value for input action being bound to. The action mapping value contains a list of mappings to the input action
 		const FUIInputActionMappingValue* pActionMappingValue{ ActionMapping.Find(UIInputAction) };
-		for (const auto& KeyMapping : pActionMappingValue->Mapping) // KeyMapping is the value of the ActionMapping key value map
-		{
-			// Bind to input key events for the key in the mapping
-			// Pressed binding
-			FInputKeyBinding AnyKeyPressedBinding(KeyMapping.Key, EInputEvent::IE_Pressed);
-			AnyKeyPressedBinding.bConsumeInput = KeyMapping.bConsumeInput;
-			AnyKeyPressedBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
-			AnyKeyPressedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, BindingIndex, KeyMapping](const FKey& Key)
-				{
-					const FGameplayTag& ActiveInputLayerName{ Project1HUD->GetActiveInputPrimaryLayoutLayerName() };
-					if (OwningLayerName == ActiveInputLayerName)
-					{
-						if (Project1HUD->IsContentOnTopOfPrimaryLayoutLayer(OwningLayerName, this))
-						{
-							InputBindings[BindingIndex].OnBoundUIInputActionInput(Project1GameInstance->GetInputKeyStateController(), Key, EInputEvent::IE_Pressed, KeyMapping);
-						}
-					}
-				}
-			);
 
-			Project1PlayerController->InputComponent->KeyBindings.Add(AnyKeyPressedBinding);
-
-			// Released binding
-			FInputKeyBinding AnyKeyReleasedBinding(KeyMapping.Key, EInputEvent::IE_Released);
-			AnyKeyReleasedBinding.bConsumeInput = KeyMapping.bConsumeInput;
-			AnyKeyReleasedBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
-			AnyKeyReleasedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, BindingIndex, KeyMapping](const FKey& Key)
-				{
-					const FGameplayTag& ActiveInputLayerName{ Project1HUD->GetActiveInputPrimaryLayoutLayerName() };
-					if (OwningLayerName == ActiveInputLayerName)
-					{
-						if (Project1HUD->IsContentOnTopOfPrimaryLayoutLayer(OwningLayerName, this))
-						{
-							InputBindings[BindingIndex].OnBoundUIInputActionInput(Project1GameInstance->GetInputKeyStateController(), Key, EInputEvent::IE_Released, KeyMapping);
-						}
-					}
-				}
-			);
-
-			Project1PlayerController->InputComponent->KeyBindings.Add(AnyKeyReleasedBinding);
-
-			// Repeat bindings
-			if (KeyMapping.bAcceptRepeatInputs)
-			{
-				FInputKeyBinding AnyKeyRepeatBinding(KeyMapping.Key, EInputEvent::IE_Repeat);
-				AnyKeyRepeatBinding.bConsumeInput = KeyMapping.bConsumeInput;
-				AnyKeyRepeatBinding.bExecuteWhenPaused = KeyMapping.bExecuteWhenPaused;
-				AnyKeyRepeatBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this, BindingIndex, KeyMapping](const FKey& Key)
-					{
-						const FGameplayTag& ActiveInputLayerName{ Project1HUD->GetActiveInputPrimaryLayoutLayerName() };
-						if (OwningLayerName == ActiveInputLayerName)
-						{
-							if (Project1HUD->IsContentOnTopOfPrimaryLayoutLayer(OwningLayerName, this))
-							{
-								InputBindings[BindingIndex].OnBoundUIInputActionInput(Project1GameInstance->GetInputKeyStateController(), Key, EInputEvent::IE_Repeat, KeyMapping);
-							}
-						}
-					}
-				);
-
-				Project1PlayerController->InputComponent->KeyBindings.Add(AnyKeyRepeatBinding);
-			}
-		}
+		// Copy mappings to input binding struct
+		InputBindings[BindingIndex].KeyMappings = pActionMappingValue->Mapping;
 	}
 
 private:

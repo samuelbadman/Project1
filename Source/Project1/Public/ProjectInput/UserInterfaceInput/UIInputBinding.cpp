@@ -2,14 +2,21 @@
 #include "ProjectInput/InputKeyStateController.h"
 #include "ProjectInput/UserInterfaceInput/UIInputAction.h"
 #include "ProjectInput/UserInterfaceInput/UIInputActionKeyMapping.h"
+#include "UIInputActionTriggerBase.h"
 
 void FUIInputBinding::OnBoundUIInputActionInput(
-	UInputKeyStateController& InputKeyStateController, 
 	const FKey& InputKey,
-	EInputEvent InputEvent, 
+	EInputEvent InputEvent,
 	const FUIInputActionKeyMapping& KeyMapping
 )
 {
+	// Ignore the input if it was a repeat input and the mapping does not accept repeat inputs
+	if ((InputEvent == EInputEvent::IE_Repeat) &&
+		(!KeyMapping.bAcceptRepeatInputs))
+	{
+		return;
+	}
+
 	// Ignore input from exluded keys
 	if (KeyMapping.bExcludeInputKeys)
 	{
@@ -19,50 +26,48 @@ void FUIInputBinding::OnBoundUIInputActionInput(
 		}
 	}
 
-	// Get new key state for the input key
-	const EInputKeyState NewKeyState{ InputKeyStateController.GetInputKeyStateFromInputEvent(InputEvent) };
-
-	// If the input was pressed or released and the key is already in the new key state, ignore the input. This prevents held keys when opening a new level from triggering inaccurate 
-	// pressed events
-	if ((InputEvent == IE_Pressed) ||
-		(InputEvent == IE_Released))
+	// Handle the input
+	// Get raw input value
+	static constexpr float DefaultRawInputValue{ 0.0f };
+	float RawInputValue{ DefaultRawInputValue };
+	switch (InputEvent)
 	{
-		if (InputKeyStateController.GetKeyState(InputKey) == NewKeyState)
-		{
-			return;
-		}
+	case EInputEvent::IE_Pressed: RawInputValue = FUIInputActionValue::PressedValue; break;
+	case EInputEvent::IE_Released: RawInputValue = FUIInputActionValue::ReleasedValue; break;
+	case EInputEvent::IE_Repeat: RawInputValue = FUIInputActionValue::PressedValue; break;
+	default: break;
 	}
 
-	// Update input key state
-	InputKeyStateController.SetKeyState(InputKey, NewKeyState);
-
-	// Handle the input
-	// Determine input value
+	// Build input value
 	switch (KeyMapping.InputAxisSwizzle)
 	{
-	case EUIInputAxisSwizzle::XY:
-		switch (InputEvent)
-		{
-		case EInputEvent::IE_Pressed: InputValue.Default1DAxis = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
-		case EInputEvent::IE_Released: InputValue.Default1DAxis = FUIInputActionValue::ReleasedValue * KeyMapping.InputValueScale; break;
-		case EInputEvent::IE_Repeat: InputValue.Default1DAxis = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
-		default: break;
-		}
-		break;
-
-	case EUIInputAxisSwizzle::YX:
-		switch (InputEvent)
-		{
-		case EInputEvent::IE_Pressed: InputValue.Axis2D = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
-		case EInputEvent::IE_Released: InputValue.Axis2D = FUIInputActionValue::ReleasedValue * KeyMapping.InputValueScale; break;
-		case EInputEvent::IE_Repeat: InputValue.Axis2D = FUIInputActionValue::PressedValue * KeyMapping.InputValueScale; break;
-		default: break;
-		}
-		break;
+	case EUIInputAxisSwizzle::XY: InputValue.Default1DAxis = RawInputValue * KeyMapping.InputValueScale; break;
+	case EUIInputAxisSwizzle::YX: InputValue.Axis2D = RawInputValue * KeyMapping.InputValueScale; break;
+	default: break;
 	}
 
-	// Call bound event with value
-	Event.ExecuteIfBound(InputValue);
+	// Call bound event with value each time it is triggered by a trigger rule on the input action
+	const auto& Triggers{ InputAction->GetTriggers() };
+	// If no triggers are set call bound event for every input
+	if (Triggers.IsEmpty())
+	{
+		Event.ExecuteIfBound(InputValue);
+	}
+	else
+	{
+		for (const auto Trigger : Triggers)
+		{
+			// Determine if the input action has been triggered
+			// Check if the trigger is valid. This allows "none" to be set in the input action to reject all input
+			if (IsValid(Trigger))
+			{
+				if (Trigger->Evaluate(RawInputValue))
+				{
+					Event.ExecuteIfBound(InputValue);
+				}
+			}
+		}
+	}
 
 	// Reset the value for the next input
 	InputValue.Reset();
