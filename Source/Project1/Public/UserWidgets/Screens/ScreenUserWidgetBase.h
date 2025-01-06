@@ -5,15 +5,10 @@
 #include "CoreMinimal.h"
 #include "UserWidgets/Project1UserWidgetBase.h"
 #include "GameplayTagContainer.h"
-#include "Kismet/GameplayStatics.h"
-#include "HUDs/Project1HUDBase.h"
-#include "PlayerControllers/Project1PlayerControllerBase.h"
+#include "ProjectInput/UserInterfaceInput/UIInputBinding.h"
 #include "ProjectInput/UserInterfaceInput/UIInputAction.h"
 #include "ProjectInput/UserInterfaceInput/UIInputActionMapping.h"
-#include "ProjectInput/UserInterfaceInput/UIInputActionValue.h"
-#include "GameInstances/Project1GameInstanceBase.h"
-#include "ProjectInput/InputKeyStateController.h"
-#include "ProjectInput/UserInterfaceInput/UIInputBinding.h"
+#include "HUDs/Project1HUDBase.h"
 #include "ScreenUserWidgetBase.generated.h"
 
 class UUIInputAction;
@@ -28,15 +23,13 @@ class PROJECT1_API UScreenUserWidgetBase : public UProject1UserWidgetBase
 	GENERATED_BODY()
 
 private:
-	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
-	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
-	TObjectPtr<UProject1GameInstanceBase> Project1GameInstance{ nullptr };
-
 	// The name of the UI widget layer that owns this screen. The name of the widget layer the screen widget was pushed to
 	FGameplayTag OwningLayerName{};
 
 	// Inputs bound to by this screen widget
 	TArray<FUIInputBinding> InputBindings{};
+
+	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
 
 public:
 	void SetOwningLayerName(const FGameplayTag& LayerName);

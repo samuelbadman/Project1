@@ -28,7 +28,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag PrimaryLayoutLayerNameToAddMainMenuScreenTo{};
 
-	TObjectPtr<AProject1HUDBase> ProjectHUD{ nullptr };
+	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
 
 private:
 	void NativeOnInitialized() override;

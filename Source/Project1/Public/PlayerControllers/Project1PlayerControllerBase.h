@@ -35,7 +35,7 @@ private:
 	bool DefaultCenterCursorInViewportOnBecomeVisible{ true };
 
 	TObjectPtr<UProject1GameInstanceBase> ProjectGameInstance{ nullptr };
-	TObjectPtr<AProject1HUDBase> ProjectHUD{ nullptr };
+	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
 
 public:
 	void SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible);

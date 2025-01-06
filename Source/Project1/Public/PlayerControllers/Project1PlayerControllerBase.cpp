@@ -47,7 +47,7 @@ void AProject1PlayerControllerBase::BeginPlay()
 	ProjectGameInstance = CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this));
 
 	// Get HUD reference as project HUD reference to forward legacy player inputs to for UI input
-	ProjectHUD = CastChecked<AProject1HUDBase>(GetHUD());
+	Project1HUD = CastChecked<AProject1HUDBase>(GetHUD());
 
 	// Set default mouse cursor visibility
 	SetMouseCursorVisibility(DefaultMouseCursorVisibility, DefaultLockMouseCursorToViewportWhenVisible, DefaultCenterCursorInViewportOnBecomeVisible);
