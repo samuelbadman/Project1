@@ -15,5 +15,5 @@ class UUIInputActionTrigger_Pressed: public UUIInputActionTriggerBase
 	GENERATED_BODY()
 	
 private:
-	bool Evaluate(const float RawInputValue) const override;
+	bool Evaluate(const float RawInputValue, const EInputEvent InputEvent) const override;
 };

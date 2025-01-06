@@ -4,7 +4,8 @@
 #include "UIInputActionTrigger_Pressed.h"
 #include "UIInputActionValue.h"
 
-bool UUIInputActionTrigger_Pressed::Evaluate(const float RawInputValue) const
+bool UUIInputActionTrigger_Pressed::Evaluate(const float RawInputValue, const EInputEvent InputEvent) const
 {
-	return RawInputValue == FUIInputActionValue::PressedValue;
+	return ((RawInputValue == FUIInputActionValue::PressedValue) &&
+		(InputEvent == EInputEvent::IE_Pressed));
 }

@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "UIInputActionTriggerBase.h"
-#include "UIInputActionTrigger_Released.generated.h"
+#include "UIInputActionTrigger_Repeat.generated.h"
 
 /**
  * 
  */
-UCLASS(meta = (DisplayName = "Released"))
-class UUIInputActionTrigger_Released: public UUIInputActionTriggerBase
+UCLASS(meta = (DisplayName = "Repeat"))
+class UUIInputActionTrigger_Repeat: public UUIInputActionTriggerBase
 {
 	GENERATED_BODY()
 	

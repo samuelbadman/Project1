@@ -10,13 +10,6 @@ void FUIInputBinding::OnBoundUIInputActionInput(
 	const FUIInputActionKeyMapping& KeyMapping
 )
 {
-	// Ignore the input if it was a repeat input and the mapping does not accept repeat inputs
-	if ((InputEvent == EInputEvent::IE_Repeat) &&
-		(!KeyMapping.bAcceptRepeatInputs))
-	{
-		return;
-	}
-
 	// Ignore input from exluded keys
 	if (KeyMapping.bExcludeInputKeys)
 	{
@@ -61,7 +54,7 @@ void FUIInputBinding::OnBoundUIInputActionInput(
 			// Check if the trigger is valid. This allows "none" to be set in the input action to reject all input
 			if (IsValid(Trigger))
 			{
-				if (Trigger->Evaluate(RawInputValue))
+				if (Trigger->Evaluate(RawInputValue, InputEvent))
 				{
 					Event.ExecuteIfBound(InputValue);
 				}

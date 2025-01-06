@@ -27,7 +27,7 @@ void UTitleScreenAnyInputPromptScreen::NativeOnShown()
 void UTitleScreenAnyInputPromptScreen::OnAnyInputUIInputTriggered(const FUIInputActionValue& Value)
 {
 	// Push main menu widget onto screen if the input was pressed
-	Project1HUD->PushContentToPrimaryLayoutLayer(PrimaryLayoutLayerNameToAddMainMenuScreenTo, TitleScreenMainMenuScreenClass);
+	//Project1HUD->PushContentToPrimaryLayoutLayer(PrimaryLayoutLayerNameToAddMainMenuScreenTo, TitleScreenMainMenuScreenClass);
 
-
+	UGameplayStatics::OpenLevel(this, FName(TEXT("DevelopmentMap")));
 }

@@ -16,9 +16,6 @@ struct FUIInputActionKeyMapping
 	float InputValueScale{ 1.0f };
 
 	UPROPERTY(EditDefaultsOnly)
-	bool bAcceptRepeatInputs{ false };
-
-	UPROPERTY(EditDefaultsOnly)
 	EUIInputAxisSwizzle InputAxisSwizzle{ EUIInputAxisSwizzle::XY };
 
 	UPROPERTY(EditDefaultsOnly)

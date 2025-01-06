@@ -18,5 +18,5 @@ class UUIInputActionTriggerBase : public UObject
 	
 public:
 	// Determines whether the input value should trigger the input action based on the rules implemented by the trigger class
-	virtual bool Evaluate(const float RawInputValue) const { return false; }
+	virtual bool Evaluate(const float RawInputValue, const EInputEvent InputEvent) const { return false; }
 };
