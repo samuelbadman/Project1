@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "UIInputActionMappingValue.h"
+#include "UIInputActionKeyMapping.h"
 #include "UIInputActionMapping.generated.h"
 
 class UUIInputAction;
@@ -19,8 +19,8 @@ class UUIInputActionMapping : public UDataAsset
 	
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (DisplayThumbnail = "false"))
-	TMap<TObjectPtr<UUIInputAction>, FUIInputActionMappingValue> ActionMapping{};
+	TMap<TObjectPtr<UUIInputAction>, FUIInputActionKeyMapping> ActionMapping{};
 
 public:
-	FORCEINLINE const TMap<TObjectPtr<UUIInputAction>, FUIInputActionMappingValue>& GetActionMapping() const { return ActionMapping; }
+	FORCEINLINE const TMap<TObjectPtr<UUIInputAction>, FUIInputActionKeyMapping>& GetActionMapping() const { return ActionMapping; }
 };

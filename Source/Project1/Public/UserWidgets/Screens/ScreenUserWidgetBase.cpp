@@ -24,16 +24,17 @@ void UScreenUserWidgetBase::ProcessInput(const FKey& Key, const EInputEvent Even
 	for (FUIInputBinding& InputBinding : InputBindings)
 	{
 		// For each key mapping in the binding
-		for (const FUIInputActionKeyMapping& KeyMapping : InputBinding.KeyMappings)
+		for (const auto& KeyPropertyPair : InputBinding.KeyMapping.Keys)
 		{
 			// If the input key matches a key in the bound mapping
-			if (KeyMapping.Key == EKeys::AnyKey) // Any key is its own key that does not equal other keys. If the mapped key is any key, call the binding regardless of input key
+			// Any key is its own key that does not equal other keys. If the mapped key is any key, call the binding regardless of input key
+			if (KeyPropertyPair.Key == EKeys::AnyKey)
 			{
-				InputBinding.OnBoundUIInputActionInput(Key, Event, KeyMapping);
+				InputBinding.OnBoundUIInputActionInput(Key, Event);
 			}
-			else if (Key == KeyMapping.Key)
+			else if (Key == KeyPropertyPair.Key)
 			{
-				InputBinding.OnBoundUIInputActionInput(Key, Event, KeyMapping);
+				InputBinding.OnBoundUIInputActionInput(Key, Event);
 			}
 		}
 	}

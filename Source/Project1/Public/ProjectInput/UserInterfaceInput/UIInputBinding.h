@@ -7,7 +7,6 @@
 #include "UIInputBinding.generated.h"
 
 class UUIInputAction;
-class UInputKeyStateController;
 
 USTRUCT()
 struct FUIInputBinding
@@ -17,11 +16,11 @@ struct FUIInputBinding
 public:
 	TObjectPtr<UUIInputAction> InputAction{ nullptr };
 	TDelegate<void(const FUIInputActionValue&)> Event{ nullptr };
-	TArray<FUIInputActionKeyMapping> KeyMappings{};
+	FUIInputActionKeyMapping KeyMapping{};
 
 private:
 	FUIInputActionValue InputValue{};
 
 public:
-	void OnBoundUIInputActionInput(const FKey& InputKey, EInputEvent InputEvent, const FUIInputActionKeyMapping& KeyMapping);
+	void OnBoundUIInputActionInput(const FKey& InputKey, EInputEvent InputEvent);
 };

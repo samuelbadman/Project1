@@ -8,6 +8,7 @@
 #include "ProjectInput/UserInterfaceInput/UIInputBinding.h"
 #include "ProjectInput/UserInterfaceInput/UIInputAction.h"
 #include "ProjectInput/UserInterfaceInput/UIInputActionMapping.h"
+#include "ProjectInput/UserInterfaceInput/UIInputActionKeyMapping.h"
 #include "HUDs/Project1HUDBase.h"
 #include "ScreenUserWidgetBase.generated.h"
 
@@ -89,11 +90,13 @@ protected:
 		// Get action mapping from input action mapping. The action mapping contains the actual mapping of keys to UI input action
 		const auto& ActionMapping{ InputActionMapping->GetActionMapping() };
 
-		// Get action mapping value for input action being bound to. The action mapping value contains a list of mappings to the input action
-		const FUIInputActionMappingValue* pActionMappingValue{ ActionMapping.Find(UIInputAction) };
-
-		// Copy mappings to input binding struct
-		InputBindings[BindingIndex].KeyMappings = pActionMappingValue->Mapping;
+		// Get action key mapping for input action being bound to. The action key mapping contains a list of keys mapped to the input action and properties about each key
+		const FUIInputActionKeyMapping* pActionKeyMapping{ ActionMapping.Find(UIInputAction) };
+		if (pActionKeyMapping)
+		{
+			// Copy key mapping to input binding struct
+			InputBindings[BindingIndex].KeyMapping = (*pActionKeyMapping);
+		}
 	}
 
 private:

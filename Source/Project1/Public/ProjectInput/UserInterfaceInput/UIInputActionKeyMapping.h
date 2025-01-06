@@ -5,12 +5,9 @@
 #include "UIInputActionKeyMapping.generated.h"
 
 USTRUCT()
-struct FUIInputActionKeyMapping
+struct FKeyProperties
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly)
-	FKey Key{};
 
 	UPROPERTY(EditDefaultsOnly)
 	float InputValueScale{ 1.0f };
@@ -23,4 +20,13 @@ struct FUIInputActionKeyMapping
 
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bExcludeInputKeys"))
 	TArray<FKey> ExcludedKeys{};
+};
+
+USTRUCT()
+struct FUIInputActionKeyMapping
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FKey, FKeyProperties> Keys{};
 };
