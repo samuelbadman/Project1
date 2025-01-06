@@ -6,8 +6,6 @@
 #include "UserWidgets/Screens/ScreenUserWidgetBase.h"
 #include "TitleScreenMainMenuScreen.generated.h"
 
-class UUIInputAction;
-
 /**
  * 
  */
@@ -16,12 +14,4 @@ class UTitleScreenMainMenuScreen : public UScreenUserWidgetBase
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UUIInputAction> CancelUIInputAction{ nullptr };
-
-private:
-	void SetupUIInputActionEvents() override;
-
-	void OnCancelUIInputTriggered(const FUIInputActionValue& Value);
 };

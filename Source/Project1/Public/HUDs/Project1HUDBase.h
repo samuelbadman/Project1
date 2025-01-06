@@ -7,11 +7,12 @@
 #include "Project1HUDBase.generated.h"
 
 class UPrimaryLayoutUserWidgetBase;
-class UUIInputActionMapping;
 struct FGameplayTag;
 class UScreenUserWidgetBase;
 class ULayerUserWidgetBase;
-class UProject1GameInstanceBase;
+struct FInputActionValue;
+class UEnhancedInputLocalPlayerSubsystem;
+class UUIInputMapping;
 
 /**
  *
@@ -22,29 +23,37 @@ class PROJECT1_API AProject1HUDBase : public AHUD
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditDefaultsOnly, meta = (DisplayName = "UI Input Action Mapping Asset"))
-	TObjectPtr<UUIInputActionMapping> UIInputActionMapping{ nullptr };
-
 	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UUIInputMapping> UIInputMapping{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "PrimaryWidgetLayout")
 	TSubclassOf<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidgetClass{ nullptr };
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidget{ nullptr };
 
-	TObjectPtr<UProject1GameInstanceBase> Project1GameInstance{ nullptr };
+	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem{ nullptr };
 
 public:
 	void PushContentToPrimaryLayoutLayer(const FGameplayTag& LayerName, const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass);
 	void PopContentFromPrimaryLayoutLayer(const FGameplayTag& LayerName);
 	ULayerUserWidgetBase* GetRegisteredPrimaryLayoutLayer(const FGameplayTag& LayerName);
 	void SetActiveInputPrimaryLayoutLayer(const FGameplayTag& LayerName);
-	const FGameplayTag& GetActiveInputPrimaryLayoutLayerName() const;
 	bool IsContentOnTopOfPrimaryLayoutLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget) const;
 
-	FORCEINLINE TObjectPtr<const UUIInputActionMapping> GetUIInputActionMapping() const { return UIInputActionMapping; }
+	void SetUIInputsEnabled(bool Enable);
 
-private:
+protected:
 	void BeginPlay() override;
 
-	void ControllerAnyKeyInputBinding(const FKey& Key, const EInputEvent Event);
+private:
+	void OnLeftClickTriggered(const FInputActionValue& Value);
+	void OnMiddleClickTriggered(const FInputActionValue& Value);
+	void OnRightClickTriggered(const FInputActionValue& Value);
+	void OnMouseWheelTriggered(const FInputActionValue& Value);
+	void OnNavigateTriggered(const FInputActionValue& Value);
+	void OnConfirmTriggered(const FInputActionValue& Value);
+	void OnCancelTriggered(const FInputActionValue& Value);
+	void OnTabTriggered(const FInputActionValue& Value);
+	void OnAnyInputTriggered(const FInputActionValue& Value);
 };

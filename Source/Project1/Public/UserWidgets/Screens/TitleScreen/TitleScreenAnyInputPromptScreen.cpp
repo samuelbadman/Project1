@@ -2,10 +2,9 @@
 
 
 #include "TitleScreenAnyInputPromptScreen.h"
-#include "ProjectInput/UserInterfaceInput/UIInputActionValue.h"
 #include "HUDs/Project1HUDBase.h"
-
 #include "Kismet/GameplayStatics.h"
+#include "InputActionValue.h"
 
 void UTitleScreenAnyInputPromptScreen::NativeOnInitialized()
 {
@@ -14,22 +13,12 @@ void UTitleScreenAnyInputPromptScreen::NativeOnInitialized()
 	Project1HUD = CastChecked<AProject1HUDBase>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 }
 
-void UTitleScreenAnyInputPromptScreen::SetupUIInputActionEvents()
-{
-	BindUIInputActionEvent(AnyInputUIInputAction, this, &UTitleScreenAnyInputPromptScreen::OnAnyInputUIInputTriggered);
-}
-
 void UTitleScreenAnyInputPromptScreen::NativeOnShown()
 {
 	// TODO: Play animation to fade in UI
 }
 
-void UTitleScreenAnyInputPromptScreen::OnAnyInputUIInputTriggered(const FUIInputActionValue& Value)
+void UTitleScreenAnyInputPromptScreen::NativeOnAnyInputTriggered(const FInputActionValue& Value)
 {
-	// Push main menu widget onto screen if the input was pressed
-	//Project1HUD->PushContentToPrimaryLayoutLayer(PrimaryLayoutLayerNameToAddMainMenuScreenTo, TitleScreenMainMenuScreenClass);
-
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, TEXT("Any input triggered"));
-
-	//UGameplayStatics::OpenLevel(this, FName(TEXT("DevelopmentMap")));
+	Project1HUD->PushContentToPrimaryLayoutLayer(TitleScreenMainMenuScreenTargetLayerName, TitleScreenMainMenuScreenClass);
 }

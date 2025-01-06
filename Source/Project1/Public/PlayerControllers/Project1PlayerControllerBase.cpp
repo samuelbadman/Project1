@@ -3,9 +3,6 @@
 
 #include "Project1PlayerControllerBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameInstances/Project1GameInstanceBase.h"
-#include "ProjectInput/InputKeyStateController.h"
-#include "HUDs/Project1HUDBase.h"
 
 void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible)
 {
@@ -42,12 +39,6 @@ void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibil
 void AProject1PlayerControllerBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Get game instance reference as project game instance to access input key state manager object
-	ProjectGameInstance = CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this));
-
-	// Get HUD reference as project HUD reference to forward legacy player inputs to for UI input
-	Project1HUD = CastChecked<AProject1HUDBase>(GetHUD());
 
 	// Set default mouse cursor visibility
 	SetMouseCursorVisibility(DefaultMouseCursorVisibility, DefaultLockMouseCursorToViewportWhenVisible, DefaultCenterCursorInViewportOnBecomeVisible);

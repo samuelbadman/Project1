@@ -6,9 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "Project1PlayerControllerBase.generated.h"
 
-class UProject1GameInstanceBase;
-class AProject1HUDBase;
-
 UENUM()
 enum class EMouseCursorVisibility : uint8
 {
@@ -33,9 +30,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	bool DefaultCenterCursorInViewportOnBecomeVisible{ true };
-
-	TObjectPtr<UProject1GameInstanceBase> ProjectGameInstance{ nullptr };
-	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
 
 public:
 	void SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible);

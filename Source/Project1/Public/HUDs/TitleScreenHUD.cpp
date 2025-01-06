@@ -3,3 +3,9 @@
 
 #include "TitleScreenHUD.h"
 
+void ATitleScreenHUD::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetUIInputsEnabled(true);
+}

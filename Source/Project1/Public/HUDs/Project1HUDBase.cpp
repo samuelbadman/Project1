@@ -3,9 +3,9 @@
 
 #include "Project1HUDBase.h"
 #include "UserWidgets/PrimaryLayouts/PrimaryLayoutUserWidgetBase.h"
-#include "Kismet/GameplayStatics.h"
-#include "GameInstances/Project1GameInstanceBase.h"
-#include "ProjectInput/InputKeyStateController.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "DataAssets/UIInputMapping.h"
 
 void AProject1HUDBase::PushContentToPrimaryLayoutLayer(const FGameplayTag& LayerName, const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass)
 {
@@ -27,22 +27,31 @@ void AProject1HUDBase::SetActiveInputPrimaryLayoutLayer(const FGameplayTag& Laye
 	PrimaryLayoutWidget->SetActiveInputLayer(LayerName);
 }
 
-const FGameplayTag& AProject1HUDBase::GetActiveInputPrimaryLayoutLayerName() const
-{
-	return PrimaryLayoutWidget->GetActiveInputLayerName();
-}
-
 bool AProject1HUDBase::IsContentOnTopOfPrimaryLayoutLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget) const
 {
 	return PrimaryLayoutWidget->IsContentOnTopOfLayer(LayerName, Widget);
 }
 
+void AProject1HUDBase::SetUIInputsEnabled(bool Enable)
+{
+	if (!IsValid(UIInputMapping))
+	{
+		return;
+	}
+
+	if (Enable)
+	{
+		EnhancedInputLocalPlayerSubsystem->AddMappingContext(UIInputMapping->GetUIInputMappingContext(), UIInputMapping->GetUIInputMappingContextPriority());
+	}
+	else
+	{
+		EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(UIInputMapping->GetUIInputMappingContext());
+	}
+}
+
 void AProject1HUDBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Get references
-	Project1GameInstance = Cast<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this));
 
 	// Create primary layout widget, cache it and add it to the viewport
 	PrimaryLayoutWidget = CreateWidget<UPrimaryLayoutUserWidgetBase>(GetOwningPlayerController(), PrimaryLayoutWidgetClass);
@@ -55,59 +64,69 @@ void AProject1HUDBase::BeginPlay()
 #endif
 	PrimaryLayoutWidget->AddToViewport();
 
-	// Bind to player controller input key events to rout to UI inputs
-	FInputKeyBinding AnyKeyPressedBinding(FInputChord(EKeys::AnyKey), EInputEvent::IE_Pressed);
-	AnyKeyPressedBinding.bConsumeInput = false;
-	AnyKeyPressedBinding.bExecuteWhenPaused = true;
-	AnyKeyPressedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this](const FKey& Key)
-		{
-			ControllerAnyKeyInputBinding(Key, IE_Pressed);
-		});
+	// Get owning player controller
+	const TObjectPtr<APlayerController> OwningPlayerController{ GetOwningPlayerController() };
 
-	FInputKeyBinding AnyKeyReleasedBinding(FInputChord(EKeys::AnyKey), EInputEvent::IE_Released);
-	AnyKeyReleasedBinding.bConsumeInput = false;
-	AnyKeyReleasedBinding.bExecuteWhenPaused = true;
-	AnyKeyReleasedBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this](const FKey& Key)
-		{
-			ControllerAnyKeyInputBinding(Key, IE_Released);
-		});
+	// Get reference to enhanced input local player subsystem
+	EnhancedInputLocalPlayerSubsystem = OwningPlayerController->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 
-	FInputKeyBinding AnyKeyRepeatBinding(FInputChord(EKeys::AnyKey), EInputEvent::IE_Repeat);
-	AnyKeyRepeatBinding.bConsumeInput = false;
-	AnyKeyRepeatBinding.bExecuteWhenPaused = true;
-	AnyKeyRepeatBinding.KeyDelegate.GetDelegateWithKeyForManualSet().BindLambda([this](const FKey& Key)
-		{
-			ControllerAnyKeyInputBinding(Key, IE_Repeat);
-		});
-
-	const TObjectPtr<APlayerController> PlayerController{ UGameplayStatics::GetPlayerController(this, 0) };
-	PlayerController->InputComponent->KeyBindings.Add(AnyKeyPressedBinding);
-	PlayerController->InputComponent->KeyBindings.Add(AnyKeyReleasedBinding);
-	PlayerController->InputComponent->KeyBindings.Add(AnyKeyRepeatBinding);
+	// Bind UI input actions/values
+	if (IsValid(UIInputMapping))
+	{
+		const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(OwningPlayerController->InputComponent);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetLeftClickInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnLeftClickTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetRightClickInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnRightClickTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetMiddleClickInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnMiddleClickTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetMouseWheelInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnMouseWheelTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetNavigateInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnNavigateTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetConfirmInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnConfirmTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetCancelInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnCancelTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetTabInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnTabTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetAnyInputInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnAnyInputTriggered);
+	}
 }
 
-void AProject1HUDBase::ControllerAnyKeyInputBinding(const FKey& Key, const EInputEvent Event)
+void AProject1HUDBase::OnLeftClickTriggered(const FInputActionValue& Value)
 {
-	// Get input key state controller
-	UInputKeyStateController& InputKeyStateController{ Project1GameInstance->GetInputKeyStateController() };
+	PrimaryLayoutWidget->RouteOnLeftClickTriggered(Value);
+}
 
-	// Get new key state for the input key
-	const EInputKeyState NewKeyState{ InputKeyStateController.GetInputKeyStateFromInputEvent(Event) };
+void AProject1HUDBase::OnMiddleClickTriggered(const FInputActionValue& Value)
+{
+	PrimaryLayoutWidget->RouteOnMiddleClickTriggered(Value);
+}
 
-	// If the input was pressed or released and the key is already in the new key state, ignore the input. This prevents held keys when opening a new level from triggering inaccurate 
-	// pressed events
-	if ((Event == IE_Pressed) ||
-		(Event == IE_Released))
-	{
-		if (InputKeyStateController.GetKeyState(Key) == NewKeyState)
-		{
-			return;
-		}
-	}
+void AProject1HUDBase::OnRightClickTriggered(const FInputActionValue& Value)
+{
+	PrimaryLayoutWidget->RouteOnRightClickTriggered(Value);
+}
 
-	// Update input key state
-	InputKeyStateController.SetKeyState(Key, NewKeyState);
+void AProject1HUDBase::OnMouseWheelTriggered(const FInputActionValue& Value)
+{
+	PrimaryLayoutWidget->RouteOnMouseWheelTriggered(Value);
+}
 
-	// Route input to primary layout widget's active input layer
-	PrimaryLayoutWidget->RouteInputToActiveInputLayer(Key, Event);
+void AProject1HUDBase::OnNavigateTriggered(const FInputActionValue& Value)
+{
+	PrimaryLayoutWidget->RouteOnNavigateTriggered(Value);
+}
+
+void AProject1HUDBase::OnConfirmTriggered(const FInputActionValue& Value)
+{
+	PrimaryLayoutWidget->RouteOnConfirmTriggered(Value);
+}
+
+void AProject1HUDBase::OnCancelTriggered(const FInputActionValue& Value)
+{
+	PrimaryLayoutWidget->RouteOnCancelTriggered(Value);
+}
+
+void AProject1HUDBase::OnTabTriggered(const FInputActionValue& Value)
+{
+	PrimaryLayoutWidget->RouteOnTabTriggered(Value);
+}
+
+void AProject1HUDBase::OnAnyInputTriggered(const FInputActionValue& Value)
+{
+	PrimaryLayoutWidget->RouteOnAnyInputTriggered(Value);
 }

@@ -9,6 +9,7 @@
 
 class ULayerUserWidgetBase;
 class UScreenUserWidgetBase;
+struct FInputActionValue;
 
 /**
  * 
@@ -42,7 +43,17 @@ public:
 	void SetActiveInputLayer(const FGameplayTag& LayerName);
 
 	bool IsContentOnTopOfLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget);
-	void RouteInputToActiveInputLayer(const FKey& Key, const EInputEvent Event);
 
-	FORCEINLINE const FGameplayTag& GetActiveInputLayerName() const { return ActiveInputLayerName; }
+	void RouteOnLeftClickTriggered(const FInputActionValue& Value);
+	void RouteOnMiddleClickTriggered(const FInputActionValue& Value);
+	void RouteOnRightClickTriggered(const FInputActionValue& Value);
+	void RouteOnMouseWheelTriggered(const FInputActionValue& Value);
+	void RouteOnNavigateTriggered(const FInputActionValue& Value);
+	void RouteOnConfirmTriggered(const FInputActionValue& Value);
+	void RouteOnCancelTriggered(const FInputActionValue& Value);
+	void RouteOnTabTriggered(const FInputActionValue& Value);
+	void RouteOnAnyInputTriggered(const FInputActionValue& Value);
+
+private:
+	TObjectPtr<ULayerUserWidgetBase> GetActiveInputLayer();
 };

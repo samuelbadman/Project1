@@ -9,6 +9,7 @@
 
 class UScreenUserWidgetBase;
 class UPanelWidget;
+struct FInputActionValue;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnContentPushedToLayerDelegateSignature, UScreenUserWidgetBase*, Widget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnContentPoppedFromLayerDelegateSignature, UScreenUserWidgetBase*, Widget);
@@ -50,5 +51,13 @@ public:
 
 	void OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLayerClassASyncLoadHandle> Handle);
 
-	void ReceiveInput(const FKey& Key, const EInputEvent Event) const;
+	void ReceiveOnLeftClickTriggered(const FInputActionValue& Value);
+	void ReceiveOnMiddleClickTriggered(const FInputActionValue& Value);
+	void ReceiveOnRightClickTriggered(const FInputActionValue& Value);
+	void ReceiveOnMouseWheelTriggered(const FInputActionValue& Value);
+	void ReceiveOnNavigateTriggered(const FInputActionValue& Value);
+	void ReceiveOnConfirmTriggered(const FInputActionValue& Value);
+	void ReceiveOnCancelTriggered(const FInputActionValue& Value);
+	void ReceiveOnTabTriggered(const FInputActionValue& Value);
+	void ReceiveOnAnyInputTriggered(const FInputActionValue& Value);
 };

@@ -83,15 +83,95 @@ bool UPrimaryLayoutUserWidgetBase::IsContentOnTopOfLayer(const FGameplayTag& Lay
 	return (Widget == (*pLayer)->Peek());
 }
 
-void UPrimaryLayoutUserWidgetBase::RouteInputToActiveInputLayer(const FKey& Key, const EInputEvent Event)
+void UPrimaryLayoutUserWidgetBase::RouteOnLeftClickTriggered(const FInputActionValue& Value)
 {
-	TObjectPtr<ULayerUserWidgetBase>* const pActiveInputLayer{ Layers.Find(ActiveInputLayerName) };
-
-	if (!pActiveInputLayer)
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
 	{
-		// A layer with the name active input layer name is set to has not been registered with the primary layout widget
-		return;
+		ActiveInputLayer->ReceiveOnLeftClickTriggered(Value);
+	}
+}
+
+void UPrimaryLayoutUserWidgetBase::RouteOnMiddleClickTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnMiddleClickTriggered(Value);
+	}
+}
+
+void UPrimaryLayoutUserWidgetBase::RouteOnRightClickTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnRightClickTriggered(Value);
+	}
+}
+
+void UPrimaryLayoutUserWidgetBase::RouteOnMouseWheelTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnMouseWheelTriggered(Value);
+	}
+}
+
+void UPrimaryLayoutUserWidgetBase::RouteOnNavigateTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnNavigateTriggered(Value);
+	}
+}
+
+void UPrimaryLayoutUserWidgetBase::RouteOnConfirmTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnConfirmTriggered(Value);
+	}
+}
+
+void UPrimaryLayoutUserWidgetBase::RouteOnCancelTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnCancelTriggered(Value);
+	}
+}
+
+void UPrimaryLayoutUserWidgetBase::RouteOnTabTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnTabTriggered(Value);
+	}
+}
+
+void UPrimaryLayoutUserWidgetBase::RouteOnAnyInputTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnAnyInputTriggered(Value);
+	}
+}
+
+TObjectPtr<ULayerUserWidgetBase> UPrimaryLayoutUserWidgetBase::GetActiveInputLayer()
+{
+	TObjectPtr<ULayerUserWidgetBase>* const pLayer{ Layers.Find(ActiveInputLayerName) };
+	
+	if (!pLayer)
+	{
+		return nullptr;
 	}
 
-	(*pActiveInputLayer)->ReceiveInput(Key, Event);
+	return (*pLayer);
 }

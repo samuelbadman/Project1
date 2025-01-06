@@ -19,10 +19,13 @@ class PROJECT1_API AGamePlayerController : public AProject1PlayerControllerBase
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputMappingContext> InputMappingContext{ nullptr };
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UInputMappingContext> MainInputMappingContext{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly)
+	int32 MainInputMappingContextPriority{ 0 };
+
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UInputAction> TestInputAction{ nullptr };
 
 private:

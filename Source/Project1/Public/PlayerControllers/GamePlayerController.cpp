@@ -18,7 +18,7 @@ void AGamePlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(InputMappingContext, 0);
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MainInputMappingContext, MainInputMappingContextPriority);
 }
 
 void AGamePlayerController::OnTestInputActionTriggered(const FInputActionValue& Value)

@@ -119,15 +119,92 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 	OnContentPushedToLayerDelegate.Broadcast(PushedWidget);
 }
 
-void ULayerUserWidgetBase::ReceiveInput(const FKey& Key, const EInputEvent Event) const
+void ULayerUserWidgetBase::ReceiveOnLeftClickTriggered(const FInputActionValue& Value)
 {
 	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-
-	if (!IsValid(Top))
+	if (IsValid(Top))
 	{
-		// There is not a valid widget on top of the layer stack
-		return;
+		Top->NativeOnLeftClickTriggered(Value);
+		Top->OnLeftClickTriggered(Value);
 	}
+}
 
-	Top->ProcessInput(Key, Event);
+void ULayerUserWidgetBase::ReceiveOnMiddleClickTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnMiddleClickTriggered(Value);
+		Top->OnMiddleClickTriggered(Value);
+	}
+}
+
+void ULayerUserWidgetBase::ReceiveOnRightClickTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnRightClickTriggered(Value);
+		Top->OnRightClickTriggered(Value);
+	}
+}
+
+void ULayerUserWidgetBase::ReceiveOnMouseWheelTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnMouseWheelTriggered(Value);
+		Top->OnMouseWheelTriggered(Value);
+	}
+}
+
+void ULayerUserWidgetBase::ReceiveOnNavigateTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnNavigateTriggered(Value);
+		Top->OnNavigateTriggered(Value);
+	}
+}
+
+void ULayerUserWidgetBase::ReceiveOnConfirmTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnConfirmTriggered(Value);
+		Top->OnConfirmTriggered(Value);
+	}
+}
+
+void ULayerUserWidgetBase::ReceiveOnCancelTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnCancelTriggered(Value);
+		Top->OnCancelTriggered(Value);
+	}
+}
+
+void ULayerUserWidgetBase::ReceiveOnTabTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnTabTriggered(Value);
+		Top->OnTabTriggered(Value);
+	}
+}
+
+void ULayerUserWidgetBase::ReceiveOnAnyInputTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnAnyInputTriggered(Value);
+		Top->OnAnyInputTriggered(Value);
+	}
 }

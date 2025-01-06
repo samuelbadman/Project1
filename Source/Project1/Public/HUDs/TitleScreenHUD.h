@@ -14,4 +14,6 @@ class PROJECT1_API ATitleScreenHUD : public AProject1HUDBase
 {
 	GENERATED_BODY()
 	
+private:
+	void BeginPlay() override;
 };
