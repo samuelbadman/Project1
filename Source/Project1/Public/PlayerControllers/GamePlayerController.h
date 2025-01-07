@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class UPlayerCharacterControllerComponent;
 
 /**
  *
@@ -19,18 +20,25 @@ class PROJECT1_API AGamePlayerController : public AProject1PlayerControllerBase
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPlayerCharacterControllerComponent> PlayerCharacterControllerComponent{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> MainInputMappingContext{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	int32 MainInputMappingContextPriority{ 0 };
 
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UInputAction> TestInputAction{ nullptr };
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
+
+public:
+	AGamePlayerController();
 
 private:
 	void SetupInputComponent() override;
+	void OnPossess(APawn* aPawn) override;
 	void BeginPlay() override;
 
-	void OnTestInputActionTriggered(const FInputActionValue& Value);
+	void OnJumpTriggered(const FInputActionValue& Value);
 };
