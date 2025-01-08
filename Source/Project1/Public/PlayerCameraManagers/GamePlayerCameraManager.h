@@ -29,6 +29,8 @@ private:
 	float ViewPitchTarget{ 0.0f };
 	float ViewYawTarget{ 0.0f };
 
+	bool bInterpolateCameraRotation{ true };
+
 public:
 	void AddViewRotation(float Pitch, float Yaw);
 	void AddViewRotationFromInput(const FVector2D& InputVector);

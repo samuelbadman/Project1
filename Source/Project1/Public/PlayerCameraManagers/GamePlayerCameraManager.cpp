@@ -7,6 +7,7 @@
 #include "Engine/StreamableManager.h"
 #include "GameInstances/Project1GameInstanceBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameViewportClients/Project1GameViewportClientBase.h"
 
 void AGamePlayerCameraManager::AddViewRotation(float Pitch, float Yaw)
 {
@@ -29,15 +30,23 @@ void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
 		// Update player camera rotation. Current pitch and yaw values are interpolated as quaternions to ensure that the shortest path is taken during interpolations.
 		const float RotationInterpSpeed{ PlayerCameraActor->GetRotateInterpSpeed() };
 
-		ViewPitchCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(static_cast<double>(ViewPitchCurrent), 0.0, 0.0)),
-			FQuat::MakeFromRotator(FRotator(static_cast<double>(ViewPitchTarget), 0.0, 0.0)),
-			DeltaTime, RotationInterpSpeed).Rotator().Pitch;
+		if (bInterpolateCameraRotation)
+		{
+			ViewPitchCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(static_cast<double>(ViewPitchCurrent), 0.0, 0.0)),
+				FQuat::MakeFromRotator(FRotator(StaticCast<double>(ViewPitchTarget), 0.0, 0.0)),
+				DeltaTime, RotationInterpSpeed).Rotator().Pitch;
+
+			ViewYawCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(0.0, static_cast<double>(ViewYawCurrent), 0.0)),
+				FQuat::MakeFromRotator(FRotator(0.0, StaticCast<double>(ViewYawTarget), 0.0)),
+				DeltaTime, RotationInterpSpeed).Rotator().Yaw;
+		}
+		else
+		{
+			ViewPitchCurrent = StaticCast<double>(ViewPitchTarget);
+			ViewYawCurrent = StaticCast<double>(ViewYawTarget);
+		}
 
 		// Wrap yaw to prevent overflow
-		ViewYawCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(0.0, static_cast<double>(ViewYawCurrent), 0.0)),
-			FQuat::MakeFromRotator(FRotator(0.0, static_cast<double>(ViewYawTarget), 0.0)),
-			DeltaTime, RotationInterpSpeed).Rotator().Yaw;
-
 		if (ViewYawCurrent > ViewYawMax)
 		{
 			ViewYawCurrent = FMath::Wrap(ViewYawCurrent, ViewYawMin, ViewYawMax);
@@ -50,6 +59,9 @@ void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
 		}
 
 		PlayerCameraActor->Rotate(ViewPitchCurrent, ViewYawCurrent);
+
+		// Update player camera location
+
 	}
 }
 
@@ -122,6 +134,11 @@ void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
 void AGamePlayerCameraManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Bind to input device changed event
+	CastChecked<UProject1GameViewportClientBase>(GetWorld()->GetGameViewport())->GetOnInputDeviceChangedDelegate().AddLambda([this](bool UsingGamepad) {
+		bInterpolateCameraRotation = UsingGamepad;
+		});
 
 	// Load player camera actor class and spawn player camera actor into the world
 	if (UKismetSystemLibrary::IsValidSoftClassReference(PlayerCameraActorClass))
