@@ -33,11 +33,11 @@ private:
 
 public:
 	void SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible);
+	bool IsMouseCursorVisible() const { return bShowMouseCursor; }
 
 protected:
 	void BeginPlay() override;
 
 private:
-	bool IsMouseCursorVisible() const { return bShowMouseCursor; }
 	void CenterMouseCursorInViewport();
 };

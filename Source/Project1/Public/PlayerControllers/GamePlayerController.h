@@ -30,6 +30,12 @@ private:
 	int32 MainInputMappingContextPriority{ 0 };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> LookAbsoluteInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> LookAnalogInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
 
 public:
@@ -40,5 +46,7 @@ private:
 	void OnPossess(APawn* aPawn) override;
 	void BeginPlay() override;
 
+	void OnLookAbsoluteTriggered(const FInputActionValue& Value);
+	void OnLookAnalogTriggered(const FInputActionValue& Value);
 	void OnJumpTriggered(const FInputActionValue& Value);
 };

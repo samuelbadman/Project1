@@ -32,6 +32,9 @@ void AGamePlayerCameraManager::BeginPlay()
 					UGameplayStatics::GetPlayerPawn(this, 0)->GetActorTransform(), 
 					SpawnInfo
 				);
+
+				// Set the spawned player camera actor as the view target
+				SetViewTarget(PlayerCameraActor);
 			}));
 	}
 }

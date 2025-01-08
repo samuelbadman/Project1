@@ -14,5 +14,4 @@ class UGameHUDScreen : public UScreenUserWidgetBase
 {
 	GENERATED_BODY()
 
-
 };

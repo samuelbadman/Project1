@@ -2,18 +2,13 @@
 
 
 #include "Project1PlayerControllerBase.h"
-#include "Kismet/GameplayStatics.h"
 
 void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible)
 {
-	FInputModeGameAndUI InputModeGameAndUI{};
-	InputModeGameAndUI.SetHideCursorDuringCapture(false);
-
 	switch (NewVisibility)
 	{
 	case EMouseCursorVisibility::Visible:
-		InputModeGameAndUI.SetLockMouseToViewportBehavior((LockMouseCursorToViewportWhenVisible) ? EMouseLockMode::LockAlways : EMouseLockMode::DoNotLock);
-
+	{
 		SetShowMouseCursor(true);
 
 		if (CenterCursorInViewportOnBecomeVisible)
@@ -21,19 +16,25 @@ void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibil
 			CenterMouseCursorInViewport();
 		}
 
-		break;
-
-	case EMouseCursorVisibility::Hidden:
-		InputModeGameAndUI.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
-
-		SetShowMouseCursor(false);
+		FInputModeGameAndUI InputModeGameAndUI{};
+		InputModeGameAndUI.SetHideCursorDuringCapture(false);
+		InputModeGameAndUI.SetLockMouseToViewportBehavior((LockMouseCursorToViewportWhenVisible) ? EMouseLockMode::LockAlways : EMouseLockMode::DoNotLock);
+		SetInputMode(InputModeGameAndUI);
 
 		break;
 	}
 
-	SetInputMode(InputModeGameAndUI);
+	case EMouseCursorVisibility::Hidden:
+	{
+		SetShowMouseCursor(false);
 
-	FSlateApplication::Get().QueryCursor();
+		FInputModeGameOnly InputModeGameOnly{};
+		InputModeGameOnly.SetConsumeCaptureMouseDown(false);
+		SetInputMode(InputModeGameOnly);
+
+		break;
+	}
+	}
 }
 
 void AProject1PlayerControllerBase::BeginPlay()
