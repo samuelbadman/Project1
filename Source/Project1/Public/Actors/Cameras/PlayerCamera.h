@@ -12,7 +12,7 @@ class UCameraComponent;
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (PrioritizeCategories = "PlayerCameraSettings"))
 class APlayerCamera : public AProject1ActorBase
 {
 	GENERATED_BODY()
@@ -27,6 +27,24 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCameraComponent> CameraComponent{ nullptr };
 
+	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings")
+	float RotateInterpSpeed{ 2.0f };
+
+	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings")
+	float SpringArmLengthLookingUp{ 50.0f };
+
+	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings")
+	float SpringArmLengthLookingDown{ 400.0f };
+
+	float CachedSpringArmTargetArmLength{ 0.0f };
+
 public:
 	APlayerCamera();
+
+	void Rotate(float Pitch, float Yaw);
+
+	FORCEINLINE float GetRotateInterpSpeed() const { return RotateInterpSpeed; }
+
+private:
+	void BeginPlay() override;
 };

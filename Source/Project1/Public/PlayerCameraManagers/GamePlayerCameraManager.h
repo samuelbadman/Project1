@@ -24,6 +24,15 @@ private:
 	TObjectPtr<APlayerCamera> PlayerCameraActor{ nullptr };
 	TSharedPtr<FStreamableHandle> PlayerCameraActorClassStreamableHandle{ nullptr };
 
+	float ViewPitchCurrent{ 0.0f };
+	float ViewYawCurrent{ 0.0f };
+	float ViewPitchTarget{ 0.0f };
+	float ViewYawTarget{ 0.0f };
+
+public:
+	void AddViewRotation(float Pitch, float Yaw);
+	void AddViewRotationFromInput(const FVector2D& InputVector);
+
 private:
 	/**
 	 * Performs per-tick camera update. Called once per tick after all other actors have been ticked.
@@ -31,4 +40,7 @@ private:
 	void UpdateCamera(float DeltaTime) override;
 
 	void BeginPlay() override;
+
+	void AddViewPitch(float Pitch);
+	void AddViewYaw(float Yaw);
 };

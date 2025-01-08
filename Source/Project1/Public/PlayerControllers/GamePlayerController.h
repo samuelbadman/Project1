@@ -10,6 +10,7 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 class UPlayerCharacterControllerComponent;
+class AGamePlayerCameraManager;
 
 /**
  *
@@ -37,6 +38,14 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
+
+	TObjectPtr<AGamePlayerCameraManager> GamePlayerCameraManager{ nullptr };
+
+	UPROPERTY(EditAnywhere, Category = "LookSensitivitySettings")
+	FVector2D AbsoluteLookInputSensitivity{ 1.0, 1.0 };
+
+	UPROPERTY(EditAnywhere, Category = "LookSensitivitySettings")
+	FVector2D AnalogLookInputSensitivity{ 2.0, 2.0 };
 
 public:
 	AGamePlayerController();

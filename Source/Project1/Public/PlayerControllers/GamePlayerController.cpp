@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/ActorComponents/PlayerCharacterControllerComponent.h"
+#include "PlayerCameraManagers/GamePlayerCameraManager.h"
 
 AGamePlayerController::AGamePlayerController()
 {
@@ -32,6 +33,9 @@ void AGamePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Get player camera manager as game player camera manager
+	GamePlayerCameraManager = CastChecked<AGamePlayerCameraManager>(PlayerCameraManager);
+
 	// TODO: Delay before adding mapping contexts at the start of the game as held inputs from old levels will trigger pressed inputs that are not wanted
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MainInputMappingContext, MainInputMappingContextPriority);
@@ -47,12 +51,13 @@ void AGamePlayerController::OnLookAbsoluteTriggered(const FInputActionValue& Val
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Look absolute value: %s"), *Value.Get<FVector2D>().ToString()));
-
+	GamePlayerCameraManager->AddViewRotationFromInput(Value.Get<FVector2D>() * AbsoluteLookInputSensitivity);
 }
 
 void AGamePlayerController::OnLookAnalogTriggered(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Look analog value: %s"), *Value.Get<FVector2D>().ToString()));
+	GamePlayerCameraManager->AddViewRotationFromInput(Value.Get<FVector2D>() * AnalogLookInputSensitivity);
 }
 
 void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)
