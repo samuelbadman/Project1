@@ -2,6 +2,7 @@
 
 
 #include "Project1CharacterBase.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AProject1CharacterBase::AProject1CharacterBase()
@@ -9,4 +10,10 @@ AProject1CharacterBase::AProject1CharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	// Set colliding character components to overlap camera collision channel
+	static constexpr ECollisionChannel CameraCollisionChannel{ ECC_Camera };
+	static constexpr ECollisionResponse CameraCollisionChannelCharacterResponse{ ECR_Overlap };
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(CameraCollisionChannel, CameraCollisionChannelCharacterResponse);
+	GetMesh()->SetCollisionResponseToChannel(CameraCollisionChannel, CameraCollisionChannelCharacterResponse);
 }
