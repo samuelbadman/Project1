@@ -43,6 +43,7 @@ void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
 	{
 		UpdateCameraRotation(DeltaTime);
 		UpdateCameraLocation(DeltaTime);
+		UpdateCameraCollision();
 	}
 
 	Super::UpdateCamera(DeltaTime);
@@ -52,8 +53,11 @@ void AGamePlayerCameraManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Get world
+	World = GetWorld();
+
 	// Bind to input device changed event
-	CastChecked<UProject1GameViewportClientBase>(GetWorld()->GetGameViewport())->GetOnInputDeviceChangedDelegate().AddLambda([this](bool UsingGamepad) {
+	CastChecked<UProject1GameViewportClientBase>(World->GetGameViewport())->GetOnInputDeviceChangedDelegate().AddLambda([this](bool UsingGamepad) {
 		bInterpolateCameraRotation = UsingGamepad;
 		});
 
@@ -63,14 +67,28 @@ void AGamePlayerCameraManager::BeginPlay()
 		PlayerCameraActorClassStreamableHandle = CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetStreamableManager().RequestAsyncLoad(
 			PlayerCameraActorClass.ToSoftObjectPath(),
 			FStreamableDelegate::CreateLambda([this]() {
+				// Get player pawn
+				const TObjectPtr<const APawn> PlayerPawn{ UGameplayStatics::GetPlayerPawn(this, 0) };
+
 				// Loaded player camera actor class. Spawn actor class into the world with the same transform as the player pawn
 				FActorSpawnParameters SpawnInfo = {};
 				SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 				PlayerCameraActor = GetWorld()->SpawnActor<APlayerCamera>(
 					PlayerCameraActorClassStreamableHandle->GetLoadedAsset<UClass>(),
-					UGameplayStatics::GetPlayerPawn(this, 0)->GetActorTransform(),
+					PlayerPawn->GetActorTransform(),
 					SpawnInfo
 				);
+
+				// Setup camera probe collision query params
+				TArray<const AActor*> CameraProbeIgnoredActors{
+					PlayerPawn,
+					PlayerCameraActor
+				};
+				CameraProbeCollisionQueryParams.AddIgnoredActors(CameraProbeIgnoredActors);
+				CameraProbeCollisionQueryParams.bTraceComplex = false;
+
+				// Setup camera probe shape
+				CameraProbeShape = FCollisionShape::MakeSphere(CameraProbeRadius);
 
 				// Set the spawned player camera actor as the view target
 				SetViewTarget(PlayerCameraActor);
@@ -165,4 +183,34 @@ void AGamePlayerCameraManager::UpdateCameraLocation(float DeltaTime)
 
 	// Set location
 	PlayerCameraActor->SetActorLocation(NewViewLocation);
+}
+
+void AGamePlayerCameraManager::UpdateCameraCollision()
+{
+	// Trace from the camera actor location to the relative camera component location
+	// If collision found move camera component in front of the collision
+
+	const FVector TraceStart{ PlayerCameraActor->GetActorLocation() };
+	const FVector TraceEnd{ PlayerCameraActor->GetCameraComponentWorldLocation() };
+
+	FHitResult ProbeHitResult{};
+	if (World->SweepSingleByChannel(
+		ProbeHitResult,
+		TraceStart,
+		TraceEnd,
+		FQuat::Identity,
+		CameraProbeCollisionChannel,
+		CameraProbeShape,
+		CameraProbeCollisionQueryParams
+	))
+	{
+		// Probe found a collision. Move camera component in front of collision along probe vector, overriding player camera relative X offset
+		if (ProbeHitResult.bStartPenetrating)
+		{
+			PlayerCameraActor->SetCameraComponentRelativeXLocation(0.0f);
+			return;
+		}
+
+		PlayerCameraActor->SetCameraComponentRelativeXLocation(PlayerCameraActor->GetCameraComponentRelativeXLocation() * ProbeHitResult.Time);
+	}
 }

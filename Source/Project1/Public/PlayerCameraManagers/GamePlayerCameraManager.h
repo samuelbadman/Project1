@@ -21,17 +21,25 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<APlayerCamera> PlayerCameraActorClass{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	bool bLimitHorizontalCameraLagDistance{ false };
 
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bLimitHorizontalCameraLagDistance"))
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bLimitHorizontalCameraLagDistance"))
 	float MaxHorizontalCameraLagDistanceFromTarget{ 10000.0f };
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	bool bLimitVerticalCameraLagDistance{ false };
 
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bLimitVerticalCameraLagDistance"))
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bLimitVerticalCameraLagDistance"))
 	float MaxVerticalCameraLagDistanceFromTarget{ 10000.0f };
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ECollisionChannel> CameraProbeCollisionChannel{ ECC_Camera };
+
+	UPROPERTY(EditAnywhere)
+	float CameraProbeRadius{ 15.0f };
+
+	TObjectPtr<UWorld> World{ nullptr };
 
 	TObjectPtr<APlayerCamera> PlayerCameraActor{ nullptr };
 	TSharedPtr<FStreamableHandle> PlayerCameraActorClassStreamableHandle{ nullptr };
@@ -44,6 +52,9 @@ private:
 	bool bInterpolateCameraRotation{ true };
 
 	TObjectPtr<const AActor> TargetFollowActor{ nullptr };
+
+	FCollisionQueryParams CameraProbeCollisionQueryParams{};
+	FCollisionShape CameraProbeShape{};
 
 public:
 	void AddViewRotation(float Pitch, float Yaw);
@@ -65,4 +76,5 @@ private:
 	void AddViewYaw(float Yaw);
 	void UpdateCameraRotation(float DeltaTime);
 	void UpdateCameraLocation(float DeltaTime);
+	void UpdateCameraCollision();
 };

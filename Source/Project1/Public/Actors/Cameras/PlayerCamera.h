@@ -54,7 +54,10 @@ public:
 	FORCEINLINE float GetLocationInterpSpeed() const { return LocationInterpSpeed; }
 
 	void SetRelativeXOffset(float Offset, float OffsetLookingUp, float OffsetLookingDown);
+	FVector GetCameraComponentWorldLocation() const;
+	void SetCameraComponentRelativeXLocation(float RelativeX);
+	float GetCameraComponentRelativeXLocation() const;
 
 private:
-	void ApplyRelativeXOffset(float Offset, float CameraForwardDotWorldUp);
+	void ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp);
 };
