@@ -12,7 +12,7 @@ void UProject1GameViewportClientBase::Tick(float DeltaTime)
 bool UProject1GameViewportClientBase::InputKey(const FInputKeyEventArgs& EventArgs)
 {
 	UpdateUsingGamepadState(EventArgs.Key.IsGamepadKey());
-	return false;
+	return Super::InputKey(EventArgs);
 }
 
 bool UProject1GameViewportClientBase::DetectMouseMove()
