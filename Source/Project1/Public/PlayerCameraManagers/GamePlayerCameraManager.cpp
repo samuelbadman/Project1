@@ -21,6 +21,22 @@ void AGamePlayerCameraManager::AddViewRotationFromInput(const FVector2D& InputVe
 	AddViewYaw(InputVector.X);
 }
 
+void AGamePlayerCameraManager::AddViewYawRotation(float Yaw)
+{
+	AddViewYaw(Yaw);
+}
+
+FQuat AGamePlayerCameraManager::GetViewYawOrientation()
+{
+	if (!IsValid(PlayerCameraActor))
+	{
+		return FQuat::Identity;
+	}
+
+	// Yaw rotation only is applied to the player camera actor. Pitch is applied locally to the camera component's parent component
+	return PlayerCameraActor->GetActorForwardVector().ToOrientationQuat();
+}
+
 void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
 {
 	Super::UpdateCamera(DeltaTime);
@@ -61,75 +77,26 @@ void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
 		PlayerCameraActor->Rotate(ViewPitchCurrent, ViewYawCurrent);
 
 		// Update player camera location
+		if (IsValid(TargetFollowActor))
+		{
+			//const FVector TargetLocation = FollowActorTarget->GetActorLocation();
+			//FVector NewLocation = FMath::VInterpTo(ThirdPersonPlayerCamera->GetActorLocation(), TargetLocation, DeltaSeconds, ViewLocationInterpSpeed);
 
+			//// Clamp max location lag distance
+			//FVector TargetToViewVector = (NewLocation - TargetLocation);
+			//const double Distance = TargetToViewVector.Length();
+
+			//TargetToViewVector.Normalize();
+			//if (Distance > static_cast<double>(MaxViewLocationLagDistance))
+			//{
+			//	NewLocation = TargetLocation + (TargetToViewVector * static_cast<double>(MaxViewLocationLagDistance));
+			//}
+
+			//// Set location
+			//ThirdPersonPlayerCamera->SetActorLocation(NewLocation);
+		}
 	}
 }
-
-//if (IsValid(ThirdPersonPlayerCamera))
-//{
-//	// Update third person player camera location
-//	if (IsValid(FollowActorTarget))
-//	{
-//		const FVector TargetLocation = FollowActorTarget->GetActorLocation();
-//		FVector NewLocation = FMath::VInterpTo(ThirdPersonPlayerCamera->GetActorLocation(), TargetLocation, DeltaSeconds, ViewLocationInterpSpeed);
-//
-//		// Clamp max location lag distance
-//		FVector TargetToViewVector = (NewLocation - TargetLocation);
-//		const double Distance = TargetToViewVector.Length();
-//
-//		TargetToViewVector.Normalize();
-//		if (Distance > static_cast<double>(MaxViewLocationLagDistance))
-//		{
-//			NewLocation = TargetLocation + (TargetToViewVector * static_cast<double>(MaxViewLocationLagDistance));
-//		}
-//
-//		// Set location
-//		ThirdPersonPlayerCamera->SetActorLocation(NewLocation);
-//	}
-//
-//	// Update third person player camera rotation. Current pitch and yaw values are interpolated as quaternions to ensure that the shortest path is taken during interpolations.
-//	const TObjectPtr<USpringArmComponent> SpringArm = ThirdPersonPlayerCamera->GetSpringArm();
-//
-//	ViewPitchCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(static_cast<double>(ViewPitchCurrent), 0.0, 0.0)),
-//		FQuat::MakeFromRotator(FRotator(static_cast<double>(ViewPitchTarget), 0.0, 0.0)),
-//		DeltaSeconds, ViewRotationInterpSpeed).Rotator().Pitch;
-//
-//	// Wrap yaw to prevent overflow
-//	ViewYawCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(0.0, static_cast<double>(ViewYawCurrent), 0.0)),
-//		FQuat::MakeFromRotator(FRotator(0.0, static_cast<double>(ViewYawTarget), 0.0)),
-//		DeltaSeconds, ViewRotationInterpSpeed).Rotator().Yaw;
-//
-//	if (ViewYawCurrent > ViewYawMax)
-//	{
-//		ViewYawCurrent = FMath::Wrap(ViewYawCurrent, ViewYawMin, ViewYawMax);
-//		ViewYawTarget = FMath::Wrap(ViewYawTarget, ViewYawMin, ViewYawMax);
-//	}
-//	else if (ViewYawCurrent < ViewYawMin)
-//	{
-//		ViewYawCurrent = FMath::Wrap(ViewYawCurrent, ViewYawMin, ViewYawMax);
-//		ViewYawTarget = FMath::Wrap(ViewYawTarget, ViewYawMin, ViewYawMax);
-//	}
-//
-//	// Separate pitch and yaw to avoid gimbal lock. Pitch is applied locally to the spring arm component and yaw is applied to the actor in world space
-//	SpringArm->SetRelativeRotation(FRotator(static_cast<double>(ViewPitchCurrent), 0.0, 0.0));
-//	ThirdPersonPlayerCamera->SetActorRotation(FRotator(0.0, static_cast<double>(ViewYawCurrent), 0.0));
-//
-//	// Update third person player camera spring arm length for pitch angle
-//	const double CameraForwardDotWorldUp = -FVector::DotProduct(SpringArm->GetRelativeRotation().Vector(), FVector::UpVector);
-//	if (CameraForwardDotWorldUp < 0.0)
-//	{
-//		SpringArm->TargetArmLength = FMath::Lerp(ThirdPersonPlayerCamera->GetSpringArmLength(), ThirdPersonPlayerCamera->GetSpringArmLengthLookUp(), FMath::Abs(CameraForwardDotWorldUp));
-//	}
-//	else
-//	{
-//		SpringArm->TargetArmLength = FMath::Lerp(ThirdPersonPlayerCamera->GetSpringArmLength(), ThirdPersonPlayerCamera->GetSpringArmLengthLookDown(), CameraForwardDotWorldUp);
-//	}
-//
-//	// Broadcast delegate
-//	OnViewUpdated.Broadcast();
-//}
-
-
 
 void AGamePlayerCameraManager::BeginPlay()
 {

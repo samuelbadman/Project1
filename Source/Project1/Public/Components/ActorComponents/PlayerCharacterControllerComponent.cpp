@@ -22,11 +22,30 @@ void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelT
 	// Update character capsule rotation
 	Character->SetActorRotation(FMath::QInterpConstantTo(Character->GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CapsuleRotationSpeed));
 
-	// Update player character skeletal mesh rotation
-	FRotator TargetCharacterMeshRotation{ Character->GetActorForwardVector().ToOrientationRotator() };
+	// Update player character skeletal mesh rotation. Keep the mesh aligned with the capsule
+	FRotator TargetCharacterMeshRotation{ TargetCapsuleWorldOrientation };
 	TargetCharacterMeshRotation.Yaw -= 90.0;
 	CharacterSkeletalMeshComponent->SetWorldRotation(FMath::QInterpConstantTo(CharacterSkeletalMeshComponent->GetComponentQuat(), TargetCharacterMeshRotation.Quaternion(),
 		DeltaTime, MeshRotationSpeed));
+
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, FString::Printf(TEXT("MinAnalogWalkSpeed: %f, MaxWalkSpeed: %f, Speed: %f"), CharacterMovementComponent->MinAnalogWalkSpeed,
+		CharacterMovementComponent->MaxWalkSpeed, Character->GetVelocity().Length()));
+}
+
+void UPlayerCharacterControllerComponent::UpdateGroundMovementState(float MoveInputMagnitude)
+{
+	if (MoveInputMagnitude < RunInputMagnitude)
+	{
+		// Walking
+		CharacterMovementComponent->MinAnalogWalkSpeed = WalkSpeed;
+		CharacterMovementComponent->MaxWalkSpeed = WalkSpeed;
+	}
+	else
+	{
+		// Running
+		CharacterMovementComponent->MinAnalogWalkSpeed = RunSpeed;
+		CharacterMovementComponent->MaxWalkSpeed = RunSpeed;
+	}
 }
 
 void UPlayerCharacterControllerComponent::SetupNewPossessedPawn(TObjectPtr<APawn> Pawn)
@@ -53,4 +72,13 @@ void UPlayerCharacterControllerComponent::SetupNewPossessedPawn(TObjectPtr<APawn
 
 	// Set default target player character capsule rotation
 	TargetCapsuleWorldOrientation = Character->GetActorQuat();
+}
+
+void UPlayerCharacterControllerComponent::AddMovement(const FVector& WorldDirection, float MoveInputMagnitude)
+{
+	TargetCapsuleWorldOrientation = WorldDirection.ToOrientationQuat();
+
+	UpdateGroundMovementState(MoveInputMagnitude);
+
+	Character->AddMovementInput(WorldDirection);
 }

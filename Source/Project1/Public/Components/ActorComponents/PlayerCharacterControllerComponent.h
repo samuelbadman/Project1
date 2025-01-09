@@ -20,6 +20,15 @@ private:
 	UPROPERTY(EditAnywhere)
 	float MeshRotationSpeed{ 7.5f };
 
+	UPROPERTY(EditAnywhere)
+	float RunInputMagnitude{ 0.45f };
+
+	UPROPERTY(EditAnywhere)
+	float WalkSpeed{ 300.0f };
+
+	UPROPERTY(EditAnywhere)
+	float RunSpeed{ 600.0f };
+
 	TObjectPtr<ACharacter> Character{ nullptr };
 	TObjectPtr<UCharacterMovementComponent> CharacterMovementComponent{ nullptr };
 	TObjectPtr<USkeletalMeshComponent> CharacterSkeletalMeshComponent{ nullptr };
@@ -31,8 +40,13 @@ public:
 	UPlayerCharacterControllerComponent();
 
 	void SetupNewPossessedPawn(TObjectPtr<APawn> Pawn);
+	void AddMovement(const FVector& WorldDirection, float MoveInputMagnitude);
+
+	FORCEINLINE void SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation) { TargetCapsuleWorldOrientation = TargetOrientation; }
 
 private:
 	// Called every frame
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	void UpdateGroundMovementState(float MoveInputMagnitude);
 };

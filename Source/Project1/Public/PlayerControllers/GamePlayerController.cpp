@@ -19,6 +19,7 @@ void AGamePlayerController::SetupInputComponent()
 	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	EnhancedInputComponent->BindAction(LookAbsoluteInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAbsoluteTriggered);
 	EnhancedInputComponent->BindAction(LookAnalogInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAnalogTriggered);
+	EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnMoveTriggered);
 	EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnJumpTriggered);
 }
 
@@ -32,6 +33,9 @@ void AGamePlayerController::OnPossess(APawn* aPawn)
 void AGamePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Get world
+	World = GetWorld();
 
 	// Get player camera manager as game player camera manager
 	GamePlayerCameraManager = CastChecked<AGamePlayerCameraManager>(PlayerCameraManager);
@@ -56,6 +60,33 @@ void AGamePlayerController::OnLookAbsoluteTriggered(const FInputActionValue& Val
 void AGamePlayerController::OnLookAnalogTriggered(const FInputActionValue& Value)
 {
 	GamePlayerCameraManager->AddViewRotationFromInput(Value.Get<FVector2D>() * AnalogLookInputSensitivity);
+}
+
+void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
+{
+	FVector InputVector{ Value.Get<FVector>() };
+	const float InputMagnitude{ Value.GetMagnitude() };
+
+	// Get input direction in world space
+	// World forward is the +x axis and world right is +y axis. Input forward is +y axis and input right is +x axis. Swap vector components.
+	Swap(InputVector.X, InputVector.Y);
+
+	// Get yaw orientation of the view on the current frame
+	const FQuat ViewYawOrientation{ GamePlayerCameraManager->GetViewYawOrientation() };
+
+	// Get world movement direction on ground plane from input values relative to the camera's orientation on the yaw plane
+	const FVector WorldMovementDirection{ ViewYawOrientation.RotateVector(InputVector).GetSafeNormal() };
+
+	// Add view yaw scaled by the amount of right input that will not be processed until the next input frame
+	const FVector ViewYawDirection{ ViewYawOrientation.Vector() };
+	const double ViewYawOffset{ FMath::Abs(1.0 -
+		FMath::Abs(FVector2D::DotProduct(FVector2D(WorldMovementDirection.X, WorldMovementDirection.Y), FVector2D(ViewYawDirection.X, ViewYawDirection.Y)))) };
+	const double Sign = -1.0 * FMath::Sign(FVector::DotProduct(FVector::CrossProduct(ViewYawDirection, FVector::UpVector).GetSafeNormal(), WorldMovementDirection));
+
+	GamePlayerCameraManager->AddViewYawRotation(MoveRightViewYawRotationRate * (ViewYawOffset * Sign) * World->DeltaTimeSeconds);
+
+	// Add movement input
+	PlayerCharacterControllerComponent->AddMovement(WorldMovementDirection, InputMagnitude);
 }
 
 void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)

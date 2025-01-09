@@ -37,15 +37,22 @@ private:
 	TObjectPtr<UInputAction> LookAnalogInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
+	TObjectPtr<UInputAction> MoveInputAction{ nullptr };
 
-	TObjectPtr<AGamePlayerCameraManager> GamePlayerCameraManager{ nullptr };
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
 
 	UPROPERTY(EditAnywhere, Category = "LookSensitivitySettings")
 	FVector2D AbsoluteLookInputSensitivity{ 1.0, 1.0 };
 
 	UPROPERTY(EditAnywhere, Category = "LookSensitivitySettings")
 	FVector2D AnalogLookInputSensitivity{ 2.0, 2.0 };
+
+	UPROPERTY(EditAnywhere, Category = "Move")
+	float MoveRightViewYawRotationRate{ 5.0f };
+
+	TObjectPtr<UWorld> World{ nullptr };
+	TObjectPtr<AGamePlayerCameraManager> GamePlayerCameraManager{ nullptr };
 
 public:
 	AGamePlayerController();
@@ -57,5 +64,6 @@ private:
 
 	void OnLookAbsoluteTriggered(const FInputActionValue& Value);
 	void OnLookAnalogTriggered(const FInputActionValue& Value);
+	void OnMoveTriggered(const FInputActionValue& Value);
 	void OnJumpTriggered(const FInputActionValue& Value);
 };

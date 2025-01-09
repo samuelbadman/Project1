@@ -31,9 +31,15 @@ private:
 
 	bool bInterpolateCameraRotation{ true };
 
+	TObjectPtr<const AActor> TargetFollowActor{ nullptr };
+
 public:
 	void AddViewRotation(float Pitch, float Yaw);
 	void AddViewRotationFromInput(const FVector2D& InputVector);
+	void AddViewYawRotation(float Yaw);
+	FQuat GetViewYawOrientation();
+
+	FORCEINLINE void SetTargetFollowActor(TObjectPtr<const AActor> TargetActor) { TargetFollowActor = TargetActor; }
 
 private:
 	/**

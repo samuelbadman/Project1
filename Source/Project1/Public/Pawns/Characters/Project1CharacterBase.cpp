@@ -3,6 +3,7 @@
 
 #include "Project1CharacterBase.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AProject1CharacterBase::AProject1CharacterBase()
@@ -16,4 +17,12 @@ AProject1CharacterBase::AProject1CharacterBase()
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(CameraCollisionChannel, CameraCollisionChannelCharacterResponse);
 	GetMesh()->SetCollisionResponseToChannel(CameraCollisionChannel, CameraCollisionChannelCharacterResponse);
+
+	// Clear inherit controller rotation settings
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	// Do not orient character to movement. This will be done by the controller
+	GetCharacterMovement()->bOrientRotationToMovement = false;
 }

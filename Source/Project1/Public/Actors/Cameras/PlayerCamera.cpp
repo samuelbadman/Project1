@@ -13,9 +13,13 @@ APlayerCamera::APlayerCamera()
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	RootComponent = SceneComponent;
 
-	// Create spring arm component and attach to root component
+	// Create spring arm component and attach to root component. 
+	// Inherit yaw from the component's parent as yaw rotation is only applied to the actor root.
+	// Do not inherit pitch as pitch is only applied to the spring arm component
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	SpringArmComponent->SetupAttachment(RootComponent);
+	SpringArmComponent->bInheritPitch = false;
+	SpringArmComponent->bInheritYaw = true;
 
 	// Create camera component and attach to spring arm component
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));

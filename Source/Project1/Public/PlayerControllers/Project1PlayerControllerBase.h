@@ -38,6 +38,8 @@ public:
 protected:
 	void BeginPlay() override;
 
+	virtual void OnMouseCursorVisibilityChanged(EMouseCursorVisibility NewVisibility) {};
+
 private:
 	void CenterMouseCursorInViewport();
 };

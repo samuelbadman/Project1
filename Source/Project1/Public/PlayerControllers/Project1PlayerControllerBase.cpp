@@ -35,6 +35,8 @@ void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibil
 		break;
 	}
 	}
+
+	OnMouseCursorVisibilityChanged(NewVisibility);
 }
 
 void AProject1PlayerControllerBase::BeginPlay()
