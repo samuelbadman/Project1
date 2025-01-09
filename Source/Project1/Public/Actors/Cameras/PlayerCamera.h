@@ -45,6 +45,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Relative X Offset Looking Down"))
 	float RelativeXOffsetLookingDown{ -400.0f };
 
+	// The interp speed used when interpolating changes to the camera component's relative X offset after applying rotation to the camera
+	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Relative X Offset Adjustment Interp Speed"))
+	float RelativeXOffsetAdjustmentInterpSpeed{ 2.0f };
+
 public:
 	APlayerCamera();
 
@@ -59,5 +63,5 @@ public:
 	float GetCameraComponentRelativeXLocation() const;
 
 private:
-	void ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp);
+	void ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp, float DeltaTime);
 };

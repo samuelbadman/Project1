@@ -30,7 +30,7 @@ void APlayerCamera::Rotate(float Pitch, float Yaw)
 
 	// Update player camera relative X offset for pitch angle
 	const double CameraForwardDotWorldUp{ -FVector::DotProduct(CameraParentComponent->GetRelativeRotation().Vector(), FVector::UpVector) };
-	ApplyRelativeXOffsetFromRotation((CameraForwardDotWorldUp < 0.0) ? RelativeXOffsetLookingUp : RelativeXOffsetLookingDown, CameraForwardDotWorldUp);
+	ApplyRelativeXOffsetFromRotation((CameraForwardDotWorldUp < 0.0) ? RelativeXOffsetLookingUp : RelativeXOffsetLookingDown, CameraForwardDotWorldUp, GetWorld()->GetDeltaSeconds());
 }
 
 void APlayerCamera::SetRelativeXOffset(float Offset, float OffsetLookingUp, float OffsetLookingDown)
@@ -55,10 +55,15 @@ float APlayerCamera::GetCameraComponentRelativeXLocation() const
 	return CameraComponent->GetRelativeLocation().X;
 }
 
-void APlayerCamera::ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp)
+void APlayerCamera::ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp, float DeltaTime)
 {
 	CameraComponent->SetRelativeLocation(FVector(
-		FMath::Lerp(RelativeXOffset, Offset, FMath::Abs(CameraForwardDotWorldUp)),
+		FMath::FInterpTo(
+			CameraComponent->GetRelativeLocation().X,
+			FMath::Lerp(RelativeXOffset, Offset, FMath::Abs(CameraForwardDotWorldUp)),
+			DeltaTime,
+			RelativeXOffsetAdjustmentInterpSpeed
+		),
 		0.0,
 		0.0
 	));
