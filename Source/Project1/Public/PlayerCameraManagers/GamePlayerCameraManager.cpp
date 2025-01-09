@@ -150,7 +150,18 @@ void AGamePlayerCameraManager::UpdateCameraLocation(float DeltaTime)
 		}
 	}
 
-	// TODO: Clamp max vertical location lag distance from target follow actor
+	// Clamp max vertical location lag distance from target follow actor
+	if (bLimitVerticalCameraLagDistance)
+	{
+		const double VerticalTargetToViewVector{ NewViewLocation.Z - TargetViewLocation.Z };
+
+		if (FMath::Abs(VerticalTargetToViewVector) > StaticCast<double>(MaxVerticalCameraLagDistanceFromTarget))
+		{
+			const double MaxVerticalViewLocation{ StaticCast<double>(MaxVerticalCameraLagDistanceFromTarget) * FMath::Sign(VerticalTargetToViewVector) };
+
+			NewViewLocation.Z = TargetViewLocation.Z + MaxVerticalViewLocation;
+		}
+	}
 
 	// Set location
 	PlayerCameraActor->SetActorLocation(NewViewLocation);

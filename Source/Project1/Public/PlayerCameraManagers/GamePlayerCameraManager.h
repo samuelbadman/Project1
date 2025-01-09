@@ -27,6 +27,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bLimitHorizontalCameraLagDistance"))
 	float MaxHorizontalCameraLagDistanceFromTarget{ 10000.0f };
 
+	UPROPERTY(EditDefaultsOnly)
+	bool bLimitVerticalCameraLagDistance{ false };
+
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bLimitVerticalCameraLagDistance"))
+	float MaxVerticalCameraLagDistanceFromTarget{ 10000.0f };
+
 	TObjectPtr<APlayerCamera> PlayerCameraActor{ nullptr };
 	TSharedPtr<FStreamableHandle> PlayerCameraActorClassStreamableHandle{ nullptr };
 
