@@ -37,6 +37,17 @@ FQuat AGamePlayerCameraManager::GetViewYawOrientation()
 	return PlayerCameraActor->GetActorForwardVector().ToOrientationQuat();
 }
 
+void AGamePlayerCameraManager::ResetViewOrientation()
+{
+	if (!IsValid(TargetFollowActor))
+	{
+		return;
+	}
+
+	ViewPitchTarget = 0.0f;
+	ViewYawTarget = static_cast<float>(TargetFollowActor->GetActorRotation().Yaw);
+}
+
 void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
 {
 	if (IsValid(PlayerCameraActor))
@@ -56,10 +67,10 @@ void AGamePlayerCameraManager::BeginPlay()
 	// Get world
 	World = GetWorld();
 
-	// Bind to input device changed event
-	CastChecked<UProject1GameViewportClientBase>(World->GetGameViewport())->GetOnInputDeviceChangedDelegate().AddLambda([this](bool UsingGamepad) {
-		bInterpolateCameraRotation = UsingGamepad;
-		});
+	// Bind to input device changed event. This is commented out as camera rotation interpolation is desired for all input devices
+	//CastChecked<UProject1GameViewportClientBase>(World->GetGameViewport())->GetOnInputDeviceChangedDelegate().AddLambda([this](bool UsingGamepad) {
+	//	bInterpolateCameraRotation = UsingGamepad;
+	//	});
 
 	// Load player camera actor class and spawn player camera actor into the world
 	if (UKismetSystemLibrary::IsValidSoftClassReference(PlayerCameraActorClass))

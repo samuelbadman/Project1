@@ -61,6 +61,7 @@ public:
 	void AddViewRotationFromInput(const FVector2D& InputVector);
 	void AddViewYawRotation(float Yaw);
 	FQuat GetViewYawOrientation();
+	void ResetViewOrientation();
 
 	FORCEINLINE void SetTargetFollowActor(TObjectPtr<const AActor> TargetActor) { TargetFollowActor = TargetActor; }
 

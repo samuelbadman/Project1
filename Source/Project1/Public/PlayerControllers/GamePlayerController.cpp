@@ -19,6 +19,7 @@ void AGamePlayerController::SetupInputComponent()
 	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	EnhancedInputComponent->BindAction(LookAbsoluteInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAbsoluteTriggered);
 	EnhancedInputComponent->BindAction(LookAnalogInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAnalogTriggered);
+	EnhancedInputComponent->BindAction(ResetLookInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnResetLookTriggered);
 	EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnMoveTriggered);
 	EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnJumpTriggered);
 }
@@ -77,6 +78,16 @@ void AGamePlayerController::OnLookAnalogTriggered(const FInputActionValue& Value
 	}
 
 	GamePlayerCameraManager->AddViewRotationFromInput(Value.Get<FVector2D>() * AnalogLookInputSensitivity);
+}
+
+void AGamePlayerController::OnResetLookTriggered(const FInputActionValue& Value)
+{
+	if (!IsValid(GamePlayerCameraManager))
+	{
+		return;
+	}
+
+	GamePlayerCameraManager->ResetViewOrientation();
 }
 
 void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
