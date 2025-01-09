@@ -39,63 +39,13 @@ FQuat AGamePlayerCameraManager::GetViewYawOrientation()
 
 void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
 {
-	Super::UpdateCamera(DeltaTime);
-
 	if (IsValid(PlayerCameraActor))
 	{
-		// Update player camera rotation. Current pitch and yaw values are interpolated as quaternions to ensure that the shortest path is taken during interpolations.
-		const float RotationInterpSpeed{ PlayerCameraActor->GetRotateInterpSpeed() };
-
-		if (bInterpolateCameraRotation)
-		{
-			ViewPitchCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(static_cast<double>(ViewPitchCurrent), 0.0, 0.0)),
-				FQuat::MakeFromRotator(FRotator(StaticCast<double>(ViewPitchTarget), 0.0, 0.0)),
-				DeltaTime, RotationInterpSpeed).Rotator().Pitch;
-
-			ViewYawCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(0.0, static_cast<double>(ViewYawCurrent), 0.0)),
-				FQuat::MakeFromRotator(FRotator(0.0, StaticCast<double>(ViewYawTarget), 0.0)),
-				DeltaTime, RotationInterpSpeed).Rotator().Yaw;
-		}
-		else
-		{
-			ViewPitchCurrent = StaticCast<double>(ViewPitchTarget);
-			ViewYawCurrent = StaticCast<double>(ViewYawTarget);
-		}
-
-		// Wrap yaw to prevent overflow
-		if (ViewYawCurrent > ViewYawMax)
-		{
-			ViewYawCurrent = FMath::Wrap(ViewYawCurrent, ViewYawMin, ViewYawMax);
-			ViewYawTarget = FMath::Wrap(ViewYawTarget, ViewYawMin, ViewYawMax);
-		}
-		else if (ViewYawCurrent < ViewYawMin)
-		{
-			ViewYawCurrent = FMath::Wrap(ViewYawCurrent, ViewYawMin, ViewYawMax);
-			ViewYawTarget = FMath::Wrap(ViewYawTarget, ViewYawMin, ViewYawMax);
-		}
-
-		PlayerCameraActor->Rotate(ViewPitchCurrent, ViewYawCurrent);
-
-		// Update player camera location
-		if (IsValid(TargetFollowActor))
-		{
-			//const FVector TargetLocation = FollowActorTarget->GetActorLocation();
-			//FVector NewLocation = FMath::VInterpTo(ThirdPersonPlayerCamera->GetActorLocation(), TargetLocation, DeltaSeconds, ViewLocationInterpSpeed);
-
-			//// Clamp max location lag distance
-			//FVector TargetToViewVector = (NewLocation - TargetLocation);
-			//const double Distance = TargetToViewVector.Length();
-
-			//TargetToViewVector.Normalize();
-			//if (Distance > static_cast<double>(MaxViewLocationLagDistance))
-			//{
-			//	NewLocation = TargetLocation + (TargetToViewVector * static_cast<double>(MaxViewLocationLagDistance));
-			//}
-
-			//// Set location
-			//ThirdPersonPlayerCamera->SetActorLocation(NewLocation);
-		}
+		UpdateCameraRotation(DeltaTime);
+		UpdateCameraLocation(DeltaTime);
 	}
+
+	Super::UpdateCamera(DeltaTime);
 }
 
 void AGamePlayerCameraManager::BeginPlay()
@@ -136,4 +86,72 @@ void AGamePlayerCameraManager::AddViewPitch(float Pitch)
 void AGamePlayerCameraManager::AddViewYaw(float Yaw)
 {
 	ViewYawTarget += Yaw;
+}
+
+void AGamePlayerCameraManager::UpdateCameraRotation(float DeltaTime)
+{
+	// Update player camera rotation. Current pitch and yaw values are interpolated as quaternions to ensure that the shortest path is taken during interpolations.
+	const float RotationInterpSpeed{ PlayerCameraActor->GetRotateInterpSpeed() };
+
+	if (bInterpolateCameraRotation)
+	{
+		ViewPitchCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(static_cast<double>(ViewPitchCurrent), 0.0, 0.0)),
+			FQuat::MakeFromRotator(FRotator(StaticCast<double>(ViewPitchTarget), 0.0, 0.0)),
+			DeltaTime, RotationInterpSpeed).Rotator().Pitch;
+
+		ViewYawCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(0.0, static_cast<double>(ViewYawCurrent), 0.0)),
+			FQuat::MakeFromRotator(FRotator(0.0, StaticCast<double>(ViewYawTarget), 0.0)),
+			DeltaTime, RotationInterpSpeed).Rotator().Yaw;
+	}
+	else
+	{
+		ViewPitchCurrent = StaticCast<double>(ViewPitchTarget);
+		ViewYawCurrent = StaticCast<double>(ViewYawTarget);
+	}
+
+	// Wrap yaw to prevent overflow
+	if (ViewYawCurrent > ViewYawMax)
+	{
+		ViewYawCurrent = FMath::Wrap(ViewYawCurrent, ViewYawMin, ViewYawMax);
+		ViewYawTarget = FMath::Wrap(ViewYawTarget, ViewYawMin, ViewYawMax);
+	}
+	else if (ViewYawCurrent < ViewYawMin)
+	{
+		ViewYawCurrent = FMath::Wrap(ViewYawCurrent, ViewYawMin, ViewYawMax);
+		ViewYawTarget = FMath::Wrap(ViewYawTarget, ViewYawMin, ViewYawMax);
+	}
+
+	PlayerCameraActor->Rotate(ViewPitchCurrent, ViewYawCurrent);
+}
+
+void AGamePlayerCameraManager::UpdateCameraLocation(float DeltaTime)
+{
+	if (!IsValid(TargetFollowActor))
+	{
+		return;
+	}
+
+	const FVector TargetViewLocation{ TargetFollowActor->GetActorLocation() };
+	FVector NewViewLocation{ FMath::VInterpTo(PlayerCameraActor->GetActorLocation(), TargetViewLocation, DeltaTime, PlayerCameraActor->GetLocationInterpSpeed()) };
+
+	// Clamp max horizontal location lag distance from target follow actor if requested
+	if (bLimitHorizontalCameraLagDistance)
+	{
+		const FVector2D HorizontalTargetToViewVector{ (FVector2D(NewViewLocation) - FVector2D(TargetViewLocation)) };
+		const double HorizontalDistance{ HorizontalTargetToViewVector.Length() };
+
+		if (HorizontalDistance > StaticCast<double>(MaxHorizontalCameraLagDistanceFromTarget))
+		{
+			const FVector2D MaxHorizontalViewLocation{ FVector2D(TargetViewLocation) +
+				(HorizontalTargetToViewVector.GetSafeNormal() * StaticCast<double>(MaxHorizontalCameraLagDistanceFromTarget)) };
+
+			NewViewLocation.X = MaxHorizontalViewLocation.X;
+			NewViewLocation.Y = MaxHorizontalViewLocation.Y;
+		}
+	}
+
+	// TODO: Clamp max vertical location lag distance from target follow actor
+
+	// Set location
+	PlayerCameraActor->SetActorLocation(NewViewLocation);
 }

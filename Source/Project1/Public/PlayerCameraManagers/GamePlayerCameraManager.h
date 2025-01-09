@@ -21,6 +21,12 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<APlayerCamera> PlayerCameraActorClass{ nullptr };
 
+	UPROPERTY(EditDefaultsOnly)
+	bool bLimitHorizontalCameraLagDistance{ false };
+
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bLimitHorizontalCameraLagDistance"))
+	float MaxHorizontalCameraLagDistanceFromTarget{ 10000.0f };
+
 	TObjectPtr<APlayerCamera> PlayerCameraActor{ nullptr };
 	TSharedPtr<FStreamableHandle> PlayerCameraActorClassStreamableHandle{ nullptr };
 
@@ -51,4 +57,6 @@ private:
 
 	void AddViewPitch(float Pitch);
 	void AddViewYaw(float Yaw);
+	void UpdateCameraRotation(float DeltaTime);
+	void UpdateCameraLocation(float DeltaTime);
 };

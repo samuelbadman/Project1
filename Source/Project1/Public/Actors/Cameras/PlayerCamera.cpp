@@ -13,41 +13,38 @@ APlayerCamera::APlayerCamera()
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	RootComponent = SceneComponent;
 
-	// Create spring arm component and attach to root component. 
-	// Inherit yaw from the component's parent as yaw rotation is only applied to the actor root.
-	// Do not inherit pitch as pitch is only applied to the spring arm component
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
-	SpringArmComponent->SetupAttachment(RootComponent);
-	SpringArmComponent->bInheritPitch = false;
-	SpringArmComponent->bInheritYaw = true;
+	// Create scene component and parent to the root component. This component is the parent of the camera component
+	CameraParentComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CameraParentComponent"));
+	CameraParentComponent->SetupAttachment(RootComponent);
 
-	// Create camera component and attach to spring arm component
+	// Create camera component and attach to parent scene component. This allows the camera component to be offset back and rotate around the actor root
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-	CameraComponent->SetupAttachment(SpringArmComponent);
+	CameraComponent->SetupAttachment(CameraParentComponent);
 }
 
 void APlayerCamera::Rotate(float Pitch, float Yaw)
 {
-	// Separate pitch and yaw to avoid gimbal lock. Pitch is applied locally to the spring arm component and yaw is applied to the actor in world space
-	SpringArmComponent->SetRelativeRotation(FRotator(StaticCast<double>(Pitch), 0.0, 0.0));
+	// Separate pitch and yaw to avoid gimbal lock. Pitch is applied locally to the camera parent component and yaw is applied to the actor in world space
+	CameraParentComponent->SetRelativeRotation(FRotator(StaticCast<double>(Pitch), 0.0, 0.0));
 	SetActorRotation(FRotator(0.0, StaticCast<double>(Yaw), 0.0));
 
-	// Update player camera spring arm length for pitch angle
-	const double CameraForwardDotWorldUp = -FVector::DotProduct(SpringArmComponent->GetRelativeRotation().Vector(), FVector::UpVector);
-	if (CameraForwardDotWorldUp < 0.0)
-	{
-		SpringArmComponent->TargetArmLength = FMath::Lerp(CachedSpringArmTargetArmLength, SpringArmLengthLookingUp, FMath::Abs(CameraForwardDotWorldUp));
-	}
-	else
-	{
-		SpringArmComponent->TargetArmLength = FMath::Lerp(CachedSpringArmTargetArmLength, SpringArmLengthLookingDown, CameraForwardDotWorldUp);
-	}
+	// Update player camera relative X offset for pitch angle
+	const double CameraForwardDotWorldUp{ -FVector::DotProduct(CameraParentComponent->GetRelativeRotation().Vector(), FVector::UpVector) };
+	ApplyRelativeXOffset((CameraForwardDotWorldUp < 0.0) ? RelativeXOffsetLookingUp : RelativeXOffsetLookingDown, CameraForwardDotWorldUp);
 }
 
-void APlayerCamera::BeginPlay()
+void APlayerCamera::SetRelativeXOffset(float Offset, float OffsetLookingUp, float OffsetLookingDown)
 {
-	Super::BeginPlay();
+	RelativeXOffset = Offset;
+	RelativeXOffsetLookingUp = OffsetLookingUp;
+	RelativeXOffsetLookingDown = OffsetLookingDown;
+}
 
-	// Cache the target arm length
-	CachedSpringArmTargetArmLength = SpringArmComponent->TargetArmLength;
+void APlayerCamera::ApplyRelativeXOffset(float Offset, float CameraForwardDotWorldUp)
+{
+	CameraComponent->SetRelativeLocation(FVector(
+		FMath::Lerp(RelativeXOffset, Offset, FMath::Abs(CameraForwardDotWorldUp)),
+		0.0,
+		0.0
+	));
 }

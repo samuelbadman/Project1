@@ -27,6 +27,16 @@ void AGamePlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 
+	// Get player camera manager as game player camera manager if it is not already retrieved
+	if (!IsValid(GamePlayerCameraManager))
+	{
+		GamePlayerCameraManager = CastChecked<AGamePlayerCameraManager>(PlayerCameraManager);
+	}
+
+	// Set player camera target actor to follow
+	GamePlayerCameraManager->SetTargetFollowActor(aPawn);
+
+	// Setup new possessed pawn
 	PlayerCharacterControllerComponent->SetupNewPossessedPawn(aPawn);
 }
 
@@ -37,9 +47,6 @@ void AGamePlayerController::BeginPlay()
 	// Get world
 	World = GetWorld();
 
-	// Get player camera manager as game player camera manager
-	GamePlayerCameraManager = CastChecked<AGamePlayerCameraManager>(PlayerCameraManager);
-
 	// TODO: Delay before adding mapping contexts at the start of the game as held inputs from old levels will trigger pressed inputs that are not wanted
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MainInputMappingContext, MainInputMappingContextPriority);
@@ -47,6 +54,11 @@ void AGamePlayerController::BeginPlay()
 
 void AGamePlayerController::OnLookAbsoluteTriggered(const FInputActionValue& Value)
 {
+	if (!IsValid(GamePlayerCameraManager))
+	{
+		return;
+	}
+
 	// Look absolute is mapped to 2D mouse XY axis
 	// Ignore mouse look inputs when the mouse cursor is visible
 	if (IsMouseCursorVisible())
@@ -59,11 +71,21 @@ void AGamePlayerController::OnLookAbsoluteTriggered(const FInputActionValue& Val
 
 void AGamePlayerController::OnLookAnalogTriggered(const FInputActionValue& Value)
 {
+	if (!IsValid(GamePlayerCameraManager))
+	{
+		return;
+	}
+
 	GamePlayerCameraManager->AddViewRotationFromInput(Value.Get<FVector2D>() * AnalogLookInputSensitivity);
 }
 
 void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
 {
+	if (!IsValid(GamePlayerCameraManager))
+	{
+		return;
+	}
+
 	FVector InputVector{ Value.Get<FVector>() };
 	const float InputMagnitude{ Value.GetMagnitude() };
 

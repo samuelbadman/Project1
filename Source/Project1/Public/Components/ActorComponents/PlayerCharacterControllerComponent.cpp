@@ -24,12 +24,9 @@ void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelT
 
 	// Update player character skeletal mesh rotation. Keep the mesh aligned with the capsule
 	FRotator TargetCharacterMeshRotation{ TargetCapsuleWorldOrientation };
-	TargetCharacterMeshRotation.Yaw -= 90.0;
+	//TargetCharacterMeshRotation.Yaw -= 90.0;
 	CharacterSkeletalMeshComponent->SetWorldRotation(FMath::QInterpConstantTo(CharacterSkeletalMeshComponent->GetComponentQuat(), TargetCharacterMeshRotation.Quaternion(),
 		DeltaTime, MeshRotationSpeed));
-
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, FString::Printf(TEXT("MinAnalogWalkSpeed: %f, MaxWalkSpeed: %f, Speed: %f"), CharacterMovementComponent->MinAnalogWalkSpeed,
-		CharacterMovementComponent->MaxWalkSpeed, Character->GetVelocity().Length()));
 }
 
 void UPlayerCharacterControllerComponent::UpdateGroundMovementState(float MoveInputMagnitude)
