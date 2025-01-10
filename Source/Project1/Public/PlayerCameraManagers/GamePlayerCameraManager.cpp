@@ -26,6 +26,24 @@ void AGamePlayerCameraManager::AddViewYawRotation(float Yaw)
 	AddViewYaw(Yaw);
 }
 
+void AGamePlayerCameraManager::AddImmediateViewRotation(float Pitch, float Yaw)
+{
+	AddViewPitch(Pitch);
+	AddViewYaw(Yaw);
+
+	ViewPitchCurrent = ViewPitchTarget;
+	ViewYawCurrent = ViewYawTarget;
+}
+
+void AGamePlayerCameraManager::AddImmediateViewRotationFromInput(const FVector2D& InputVector)
+{
+	AddViewPitch(InputVector.Y);
+	AddViewYaw(InputVector.X);
+
+	ViewPitchCurrent = ViewPitchTarget;
+	ViewYawCurrent = ViewYawTarget;
+}
+
 FQuat AGamePlayerCameraManager::GetViewYawOrientation()
 {
 	if (!IsValid(PlayerCameraActor))
@@ -66,11 +84,6 @@ void AGamePlayerCameraManager::BeginPlay()
 
 	// Get world
 	World = GetWorld();
-
-	// Bind to input device changed event. This is commented out as camera rotation interpolation is desired for all input devices
-	//CastChecked<UProject1GameViewportClientBase>(World->GetGameViewport())->GetOnInputDeviceChangedDelegate().AddLambda([this](bool UsingGamepad) {
-	//	bInterpolateCameraRotation = UsingGamepad;
-	//	});
 
 	// Load player camera actor class and spawn player camera actor into the world
 	if (UKismetSystemLibrary::IsValidSoftClassReference(PlayerCameraActorClass))
@@ -122,21 +135,14 @@ void AGamePlayerCameraManager::UpdateCameraRotation(float DeltaTime)
 	// Update player camera rotation. Current pitch and yaw values are interpolated as quaternions to ensure that the shortest path is taken during interpolations.
 	const float RotationInterpSpeed{ PlayerCameraActor->GetRotateInterpSpeed() };
 
-	if (bInterpolateCameraRotation)
-	{
-		ViewPitchCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(static_cast<double>(ViewPitchCurrent), 0.0, 0.0)),
-			FQuat::MakeFromRotator(FRotator(StaticCast<double>(ViewPitchTarget), 0.0, 0.0)),
-			DeltaTime, RotationInterpSpeed).Rotator().Pitch;
+	ViewPitchCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(static_cast<double>(ViewPitchCurrent), 0.0, 0.0)),
+		FQuat::MakeFromRotator(FRotator(StaticCast<double>(ViewPitchTarget), 0.0, 0.0)),
+		DeltaTime, RotationInterpSpeed).Rotator().Pitch;
 
-		ViewYawCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(0.0, static_cast<double>(ViewYawCurrent), 0.0)),
-			FQuat::MakeFromRotator(FRotator(0.0, StaticCast<double>(ViewYawTarget), 0.0)),
-			DeltaTime, RotationInterpSpeed).Rotator().Yaw;
-	}
-	else
-	{
-		ViewPitchCurrent = StaticCast<double>(ViewPitchTarget);
-		ViewYawCurrent = StaticCast<double>(ViewYawTarget);
-	}
+	ViewYawCurrent = FMath::QInterpTo(FQuat::MakeFromRotator(FRotator(0.0, static_cast<double>(ViewYawCurrent), 0.0)),
+		FQuat::MakeFromRotator(FRotator(0.0, StaticCast<double>(ViewYawTarget), 0.0)),
+		DeltaTime, RotationInterpSpeed).Rotator().Yaw;
+
 
 	// Wrap yaw to prevent overflow
 	if (ViewYawCurrent > ViewYawMax)

@@ -67,7 +67,7 @@ void AGamePlayerController::OnLookAbsoluteTriggered(const FInputActionValue& Val
 		return;
 	}
 
-	GamePlayerCameraManager->AddViewRotationFromInput(Value.Get<FVector2D>() * AbsoluteLookInputSensitivity);
+	GamePlayerCameraManager->AddImmediateViewRotationFromInput(Value.Get<FVector2D>() * AbsoluteLookInputSensitivity);
 }
 
 void AGamePlayerController::OnLookAnalogTriggered(const FInputActionValue& Value)
