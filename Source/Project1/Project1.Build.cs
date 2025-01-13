@@ -15,6 +15,7 @@ public class Project1 : ModuleRules
 			"InputCore", 
 			"EnhancedInput", 
 			"Slate",
+			"SlateCore",
 			"GameplayTags"
 		});
 

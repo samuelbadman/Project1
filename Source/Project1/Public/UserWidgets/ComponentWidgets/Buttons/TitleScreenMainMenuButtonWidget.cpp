@@ -9,6 +9,21 @@ UTitleScreenMainMenuButtonWidget::UTitleScreenMainMenuButtonWidget()
 	ButtonText = FText::FromString(TEXT("DefaultButtonText"));
 }
 
+void UTitleScreenMainMenuButtonWidget::OnBecomeActive()
+{
+	GetTextBlock()->SetColorAndOpacity(ButtonTextActiveColor);
+}
+
+void UTitleScreenMainMenuButtonWidget::OnEndActive()
+{
+	GetTextBlock()->SetColorAndOpacity(ButtonTextInactiveColor);
+}
+
+void UTitleScreenMainMenuButtonWidget::OnActiveConfirmInput()
+{
+	OnActiveConfirmInputDelegate.Broadcast();
+}
+
 void UTitleScreenMainMenuButtonWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
