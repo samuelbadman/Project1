@@ -56,14 +56,14 @@ private:
 
 public:
 	void AddViewRotation(float Pitch, float Yaw);
-	void AddViewRotationFromInput(const FVector2D& InputVector);
+	void AddViewRotation(const FVector2D& InputVector);
 	void AddViewYawRotation(float Yaw);
 
 	// Adds view rotation, immediately applying the rotation to the view, ignoring rotation iterpolation
 	void AddImmediateViewRotation(float Pitch, float Yaw);
 
 	// Adds view rotation, immediately applying the rotation to the view, ignoring rotation iterpolation
-	void AddImmediateViewRotationFromInput(const FVector2D& InputVector);
+	void AddImmediateViewRotation(const FVector2D& InputVector);
 
 	FQuat GetViewYawOrientation();
 	void ResetViewOrientation();

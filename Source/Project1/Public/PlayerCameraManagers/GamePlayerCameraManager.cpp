@@ -15,7 +15,7 @@ void AGamePlayerCameraManager::AddViewRotation(float Pitch, float Yaw)
 	AddViewYaw(Yaw);
 }
 
-void AGamePlayerCameraManager::AddViewRotationFromInput(const FVector2D& InputVector)
+void AGamePlayerCameraManager::AddViewRotation(const FVector2D& InputVector)
 {
 	AddViewPitch(InputVector.Y);
 	AddViewYaw(InputVector.X);
@@ -35,7 +35,7 @@ void AGamePlayerCameraManager::AddImmediateViewRotation(float Pitch, float Yaw)
 	ViewYawCurrent = ViewYawTarget;
 }
 
-void AGamePlayerCameraManager::AddImmediateViewRotationFromInput(const FVector2D& InputVector)
+void AGamePlayerCameraManager::AddImmediateViewRotation(const FVector2D& InputVector)
 {
 	AddViewPitch(InputVector.Y);
 	AddViewYaw(InputVector.X);
@@ -221,13 +221,13 @@ void AGamePlayerCameraManager::UpdateCameraCollision()
 		CameraProbeCollisionQueryParams
 	))
 	{
-		// Probe found a collision. Move camera component in front of collision along probe vector, overriding player camera relative X offset
+		// Ignore collision if the probe started in penetration
 		if (ProbeHitResult.bStartPenetrating)
 		{
-			PlayerCameraActor->SetCameraComponentRelativeXLocation(0.0f);
 			return;
 		}
 
+		// Probe found a collision. Move camera component in front of collision along probe vector, overriding player camera relative X offset
 		PlayerCameraActor->SetCameraComponentRelativeXLocation(PlayerCameraActor->GetCameraComponentRelativeXLocation() * ProbeHitResult.Time);
 	}
 }
