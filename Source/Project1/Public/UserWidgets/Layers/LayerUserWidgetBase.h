@@ -51,6 +51,7 @@ public:
 
 	void OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLayerClassASyncLoadHandle> Handle);
 
+	void ReceiveOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
 	void ReceiveOnLeftClickTriggered(const FInputActionValue& Value);
 	void ReceiveOnMiddleClickTriggered(const FInputActionValue& Value);
 	void ReceiveOnRightClickTriggered(const FInputActionValue& Value);

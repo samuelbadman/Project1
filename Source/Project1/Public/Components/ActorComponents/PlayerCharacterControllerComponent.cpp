@@ -24,9 +24,10 @@ void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelT
 
 	// Update player character skeletal mesh rotation. Keep the mesh aligned with the capsule
 	FRotator TargetCharacterMeshRotation{ TargetCapsuleWorldOrientation };
-	//TargetCharacterMeshRotation.Yaw -= 90.0;
-	CharacterSkeletalMeshComponent->SetWorldRotation(FMath::QInterpConstantTo(CharacterSkeletalMeshComponent->GetComponentQuat(), TargetCharacterMeshRotation.Quaternion(),
-		DeltaTime, MeshRotationSpeed));
+	// TODO: This sometimes rotates the mesh in the opposite direction to the capsule. Will this be a problem? Matching mesh rotation to capsule for now
+	//CharacterSkeletalMeshComponent->SetWorldRotation(FMath::QInterpConstantTo(CharacterSkeletalMeshComponent->GetComponentQuat(), TargetCharacterMeshRotation.Quaternion(),
+	//	DeltaTime, MeshRotationSpeed));
+	CharacterSkeletalMeshComponent->SetWorldRotation(Character->GetActorRotation());
 }
 
 void UPlayerCharacterControllerComponent::UpdateGroundMovementState(float MoveInputMagnitude)

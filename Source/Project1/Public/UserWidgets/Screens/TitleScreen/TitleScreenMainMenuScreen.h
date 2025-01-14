@@ -27,6 +27,7 @@ public:
 private:
 	void NativeOnNavigateTriggered(const FInputActionValue& Value) override;
 	void NativeOnConfirmTriggered(const FInputActionValue& Value) override;
+	void NativeOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta) override;
 
 	void ActivateButton(int32 ButtonIndex);
 	void DeactivateButton(int32 ButtonIndex);

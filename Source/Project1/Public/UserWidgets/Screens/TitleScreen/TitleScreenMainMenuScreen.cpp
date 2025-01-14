@@ -40,6 +40,11 @@ void UTitleScreenMainMenuScreen::NativeOnConfirmTriggered(const FInputActionValu
 	RegisteredMenuButtons[ActiveMenuButtonIndex]->OnActiveConfirmInput();
 }
 
+void UTitleScreenMainMenuScreen::NativeOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("Title screen main menu screen On mouse moved")));
+}
+
 void UTitleScreenMainMenuScreen::ActivateButton(int32 ButtonIndex)
 {
 	RegisteredMenuButtons[ButtonIndex]->OnBecomeActive();

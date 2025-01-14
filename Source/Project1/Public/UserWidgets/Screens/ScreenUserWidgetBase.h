@@ -48,6 +48,9 @@ public:
 	virtual void NativeOnPoppedFromLayerStack() {};
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void OnLeftClickTriggered(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -74,6 +77,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnAnyInputTriggered(const FInputActionValue& Value);
 
+	virtual void NativeOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta) {};
 	virtual void NativeOnLeftClickTriggered(const FInputActionValue& Value) {};
 	virtual void NativeOnMiddleClickTriggered(const FInputActionValue& Value) {};
 	virtual void NativeOnRightClickTriggered(const FInputActionValue& Value) {};

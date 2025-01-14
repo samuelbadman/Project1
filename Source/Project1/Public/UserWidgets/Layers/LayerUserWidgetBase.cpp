@@ -119,6 +119,16 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 	OnContentPushedToLayerDelegate.Broadcast(PushedWidget);
 }
 
+void ULayerUserWidgetBase::ReceiveOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnMouseMoved(NewMousePosition, OldMousePosition, MouseMoveDelta);
+		Top->OnMouseMoved(NewMousePosition, OldMousePosition, MouseMoveDelta);
+	}
+}
+
 void ULayerUserWidgetBase::ReceiveOnLeftClickTriggered(const FInputActionValue& Value)
 {
 	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };

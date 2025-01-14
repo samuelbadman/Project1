@@ -13,6 +13,7 @@ class ULayerUserWidgetBase;
 struct FInputActionValue;
 class UEnhancedInputLocalPlayerSubsystem;
 class UUIInputMapping;
+class UProject1GameViewportClientBase;
 
 /**
  *
@@ -33,6 +34,8 @@ private:
 	TObjectPtr<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidget{ nullptr };
 
 	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem{ nullptr };
+	TObjectPtr<UProject1GameViewportClientBase> ProjectGameViewportClient{ nullptr };
+	FDelegateHandle OnMouseMovedDelegateHandle{};
 
 public:
 	void PushContentToPrimaryLayoutLayer(const FGameplayTag& LayerName, const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass);
@@ -47,6 +50,7 @@ protected:
 	void BeginPlay() override;
 
 private:
+	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
 	void OnLeftClickTriggered(const FInputActionValue& Value);
 	void OnMiddleClickTriggered(const FInputActionValue& Value);
 	void OnRightClickTriggered(const FInputActionValue& Value);

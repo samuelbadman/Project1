@@ -83,6 +83,15 @@ bool UPrimaryLayoutUserWidgetBase::IsContentOnTopOfLayer(const FGameplayTag& Lay
 	return (Widget == (*pLayer)->Peek());
 }
 
+void UPrimaryLayoutUserWidgetBase::RouteOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnMouseMoved(NewMousePosition, OldMousePosition, MouseMoveDelta);
+	}
+}
+
 void UPrimaryLayoutUserWidgetBase::RouteOnLeftClickTriggered(const FInputActionValue& Value)
 {
 	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();

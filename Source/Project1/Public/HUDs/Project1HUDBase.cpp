@@ -6,6 +6,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "DataAssets/UIInputMapping.h"
+#include "GameViewportClients/Project1GameViewportClientBase.h"
+#include "Kismet/GameplayStatics.h"
 
 void AProject1HUDBase::PushContentToPrimaryLayoutLayer(const FGameplayTag& LayerName, const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass)
 {
@@ -41,10 +43,19 @@ void AProject1HUDBase::SetUIInputsEnabled(bool Enable)
 
 	if (Enable)
 	{
+		// Bind to game viewport client generated mouse move events
+		OnMouseMovedDelegateHandle = ProjectGameViewportClient->GetOnMouseMovedDelegate().AddUObject(this, &AProject1HUDBase::OnMouseMoved);
+
+		// Add UI input mapping context
 		EnhancedInputLocalPlayerSubsystem->AddMappingContext(UIInputMapping->GetUIInputMappingContext(), UIInputMapping->GetUIInputMappingContextPriority());
 	}
 	else
 	{
+		// Remove binding to game viewport client generated mouse move events
+		ProjectGameViewportClient->GetOnMouseMovedDelegate().Remove(OnMouseMovedDelegateHandle);
+		OnMouseMovedDelegateHandle = {};
+
+		// Remove UI input mapping context
 		EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(UIInputMapping->GetUIInputMappingContext());
 	}
 }
@@ -70,6 +81,9 @@ void AProject1HUDBase::BeginPlay()
 	// Get reference to enhanced input local player subsystem
 	EnhancedInputLocalPlayerSubsystem = OwningPlayerController->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 
+	// Get reference to game viewport client as project game viewport client
+	ProjectGameViewportClient = CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient());
+
 	// Bind UI input actions/values
 	if (IsValid(UIInputMapping))
 	{
@@ -84,6 +98,11 @@ void AProject1HUDBase::BeginPlay()
 		EnhancedInputComponent->BindAction(UIInputMapping->GetTabInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnTabTriggered);
 		EnhancedInputComponent->BindAction(UIInputMapping->GetAnyInputInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnAnyInputTriggered);
 	}
+}
+
+void AProject1HUDBase::OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
+{
+	PrimaryLayoutWidget->RouteOnMouseMoved(NewMousePosition, OldMousePosition, MouseMoveDelta);
 }
 
 void AProject1HUDBase::OnLeftClickTriggered(const FInputActionValue& Value)

@@ -28,7 +28,7 @@ bool UProject1GameViewportClientBase::DetectMouseMove()
 	if (CurrentMousePosition != PreviousMousePosition)
 	{
 		// Mouse position has changed.
-		OnMouseMoved(CurrentMousePosition - PreviousMousePosition);
+		OnMouseMoved(CurrentMousePosition, PreviousMousePosition, (CurrentMousePosition - PreviousMousePosition));
 		PreviousMousePosition = CurrentMousePosition;
 		return true;
 	}
@@ -37,9 +37,10 @@ bool UProject1GameViewportClientBase::DetectMouseMove()
 	return false;
 }
 
-void UProject1GameViewportClientBase::OnMouseMoved(const FVector2D& MouseMoveDelta)
+void UProject1GameViewportClientBase::OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
 {
 	UpdateUsingGamepadState(false);
+	OnMouseMovedDelegate.Broadcast(NewMousePosition, OldMousePosition, MouseMoveDelta);
 }
 
 void UProject1GameViewportClientBase::UpdateUsingGamepadState(bool GamepadInput)

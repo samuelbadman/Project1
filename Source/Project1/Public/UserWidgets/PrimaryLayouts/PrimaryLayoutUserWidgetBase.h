@@ -44,6 +44,7 @@ public:
 
 	bool IsContentOnTopOfLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget);
 
+	void RouteOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
 	void RouteOnLeftClickTriggered(const FInputActionValue& Value);
 	void RouteOnMiddleClickTriggered(const FInputActionValue& Value);
 	void RouteOnRightClickTriggered(const FInputActionValue& Value);
