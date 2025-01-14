@@ -19,9 +19,9 @@ void UTitleScreenMainMenuButtonWidget::OnEndActive()
 	GetTextBlock()->SetColorAndOpacity(ButtonTextInactiveColor);
 }
 
-void UTitleScreenMainMenuButtonWidget::OnActiveConfirmInput()
+void UTitleScreenMainMenuButtonWidget::Press()
 {
-	OnActiveConfirmInputDelegate.Broadcast();
+	OnPressedDelegate.Broadcast();
 }
 
 void UTitleScreenMainMenuButtonWidget::NativePreConstruct()

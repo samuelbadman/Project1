@@ -21,6 +21,8 @@ private:
 	FVector2D PreviousMousePosition{ FVector2D::ZeroVector };
 	bool bUsingGamepad{ true };
 	FOnInputDeviceChangedDelegateSignature OnInputDeviceChangedDelegate{};
+
+	// Bound events to this delegate can potentially be called every frame
 	FOnMouseMovedDelegateSignature OnMouseMovedDelegate{};
 
 public:

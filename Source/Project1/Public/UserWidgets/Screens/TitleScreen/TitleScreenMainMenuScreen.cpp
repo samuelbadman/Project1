@@ -5,6 +5,7 @@
 #include "InputActionValue.h"
 #include "UserWidgets/ComponentWidgets/Buttons/TitleScreenMainMenuButtonWidget.h"
 #include "FunctionLibraries/Project1BlueprintFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 void UTitleScreenMainMenuScreen::RegisterMenuButtons(const TArray<UTitleScreenMainMenuButtonWidget*>& Buttons, int32 ActiveButtonIndex)
 {
@@ -21,28 +22,52 @@ void UTitleScreenMainMenuScreen::NativeOnNavigateTriggered(const FInputActionVal
 		return;
 	}
 
-	// Deactivate current active menu button
-	DeactivateButton(ActiveMenuButtonIndex);
-
-	// Flip sign of vertical input to match direction of buttons in the array
-	ActiveMenuButtonIndex = UProject1BlueprintFunctionLibrary::WrapIncrementArrayIndex(
-		ActiveMenuButtonIndex, 
-		RegisteredMenuButtons.Num(), 
+	SetActiveMenuButtonIndex(UProject1BlueprintFunctionLibrary::WrapIncrementArrayIndex(
+		ActiveMenuButtonIndex,
+		RegisteredMenuButtons.Num(),
 		StaticCast<int32>(Value.Get<FVector2D>().Y) * -1
-	);
-
-	// Activate button at new active button index
-	ActivateButton(ActiveMenuButtonIndex);
+	));
 }
 
 void UTitleScreenMainMenuScreen::NativeOnConfirmTriggered(const FInputActionValue& Value)
 {
-	RegisteredMenuButtons[ActiveMenuButtonIndex]->OnActiveConfirmInput();
+	RegisteredMenuButtons[ActiveMenuButtonIndex]->Press();
 }
 
 void UTitleScreenMainMenuScreen::NativeOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("Title screen main menu screen On mouse moved")));
+	int32 NewActiveButtonIndex{ INDEX_NONE };
+
+	// For each button in the menu, check if the mouse has moved over it and activate the button if so
+	for (TObjectPtr<UTitleScreenMainMenuButtonWidget> Button : RegisteredMenuButtons)
+	{
+		if (Button->IsMouseOver(NewMousePosition))
+		{
+			const int32 ButtonIndex{ RegisteredMenuButtons.Find(Button) };
+			if (ButtonIndex == INDEX_NONE)
+			{
+				continue;
+			}
+
+			NewActiveButtonIndex = ButtonIndex;
+		}
+	}
+
+	SetActiveMenuButtonIndex(NewActiveButtonIndex);
+}
+
+void UTitleScreenMainMenuScreen::NativeOnLeftClickTriggered(const FInputActionValue& Value)
+{
+	// Select the active button if the mouse is over it
+	const TObjectPtr<UTitleScreenMainMenuButtonWidget> ActiveMenuButton{ GetActiveMenuButton() };
+
+	FVector2D MousePosition{};
+	UGameplayStatics::GetPlayerController(this, 0)->GetMousePosition(MousePosition.X, MousePosition.Y);
+
+	if (ActiveMenuButton->IsMouseOver(MousePosition))
+	{
+		ActiveMenuButton->Press();
+	}
 }
 
 void UTitleScreenMainMenuScreen::ActivateButton(int32 ButtonIndex)
@@ -53,4 +78,26 @@ void UTitleScreenMainMenuScreen::ActivateButton(int32 ButtonIndex)
 void UTitleScreenMainMenuScreen::DeactivateButton(int32 ButtonIndex)
 {
 	RegisteredMenuButtons[ButtonIndex]->OnEndActive();
+}
+
+void UTitleScreenMainMenuScreen::SetActiveMenuButtonIndex(int32 NewActiveButtonIndex)
+{
+	if (ActiveMenuButtonIndex == NewActiveButtonIndex)
+	{
+		return;
+	}
+
+	if (!RegisteredMenuButtons.IsValidIndex(NewActiveButtonIndex))
+	{
+		return;
+	}
+
+	// Deactivate current active menu button
+	DeactivateButton(ActiveMenuButtonIndex);
+
+	// Update index
+	ActiveMenuButtonIndex = NewActiveButtonIndex;
+
+	// Activate button at new active button index
+	ActivateButton(NewActiveButtonIndex);
 }

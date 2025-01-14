@@ -8,7 +8,7 @@
 
 class UTextBlock;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActiveConfirmInputDelegateSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPressedDelegateSignature);
 
 /**
  *
@@ -28,8 +28,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	FSlateColor ButtonTextInactiveColor{FColor::White};
 
-	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Active Confirm Input"))
-	FOnActiveConfirmInputDelegateSignature OnActiveConfirmInputDelegate{};
+	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Pressed"))
+	FOnPressedDelegateSignature OnPressedDelegate{};
 
 public:
 	UTitleScreenMainMenuButtonWidget();
@@ -39,7 +39,8 @@ public:
 
 	void OnBecomeActive();
 	void OnEndActive();
-	void OnActiveConfirmInput();
+
+	void Press();
 
 private:
 	void NativePreConstruct() override;

@@ -14,4 +14,6 @@ class PROJECT1_API ATitleScreenPlayerController : public AProject1PlayerControll
 {
 	GENERATED_BODY()
 
+private:
+	void BeginPlay() override;
 };
