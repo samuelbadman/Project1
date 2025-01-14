@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Pawns/Characters/Project1CharacterBase.h"
-#include "ProtaganistCharacter.generated.h"
+#include "ProtagonistCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT1_API AProtaganistCharacter : public AProject1CharacterBase
+class PROJECT1_API AProtagonistCharacter : public AProject1CharacterBase
 {
 	GENERATED_BODY()
 	
