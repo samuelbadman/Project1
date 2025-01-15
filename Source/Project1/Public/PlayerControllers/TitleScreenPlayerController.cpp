@@ -9,7 +9,7 @@ void ATitleScreenPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient())->GetOnInputDeviceChangedDelegate().AddLambda(
+	CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient())->GetOnInputDeviceChangedDelegate().AddWeakLambda(this,
 		[this](bool UsingGamepad) {
 			SetMouseCursorVisibility((UsingGamepad) ? EMouseCursorVisibility::Hidden : EMouseCursorVisibility::Visible, false, DefaultCenterCursorInViewportOnBecomeVisible);
 		});

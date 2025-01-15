@@ -41,7 +41,7 @@ void UProject1ButtonWidgetBase::NativeOnInitialized()
 
 	GameViewportClient = CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient());
 
-	OnMouseMovedDelegateHandle = GameViewportClient->GetOnMouseMovedDelegate().AddLambda(
+	OnMouseMovedDelegateHandle = GameViewportClient->GetOnMouseMovedDelegate().AddWeakLambda(this,
 		[this](const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta) {
 			const bool NewUnderMouse = IsWidgetGeometryUnderMouse(NewMousePosition);
 
