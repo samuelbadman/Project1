@@ -4,7 +4,7 @@
 #include "Project1UserWidgetBase.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 
-bool UProject1UserWidgetBase::IsMouseOver(const FVector2D& MousePosition) const
+bool UProject1UserWidgetBase::IsWidgetGeometryUnderMouse(const FVector2D& MousePosition) const
 {
 	const FGeometry& Geometry = GetCachedGeometry();
 	const FVector2D Size{ Geometry.GetAbsoluteSize() };

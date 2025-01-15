@@ -8,8 +8,6 @@
 
 class UTextBlock;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPressedDelegateSignature);
-
 /**
  *
  */
@@ -23,13 +21,10 @@ private:
 	FText ButtonText{};
 
 	UPROPERTY(EditAnywhere)
-	FSlateColor ButtonTextActiveColor{FColor::Yellow};
+	FSlateColor ButtonTextActiveColor{ FColor::Yellow };
 
 	UPROPERTY(EditAnywhere)
-	FSlateColor ButtonTextInactiveColor{FColor::White};
-
-	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Pressed"))
-	FOnPressedDelegateSignature OnPressedDelegate{};
+	FSlateColor ButtonTextInactiveColor{ FColor::White };
 
 public:
 	UTitleScreenMainMenuButtonWidget();
@@ -37,11 +32,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	UTextBlock* GetTextBlock() const;
 
-	void OnBecomeActive();
-	void OnEndActive();
-
-	void Press();
-
 private:
 	void NativePreConstruct() override;
+	void NativeOnBecomeActive() override;
+	void NativeOnEndActive() override;
 };

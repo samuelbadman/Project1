@@ -6,10 +6,10 @@
 #include "UserWidgets/Screens/ScreenUserWidgetBase.h"
 #include "TitleScreenMainMenuScreen.generated.h"
 
-class UTitleScreenMainMenuButtonWidget;
+class UButtonListComponent;
 
 /**
- * 
+ *
  */
 UCLASS()
 class UTitleScreenMainMenuScreen : public UScreenUserWidgetBase
@@ -17,23 +17,17 @@ class UTitleScreenMainMenuScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 
 private:
-	TArray<TObjectPtr<UTitleScreenMainMenuButtonWidget>> RegisteredMenuButtons{};
-	int32 ActiveMenuButtonIndex{ -1 };
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UButtonListComponent> ButtonListComponent{ nullptr };
+
+	UPROPERTY(EditAnywhere)
+	bool bWrapMenuNavigation{ true };
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void RegisterMenuButtons(const TArray<UTitleScreenMainMenuButtonWidget*>& Buttons, int32 ActiveButtonIndex);
+	UTitleScreenMainMenuScreen();
 
 private:
 	void NativeOnNavigateTriggered(const FInputActionValue& Value) override;
 	void NativeOnConfirmTriggered(const FInputActionValue& Value) override;
-	void NativeOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta) override;
 	void NativeOnLeftClickTriggered(const FInputActionValue& Value) override;
-
-	void ActivateButton(int32 ButtonIndex);
-	void DeactivateButton(int32 ButtonIndex);
-
-	void SetActiveMenuButtonIndex(int32 NewActiveButtonIndex);
-
-	FORCEINLINE TObjectPtr<UTitleScreenMainMenuButtonWidget> GetActiveMenuButton() const { return RegisteredMenuButtons[ActiveMenuButtonIndex]; }
 };

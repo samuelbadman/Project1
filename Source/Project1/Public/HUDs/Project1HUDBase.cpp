@@ -53,7 +53,7 @@ void AProject1HUDBase::SetUIInputsEnabled(bool Enable)
 	{
 		// Remove binding to game viewport client generated mouse move events
 		ProjectGameViewportClient->GetOnMouseMovedDelegate().Remove(OnMouseMovedDelegateHandle);
-		OnMouseMovedDelegateHandle = {};
+		OnMouseMovedDelegateHandle.Reset();
 
 		// Remove UI input mapping context
 		EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(UIInputMapping->GetUIInputMappingContext());

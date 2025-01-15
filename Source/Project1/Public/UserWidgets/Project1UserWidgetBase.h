@@ -15,5 +15,5 @@ class PROJECT1_API UProject1UserWidgetBase : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	bool IsMouseOver(const FVector2D& MousePosition) const;
+	bool IsWidgetGeometryUnderMouse(const FVector2D& MousePosition) const;
 };

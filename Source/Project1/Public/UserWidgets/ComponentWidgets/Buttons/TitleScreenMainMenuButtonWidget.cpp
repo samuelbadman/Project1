@@ -6,22 +6,7 @@
 
 UTitleScreenMainMenuButtonWidget::UTitleScreenMainMenuButtonWidget()
 {
-	ButtonText = FText::FromString(TEXT("DefaultButtonText"));
-}
-
-void UTitleScreenMainMenuButtonWidget::OnBecomeActive()
-{
-	GetTextBlock()->SetColorAndOpacity(ButtonTextActiveColor);
-}
-
-void UTitleScreenMainMenuButtonWidget::OnEndActive()
-{
-	GetTextBlock()->SetColorAndOpacity(ButtonTextInactiveColor);
-}
-
-void UTitleScreenMainMenuButtonWidget::Press()
-{
-	OnPressedDelegate.Broadcast();
+	ButtonText = FText::FromString(TEXT("Default Button Text"));
 }
 
 void UTitleScreenMainMenuButtonWidget::NativePreConstruct()
@@ -33,4 +18,14 @@ void UTitleScreenMainMenuButtonWidget::NativePreConstruct()
 	{
 		TextBlock->SetText(ButtonText);
 	}
+}
+
+void UTitleScreenMainMenuButtonWidget::NativeOnBecomeActive()
+{
+	GetTextBlock()->SetColorAndOpacity(ButtonTextActiveColor);
+}
+
+void UTitleScreenMainMenuButtonWidget::NativeOnEndActive()
+{
+	GetTextBlock()->SetColorAndOpacity(ButtonTextInactiveColor);
 }
