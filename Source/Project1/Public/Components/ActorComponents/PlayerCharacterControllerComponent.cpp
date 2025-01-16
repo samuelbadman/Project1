@@ -20,14 +20,15 @@ void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelT
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Update character capsule rotation
-	Character->SetActorRotation(FMath::QInterpConstantTo(Character->GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CapsuleRotationSpeed));
+	const FQuat NewCharacterOrientation{ FMath::QInterpConstantTo(Character->GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CapsuleRotationSpeed) };
+	Character->SetActorRotation(NewCharacterOrientation);
 
 	// Update player character skeletal mesh rotation. Keep the mesh aligned with the capsule
 	FRotator TargetCharacterMeshRotation{ TargetCapsuleWorldOrientation };
 	// TODO: This sometimes rotates the mesh in the opposite direction to the capsule. Will this be a problem? Matching mesh rotation to capsule for now
 	//CharacterSkeletalMeshComponent->SetWorldRotation(FMath::QInterpConstantTo(CharacterSkeletalMeshComponent->GetComponentQuat(), TargetCharacterMeshRotation.Quaternion(),
 	//	DeltaTime, MeshRotationSpeed));
-	CharacterSkeletalMeshComponent->SetWorldRotation(Character->GetActorRotation());
+	CharacterSkeletalMeshComponent->SetWorldRotation(NewCharacterOrientation);
 }
 
 void UPlayerCharacterControllerComponent::UpdateGroundMovementState(float MoveInputMagnitude)
