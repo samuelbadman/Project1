@@ -14,6 +14,13 @@ class PROJECT1_API ATitleScreenPlayerController : public AProject1PlayerControll
 {
 	GENERATED_BODY()
 
+public:
+	UPROPERTY(EditAnywhere)
+	bool bLockMouseToViewportWhenShown{ false };
+
+	UPROPERTY(EditAnywhere)
+	bool bCenterMouseInViewportWhenShown{ false };
+
 private:
 	void BeginPlay() override;
 };

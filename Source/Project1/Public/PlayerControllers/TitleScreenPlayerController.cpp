@@ -11,6 +11,6 @@ void ATitleScreenPlayerController::BeginPlay()
 
 	CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient())->GetOnInputDeviceChangedDelegate().AddWeakLambda(this,
 		[this](bool UsingGamepad) {
-			SetMouseCursorVisibility((UsingGamepad) ? EMouseCursorVisibility::Hidden : EMouseCursorVisibility::Visible, false, DefaultCenterCursorInViewportOnBecomeVisible);
+			SetMouseCursorVisibility((UsingGamepad) ? EMouseCursorVisibility::Hidden : EMouseCursorVisibility::Visible, bLockMouseToViewportWhenShown, bCenterMouseInViewportWhenShown);
 		});
 }

@@ -21,7 +21,7 @@ class PROJECT1_API AProject1PlayerControllerBase : public APlayerController
 {
 	GENERATED_BODY()
 	
-protected:
+private:
 	UPROPERTY(EditDefaultsOnly)
 	EMouseCursorVisibility DefaultMouseCursorVisibility{ EMouseCursorVisibility::Hidden };
 
