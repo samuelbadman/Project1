@@ -6,10 +6,12 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/ActorComponents/PlayerCharacterControllerComponent.h"
 #include "PlayerCameraManagers/GamePlayerCameraManager.h"
+#include "Components/ActorComponents/PlayerInteractComponent.h"
 
 AGamePlayerController::AGamePlayerController()
 {
 	PlayerCharacterControllerComponent = CreateDefaultSubobject<UPlayerCharacterControllerComponent>(FName(TEXT("PlayerCharacterControllerComponent")));
+	PlayerInteractComponent = CreateDefaultSubobject<UPlayerInteractComponent>(FName(TEXT("PlayerInteractComponent")));
 }
 
 void AGamePlayerController::SetupInputComponent()
@@ -38,7 +40,8 @@ void AGamePlayerController::OnPossess(APawn* aPawn)
 	GamePlayerCameraManager->SetTargetFollowActor(aPawn);
 
 	// Setup new possessed pawn
-	PlayerCharacterControllerComponent->SetupNewPossessedPawn(aPawn);
+	PlayerCharacterControllerComponent->SetupNewPawn(aPawn);
+	PlayerInteractComponent->SetupNewPawn(aPawn);
 }
 
 void AGamePlayerController::BeginPlay()

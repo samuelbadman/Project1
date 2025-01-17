@@ -11,6 +11,7 @@ class UInputAction;
 struct FInputActionValue;
 class UPlayerCharacterControllerComponent;
 class AGamePlayerCameraManager;
+class UPlayerInteractComponent;
 
 /**
  *
@@ -23,6 +24,9 @@ class PROJECT1_API AGamePlayerController : public AProject1PlayerControllerBase
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UPlayerCharacterControllerComponent> PlayerCharacterControllerComponent{ nullptr };
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPlayerInteractComponent> PlayerInteractComponent{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> MainInputMappingContext{ nullptr };

@@ -17,15 +17,17 @@ private:
 	UPROPERTY(EditAnywhere)
 	float CapsuleRotationSpeed{ 7.5f };
 
-	UPROPERTY(EditAnywhere)
-	float MeshRotationSpeed{ 7.5f };
+	//UPROPERTY(EditAnywhere)
+	//float MeshRotationSpeed{ 7.5f };
 
 	UPROPERTY(EditAnywhere)
 	float RunInputMagnitude{ 0.45f };
 
+	// TODO: Move data into a component/data asset/character that can be defined per character as different characters may move at different speeds
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed{ 300.0f };
 
+	// TODO: Move data into a component/data asset/character that can be defined per character as different characters may move at different speeds
 	UPROPERTY(EditAnywhere)
 	float RunSpeed{ 600.0f };
 
@@ -39,7 +41,7 @@ public:
 	// Sets default values for this component's properties
 	UPlayerCharacterControllerComponent();
 
-	void SetupNewPossessedPawn(TObjectPtr<APawn> Pawn);
+	void SetupNewPawn(TObjectPtr<APawn> Pawn);
 	void AddMovement(const FVector& WorldDirection, float MoveInputMagnitude);
 
 	FORCEINLINE void SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation) { TargetCapsuleWorldOrientation = TargetOrientation; }

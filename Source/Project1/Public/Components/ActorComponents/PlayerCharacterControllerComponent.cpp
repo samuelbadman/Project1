@@ -47,7 +47,7 @@ void UPlayerCharacterControllerComponent::UpdateGroundMovementState(float MoveIn
 	}
 }
 
-void UPlayerCharacterControllerComponent::SetupNewPossessedPawn(TObjectPtr<APawn> Pawn)
+void UPlayerCharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 {
 	// Get pawn as character
 	Character = CastChecked<ACharacter>(Pawn);
