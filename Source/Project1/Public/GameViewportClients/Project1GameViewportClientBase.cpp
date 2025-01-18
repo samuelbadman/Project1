@@ -3,10 +3,12 @@
 
 #include "Project1GameViewportClientBase.h"
 
-void UProject1GameViewportClientBase::Tick(float DeltaTime)
+void UProject1GameViewportClientBase::Init(FWorldContext& WorldContext, UGameInstance* OwningGameInstance, bool bCreateNewAudioDevice)
 {
-	Super::Tick(DeltaTime);
-	DetectMouseMove();
+	Super::Init(WorldContext, OwningGameInstance, bCreateNewAudioDevice);
+
+	// Set detect mouse move timer
+	GetWorld()->GetTimerManager().SetTimer(DetectMouseMoveTimerHandle, this, &UProject1GameViewportClientBase::DetectMouseMove, DetectMouseMoveInterval, true);
 }
 
 bool UProject1GameViewportClientBase::InputKey(const FInputKeyEventArgs& EventArgs)
@@ -15,14 +17,14 @@ bool UProject1GameViewportClientBase::InputKey(const FInputKeyEventArgs& EventAr
 	return Super::InputKey(EventArgs);
 }
 
-bool UProject1GameViewportClientBase::DetectMouseMove()
+void UProject1GameViewportClientBase::DetectMouseMove()
 {
 	FVector2D CurrentMousePosition = {};
 
 	// GetMousePosition returns false if there is no associated mouse device.
 	if (!GetMousePosition(CurrentMousePosition))
 	{
-		return false;
+		return;
 	}
 
 	if (CurrentMousePosition != PreviousMousePosition)
@@ -30,11 +32,11 @@ bool UProject1GameViewportClientBase::DetectMouseMove()
 		// Mouse position has changed.
 		OnMouseMoved(CurrentMousePosition, PreviousMousePosition, (CurrentMousePosition - PreviousMousePosition));
 		PreviousMousePosition = CurrentMousePosition;
-		return true;
+		return;
 	}
 
 	// Mouse position has not changed.
-	return false;
+	return;
 }
 
 void UProject1GameViewportClientBase::OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)

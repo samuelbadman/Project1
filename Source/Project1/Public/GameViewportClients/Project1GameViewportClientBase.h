@@ -12,12 +12,15 @@ DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnMouseMovedDelegateSignature, const FVe
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class PROJECT1_API UProject1GameViewportClientBase : public UGameViewportClient
 {
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditDefaultsOnly)
+	float DetectMouseMoveInterval{ 0.000001f };
+
 	FVector2D PreviousMousePosition{ FVector2D::ZeroVector };
 	bool bUsingGamepad{ true };
 	FOnInputDeviceChangedDelegateSignature OnInputDeviceChangedDelegate{};
@@ -25,17 +28,19 @@ private:
 	// Bound events to this delegate can potentially be called every frame
 	FOnMouseMovedDelegateSignature OnMouseMovedDelegate{};
 
+	FTimerHandle DetectMouseMoveTimerHandle{};
+
 public:
 	// The project's game viewport client class can be retrieved from the game instance
 	FORCEINLINE FOnInputDeviceChangedDelegateSignature& GetOnInputDeviceChangedDelegate() { return OnInputDeviceChangedDelegate; }
 	FORCEINLINE FOnMouseMovedDelegateSignature& GetOnMouseMovedDelegate() { return OnMouseMovedDelegate; }
 
 protected:
-	void Tick(float DeltaTime) override;
+	void Init(struct FWorldContext& WorldContext, UGameInstance* OwningGameInstance, bool bCreateNewAudioDevice = true) override;
 	bool InputKey(const FInputKeyEventArgs& EventArgs) override;
 
 private:
-	bool DetectMouseMove();
+	void DetectMouseMove();
 	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
 	void UpdateUsingGamepadState(bool GamepadInput);
 	void ChangeGamepadState(bool UsingGamepad);
