@@ -24,4 +24,7 @@ class PROJECT1_API IInteractable
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	FText GetInteractablePromptText();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnInteractedWith(AActor* Interactor);
 };

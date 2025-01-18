@@ -49,6 +49,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> InteractInputAction{ nullptr };
+
 	UPROPERTY(EditAnywhere, Category = "LookSensitivitySettings")
 	FVector2D AbsoluteLookInputSensitivity{ 1.0, 1.0 };
 
@@ -74,4 +77,5 @@ private:
 	void OnResetLookTriggered(const FInputActionValue& Value);
 	void OnMoveTriggered(const FInputActionValue& Value);
 	void OnJumpTriggered(const FInputActionValue& Value);
+	void OnInteractTriggered(const FInputActionValue& Value);
 };

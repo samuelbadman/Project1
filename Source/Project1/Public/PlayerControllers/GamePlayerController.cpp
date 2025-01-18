@@ -24,6 +24,7 @@ void AGamePlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(ResetLookInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnResetLookTriggered);
 	EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnMoveTriggered);
 	EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnJumpTriggered);
+	EnhancedInputComponent->BindAction(InteractInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractTriggered);
 }
 
 void AGamePlayerController::OnPossess(APawn* aPawn)
@@ -128,4 +129,10 @@ void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
 void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Jump input triggered")));
+}
+
+void AGamePlayerController::OnInteractTriggered(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Interact input triggered")));
+	PlayerInteractComponent->OnInteractInput();
 }

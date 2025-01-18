@@ -6,7 +6,7 @@
 #include "Components/ActorComponents/Project1ActorComponentBase.h"
 #include "PlayerInteractComponent.generated.h"
 
-class IInteractable;
+class APlayerInteractCollision;
 
 /**
  * 
@@ -17,10 +17,19 @@ class PROJECT1_API UPlayerInteractComponent : public UProject1ActorComponentBase
 	GENERATED_BODY()
 	
 private:
-	TArray<TScriptInterface<IInteractable>> OverlappedInteractables{};
+	UPROPERTY(EditDefaultsOnly)
+	float InteractCollisionRadiusMultiplier{ 2.0f };
+
+	UPROPERTY(EditDefaultsOnly)
+	float InteractCollisionHalfHeightMultiplier{ 1.0f };
+
+	TObjectPtr<APawn> InteractingPawn{ nullptr };
+	TObjectPtr<APlayerInteractCollision> PlayerInteractCollisionActor{ nullptr };
+	TArray<TObjectPtr<AActor>> OverlappedInteractables{};
 
 public:
 	void SetupNewPawn(TObjectPtr<APawn> Pawn);
+	void OnInteractInput();
 
 private:
 	UFUNCTION()
