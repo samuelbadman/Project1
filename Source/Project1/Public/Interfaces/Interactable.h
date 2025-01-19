@@ -26,5 +26,11 @@ public:
 	FText GetInteractablePromptText();
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void OnPlayerInteractBeginOverlap();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPlayerInteractEndOverlap();
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void OnInteractedWith(AActor* Interactor);
 };

@@ -48,8 +48,8 @@ void UPlayerInteractComponent::OnInteractInput()
 		return;
 	}
 
-	// TODO: Handle multiple overlapping interactables
-	Cast<IInteractable>(OverlappedInteractables[0])->Execute_OnInteractedWith(OverlappedInteractables[0], InteractingPawn.Get());
+	// TODO: Handle multiple overlapping interactables. Use overlap begin/end delegates in interact screen widget to control showing the switch interact target widget
+	IInteractable::Execute_OnInteractedWith(OverlappedInteractables[0], InteractingPawn.Get());
 }
 
 void UPlayerInteractComponent::OnPawnCollisionBeginOverlap(
@@ -63,9 +63,14 @@ void UPlayerInteractComponent::OnPawnCollisionBeginOverlap(
 	// Is the overlapping actor interactable?
 	if (UKismetSystemLibrary::DoesImplementInterface(OtherActor, UInteractable::StaticClass()))
 	{
+		// Add interactable to player interactable overlapped list
 		OverlappedInteractables.Add(OtherActor);
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString::Printf(TEXT("Pawn capsule overlap begin [%s] [%s]"), *AActor::GetDebugName(OtherActor),
-			*Cast<IInteractable>(OtherActor)->Execute_GetInteractablePromptText(OtherActor).ToString()));
+
+		// Notify interactable it has become overlapped by the player
+		IInteractable::Execute_OnPlayerInteractBeginOverlap(OtherActor);
+
+		// Call subscribed events for when an interactable is overlapped by the player
+		OnBeginInteractableOverlapDelegate.Broadcast(OtherActor, OverlappedInteractables.Num());
 	}
 }
 
@@ -75,6 +80,15 @@ void UPlayerInteractComponent::OnPawnCollisionEndOverlap(
 	UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
-	OverlappedInteractables.Remove(OtherActor);
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, FString::Printf(TEXT("Pawn capsule overlap end [%s]"), *AActor::GetDebugName(OtherActor)));
+	if (UKismetSystemLibrary::DoesImplementInterface(OtherActor, UInteractable::StaticClass()))
+	{
+		// Remove the interactable from player interactable overlapped list
+		OverlappedInteractables.Remove(OtherActor);
+
+		// Notify interactable it has left player interact collision
+		IInteractable::Execute_OnPlayerInteractEndOverlap(OtherActor);
+
+		// Call subscribed events for when an interactable has left player interact collision
+		OnEndInteractableOverlapDelegate.Broadcast(OtherActor, OverlappedInteractables.Num());
+	}
 }

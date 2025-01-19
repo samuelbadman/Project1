@@ -7,6 +7,10 @@
 #include "PlayerInteractComponent.generated.h"
 
 class APlayerInteractCollision;
+class IInteractable;
+
+DECLARE_MULTICAST_DELEGATE_TwoParams(FBeginInteractableOverlapDelegateSignature, TWeakObjectPtr<AActor> /* Interactable */, int32 /* NumOverlappedInteractables */);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FEndInteractableOverlapDelegateSignature, TWeakObjectPtr<AActor> /* Interactable */, int32 /* NumOverlappedInteractables */);
 
 /**
  * 
@@ -16,6 +20,10 @@ class PROJECT1_API UPlayerInteractComponent : public UProject1ActorComponentBase
 {
 	GENERATED_BODY()
 	
+public:
+	FBeginInteractableOverlapDelegateSignature OnBeginInteractableOverlapDelegate{};
+	FEndInteractableOverlapDelegateSignature OnEndInteractableOverlapDelegate{};
+
 private:
 	UPROPERTY(EditDefaultsOnly)
 	float InteractCollisionRadiusMultiplier{ 2.0f };
