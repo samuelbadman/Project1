@@ -22,6 +22,10 @@ class PROJECT1_API ULayerUserWidgetBase : public UProject1UserWidgetBase
 {
 	GENERATED_BODY()
 
+public:
+	static constexpr ESlateVisibility ScreenWidgetShownSlateVisibility{ ESlateVisibility::SelfHitTestInvisible };
+	static constexpr ESlateVisibility ScreenWidgetCollapsedSlateVisibility{ ESlateVisibility::Collapsed };
+
 private:
 	UPROPERTY(BlueprintAssignable)
 	FOnContentPushedToLayerDelegateSignature OnContentPushedToLayerDelegate{};
@@ -41,7 +45,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	UPanelWidget* GetPanelWidget() const;
 
+	// Do not call. Called when registering the layer with a primary layout widget.
 	void SetLayerName(const FGameplayTag& Name);
+	// Pushed widget class is loaded asynchronously before being shown on screen. The layer will not be in its final state immediately after calling this function
 	void PushContent(const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass);
 	void PopContent();
 	TObjectPtr<UScreenUserWidgetBase> Peek() const;
@@ -57,6 +63,8 @@ public:
 	void ReceiveOnRightClickTriggered(const FInputActionValue& Value);
 	void ReceiveOnMouseWheelTriggered(const FInputActionValue& Value);
 	void ReceiveOnNavigateTriggered(const FInputActionValue& Value);
+	void ReceiveOnNavigateNoMoveTriggered(const FInputActionValue& Value);
+	void ReceiveOnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value);
 	void ReceiveOnConfirmTriggered(const FInputActionValue& Value);
 	void ReceiveOnCancelTriggered(const FInputActionValue& Value);
 	void ReceiveOnTabTriggered(const FInputActionValue& Value);

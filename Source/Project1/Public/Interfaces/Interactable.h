@@ -23,7 +23,7 @@ class PROJECT1_API IInteractable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION(BlueprintImplementableEvent)
-	FText GetInteractablePromptText();
+	FText GetInteractActionText();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPlayerInteractBeginOverlap();

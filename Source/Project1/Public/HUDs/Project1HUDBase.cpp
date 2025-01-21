@@ -29,35 +29,46 @@ void AProject1HUDBase::SetActiveInputPrimaryLayoutLayer(const FGameplayTag& Laye
 	PrimaryLayoutWidget->SetActiveInputLayer(LayerName);
 }
 
+const FGameplayTag& AProject1HUDBase::GetPreviousActiveInputPrimaryLayoutLayer() const
+{
+	return PrimaryLayoutWidget->GetPreviousActiveInputLayerName();
+}
+
 bool AProject1HUDBase::IsContentOnTopOfPrimaryLayoutLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget) const
 {
 	return PrimaryLayoutWidget->IsContentOnTopOfLayer(LayerName, Widget);
 }
 
-void AProject1HUDBase::SetUIInputsEnabled(bool Enable)
+void AProject1HUDBase::BindUIInputActions(UEnhancedInputComponent* EnhancedInputComponent)
 {
-	if (!IsValid(UIInputMapping))
+	// Bind UI input actions/values
+	if (IsValid(UIInputMapping))
 	{
-		return;
+		EnhancedInputComponent->BindAction(UIInputMapping->GetLeftClickInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnLeftClickTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetRightClickInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnRightClickTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetMiddleClickInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnMiddleClickTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetMouseWheelInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnMouseWheelTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetNavigateInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnNavigateTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetNavigateNoMoveInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnNavigateNoMoveTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetNavigateNoMoveNoRepeatInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnNavigateNoMoveNoRepeatTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetConfirmInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnConfirmTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetCancelInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnCancelTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetTabInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnTabTriggered);
+		EnhancedInputComponent->BindAction(UIInputMapping->GetAnyInputInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnAnyInputTriggered);
 	}
+}
 
-	if (Enable)
-	{
-		// Bind to game viewport client generated mouse move events
-		OnMouseMovedDelegateHandle = ProjectGameViewportClient->GetOnMouseMovedDelegate().AddUObject(this, &AProject1HUDBase::OnMouseMoved);
+void AProject1HUDBase::BindToMouseMoveEvents(UProject1GameViewportClientBase* Project1GameViewportClient)
+{
+	// Bind to game viewport client generated mouse move events
+	OnMouseMovedDelegateHandle = Project1GameViewportClient->GetOnMouseMovedDelegate().AddUObject(this, &AProject1HUDBase::OnMouseMoved);
+}
 
-		// Add UI input mapping context
-		EnhancedInputLocalPlayerSubsystem->AddMappingContext(UIInputMapping->GetUIInputMappingContext(), UIInputMapping->GetUIInputMappingContextPriority());
-	}
-	else
-	{
-		// Remove binding to game viewport client generated mouse move events
-		ProjectGameViewportClient->GetOnMouseMovedDelegate().Remove(OnMouseMovedDelegateHandle);
-		OnMouseMovedDelegateHandle.Reset();
-
-		// Remove UI input mapping context
-		EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(UIInputMapping->GetUIInputMappingContext());
-	}
+void AProject1HUDBase::UnbindFromMouseMoveEvents(UProject1GameViewportClientBase* Project1GameViewportClient)
+{
+	// Remove binding to game viewport client generated mouse move events
+	Project1GameViewportClient->GetOnMouseMovedDelegate().Remove(OnMouseMovedDelegateHandle);
+	OnMouseMovedDelegateHandle.Reset();
 }
 
 void AProject1HUDBase::BeginPlay()
@@ -74,30 +85,6 @@ void AProject1HUDBase::BeginPlay()
 	}
 #endif
 	PrimaryLayoutWidget->AddToViewport();
-
-	// Get owning player controller
-	const TObjectPtr<APlayerController> OwningPlayerController{ GetOwningPlayerController() };
-
-	// Get reference to enhanced input local player subsystem
-	EnhancedInputLocalPlayerSubsystem = OwningPlayerController->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
-
-	// Get reference to game viewport client as project game viewport client
-	ProjectGameViewportClient = CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient());
-
-	// Bind UI input actions/values
-	if (IsValid(UIInputMapping))
-	{
-		const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(OwningPlayerController->InputComponent);
-		EnhancedInputComponent->BindAction(UIInputMapping->GetLeftClickInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnLeftClickTriggered);
-		EnhancedInputComponent->BindAction(UIInputMapping->GetRightClickInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnRightClickTriggered);
-		EnhancedInputComponent->BindAction(UIInputMapping->GetMiddleClickInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnMiddleClickTriggered);
-		EnhancedInputComponent->BindAction(UIInputMapping->GetMouseWheelInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnMouseWheelTriggered);
-		EnhancedInputComponent->BindAction(UIInputMapping->GetNavigateInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnNavigateTriggered);
-		EnhancedInputComponent->BindAction(UIInputMapping->GetConfirmInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnConfirmTriggered);
-		EnhancedInputComponent->BindAction(UIInputMapping->GetCancelInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnCancelTriggered);
-		EnhancedInputComponent->BindAction(UIInputMapping->GetTabInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnTabTriggered);
-		EnhancedInputComponent->BindAction(UIInputMapping->GetAnyInputInputAction(), ETriggerEvent::Triggered, this, &AProject1HUDBase::OnAnyInputTriggered);
-	}
 }
 
 void AProject1HUDBase::OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
@@ -128,6 +115,16 @@ void AProject1HUDBase::OnMouseWheelTriggered(const FInputActionValue& Value)
 void AProject1HUDBase::OnNavigateTriggered(const FInputActionValue& Value)
 {
 	PrimaryLayoutWidget->RouteOnNavigateTriggered(Value);
+}
+
+void AProject1HUDBase::OnNavigateNoMoveTriggered(const FInputActionValue& Value)
+{
+	PrimaryLayoutWidget->RouteOnNavigateNoMoveTriggered(Value);
+}
+
+void AProject1HUDBase::OnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value)
+{
+	PrimaryLayoutWidget->RouteOnNavigateNoMoveNoRepeatTriggered(Value);
 }
 
 void AProject1HUDBase::OnConfirmTriggered(const FInputActionValue& Value)

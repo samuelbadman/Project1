@@ -7,6 +7,7 @@
 #include "Interfaces/Interactable.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Actors/Player/PlayerInteractCollision.h"
+#include "FunctionLibraries/Project1BlueprintFunctionLibrary.h"
 
 void UPlayerInteractComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 {
@@ -41,15 +42,33 @@ void UPlayerInteractComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 	PlayerInteractCollisionActor->AttachToComponent(PlayerMovementCollision, FAttachmentTransformRules::SnapToTargetIncludingScale);
 }
 
-void UPlayerInteractComponent::OnInteractInput()
+TObjectPtr<AActor> UPlayerInteractComponent::GetTargetInteractable() const
 {
-	if (OverlappedInteractables.IsEmpty())
+	if (!OverlappedInteractables.IsValidIndex(TargetOverlappedInteractableIndex))
 	{
-		return;
+		return nullptr;
 	}
 
-	// TODO: Handle multiple overlapping interactables. Use overlap begin/end delegates in interact screen widget to control showing the switch interact target widget
-	IInteractable::Execute_OnInteractedWith(OverlappedInteractables[0], InteractingPawn.Get());
+	return OverlappedInteractables[TargetOverlappedInteractableIndex];
+}
+
+void UPlayerInteractComponent::IncrementTargetInteractableIndex(int32 Increment)
+{
+	SetTargetOverlappedInteractable(UProject1BlueprintFunctionLibrary::WrapIncrementArrayIndex(
+		TargetOverlappedInteractableIndex,
+		OverlappedInteractables.Num(),
+		Increment
+	));
+}
+
+void UPlayerInteractComponent::DisableInteract()
+{
+	PlayerInteractCollisionActor->GetCapsuleCollision()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void UPlayerInteractComponent::EnableInteract()
+{
+	PlayerInteractCollisionActor->GetCapsuleCollision()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void UPlayerInteractComponent::OnPawnCollisionBeginOverlap(
@@ -65,6 +84,12 @@ void UPlayerInteractComponent::OnPawnCollisionBeginOverlap(
 	{
 		// Add interactable to player interactable overlapped list
 		OverlappedInteractables.Add(OtherActor);
+
+		// Update target interactable index. Don't update if there is already an interactable targeted
+		if (OverlappedInteractables.Num() == 1)
+		{
+			SetTargetOverlappedInteractable(0);
+		}
 
 		// Notify interactable it has become overlapped by the player
 		IInteractable::Execute_OnPlayerInteractBeginOverlap(OtherActor);
@@ -82,13 +107,39 @@ void UPlayerInteractComponent::OnPawnCollisionEndOverlap(
 {
 	if (UKismetSystemLibrary::DoesImplementInterface(OtherActor, UInteractable::StaticClass()))
 	{
+		// If the actor being removed is the current overlapped interactable target
+		const bool RemovedTargetOverlappedInteractable{ OtherActor == OverlappedInteractables[TargetOverlappedInteractableIndex] };
+
 		// Remove the interactable from player interactable overlapped list
 		OverlappedInteractables.Remove(OtherActor);
+
+		// If the target overlapped interactable index is no longer valid
+		// Else if the target index is still valid but the current target interactable was removed
+		if (!OverlappedInteractables.IsValidIndex(TargetOverlappedInteractableIndex))
+		{
+			// Update the target index to be the first overlapped interactable
+			SetTargetOverlappedInteractable(0);
+		}
+		else if (RemovedTargetOverlappedInteractable)
+		{
+			// Update the target index to be the current index, calling the target interactable changed delegate
+			SetTargetOverlappedInteractable(TargetOverlappedInteractableIndex);
+		}
 
 		// Notify interactable it has left player interact collision
 		IInteractable::Execute_OnPlayerInteractEndOverlap(OtherActor);
 
 		// Call subscribed events for when an interactable has left player interact collision
 		OnEndInteractableOverlapDelegate.Broadcast(OtherActor, OverlappedInteractables.Num());
+	}
+}
+
+void UPlayerInteractComponent::SetTargetOverlappedInteractable(int32 NewIndex)
+{
+	TargetOverlappedInteractableIndex = NewIndex;
+
+	if (OverlappedInteractables.IsValidIndex(NewIndex))
+	{
+		OnTargetInteractableChangedDelegate.Broadcast(OverlappedInteractables[NewIndex]);
 	}
 }

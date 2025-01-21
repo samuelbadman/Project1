@@ -55,7 +55,7 @@ void ULayerUserWidgetBase::PopContent()
 	if (IsValid(Top))
 	{
 		PanelWidget->AddChild(Top);
-		Top->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		Top->SetVisibility(ScreenWidgetShownSlateVisibility);
 	}
 }
 
@@ -74,7 +74,7 @@ void ULayerUserWidgetBase::CollapseTop()
 	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
 	if (IsValid(Top))
 	{
-		Top->SetVisibility(ESlateVisibility::Collapsed);
+		Top->SetVisibility(ScreenWidgetCollapsedSlateVisibility);
 		Top->NativeOnCollapsed();
 		Top->OnCollapsed();
 	}
@@ -85,7 +85,7 @@ void ULayerUserWidgetBase::ShowTop()
 	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek()};
 	if (IsValid(Top))
 	{
-		Top->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		Top->SetVisibility(ScreenWidgetShownSlateVisibility);
 		Top->NativeOnShown();
 		Top->OnShown();
 	}
@@ -109,13 +109,13 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 	PanelWidget->AddChild(PushedWidget);
 
 	PushedWidget->SetOwningLayerName(LayerName);
-	PushedWidget->NativeOnPushedToLayerStack();
-	PushedWidget->OnPushedToLayerStack();
 
 	ShowTop();
 
 	PushedContentClassASyncLoadHandles.Remove(Handle);
 
+	PushedWidget->NativeOnPushedToLayerStack();
+	PushedWidget->OnPushedToLayerStack();
 	OnContentPushedToLayerDelegate.Broadcast(PushedWidget);
 }
 
@@ -176,6 +176,26 @@ void ULayerUserWidgetBase::ReceiveOnNavigateTriggered(const FInputActionValue& V
 	{
 		Top->NativeOnNavigateTriggered(Value);
 		Top->OnNavigateTriggered(Value);
+	}
+}
+
+void ULayerUserWidgetBase::ReceiveOnNavigateNoMoveTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnNavigateNoMoveTriggered(Value);
+		Top->OnNavigateNoMoveTriggered(Value);
+	}
+}
+
+void ULayerUserWidgetBase::ReceiveOnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->NativeOnNavigateNoMoveNoRepeatTriggered(Value);
+		Top->OnNavigateNoMoveNoRepeatTriggered(Value);
 	}
 }
 

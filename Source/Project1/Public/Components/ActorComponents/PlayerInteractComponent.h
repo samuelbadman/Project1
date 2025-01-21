@@ -8,9 +8,11 @@
 
 class APlayerInteractCollision;
 class IInteractable;
+struct FInputActionValue;
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FBeginInteractableOverlapDelegateSignature, TWeakObjectPtr<AActor> /* Interactable */, int32 /* NumOverlappedInteractables */);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FEndInteractableOverlapDelegateSignature, TWeakObjectPtr<AActor> /* Interactable */, int32 /* NumOverlappedInteractables */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FTargetInteractableChangedDelegateSignature, TWeakObjectPtr<AActor> /* NewTargetInteractable */);
 
 /**
  * 
@@ -23,6 +25,7 @@ class PROJECT1_API UPlayerInteractComponent : public UProject1ActorComponentBase
 public:
 	FBeginInteractableOverlapDelegateSignature OnBeginInteractableOverlapDelegate{};
 	FEndInteractableOverlapDelegateSignature OnEndInteractableOverlapDelegate{};
+	FTargetInteractableChangedDelegateSignature OnTargetInteractableChangedDelegate{};
 
 private:
 	UPROPERTY(EditDefaultsOnly)
@@ -34,10 +37,15 @@ private:
 	TObjectPtr<APawn> InteractingPawn{ nullptr };
 	TObjectPtr<APlayerInteractCollision> PlayerInteractCollisionActor{ nullptr };
 	TArray<TObjectPtr<AActor>> OverlappedInteractables{};
+	int32 TargetOverlappedInteractableIndex{ INDEX_NONE };
 
 public:
 	void SetupNewPawn(TObjectPtr<APawn> Pawn);
-	void OnInteractInput();
+	TObjectPtr<AActor> GetTargetInteractable() const;
+	void IncrementTargetInteractableIndex(int32 Increment);
+
+	void EnableInteract();
+	void DisableInteract();
 
 private:
 	UFUNCTION()
@@ -55,4 +63,6 @@ private:
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
+
+	void SetTargetOverlappedInteractable(int32 NewIndex);
 };

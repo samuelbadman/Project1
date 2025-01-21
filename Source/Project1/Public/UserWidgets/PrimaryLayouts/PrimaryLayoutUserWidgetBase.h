@@ -22,6 +22,7 @@ class PROJECT1_API UPrimaryLayoutUserWidgetBase : public UProject1UserWidgetBase
 private:
 	TMap<FGameplayTag, TObjectPtr<ULayerUserWidgetBase>> Layers{};
 	FGameplayTag ActiveInputLayerName{};
+	FGameplayTag PreviousActiveInputLayerName{};
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -42,6 +43,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetActiveInputLayer(const FGameplayTag& LayerName);
 
+	FORCEINLINE const FGameplayTag& GetPreviousActiveInputLayerName() const { return PreviousActiveInputLayerName; }
+
 	bool IsContentOnTopOfLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget);
 
 	void RouteOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
@@ -50,6 +53,8 @@ public:
 	void RouteOnRightClickTriggered(const FInputActionValue& Value);
 	void RouteOnMouseWheelTriggered(const FInputActionValue& Value);
 	void RouteOnNavigateTriggered(const FInputActionValue& Value);
+	void RouteOnNavigateNoMoveTriggered(const FInputActionValue& Value);
+	void RouteOnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value);
 	void RouteOnConfirmTriggered(const FInputActionValue& Value);
 	void RouteOnCancelTriggered(const FInputActionValue& Value);
 	void RouteOnTabTriggered(const FInputActionValue& Value);

@@ -11,7 +11,7 @@ struct FGameplayTag;
 class UScreenUserWidgetBase;
 class ULayerUserWidgetBase;
 struct FInputActionValue;
-class UEnhancedInputLocalPlayerSubsystem;
+class UEnhancedInputComponent;
 class UUIInputMapping;
 class UProject1GameViewportClientBase;
 
@@ -33,8 +33,6 @@ private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidget{ nullptr };
 
-	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem{ nullptr };
-	TObjectPtr<UProject1GameViewportClientBase> ProjectGameViewportClient{ nullptr };
 	FDelegateHandle OnMouseMovedDelegateHandle{};
 
 public:
@@ -42,9 +40,14 @@ public:
 	void PopContentFromPrimaryLayoutLayer(const FGameplayTag& LayerName);
 	ULayerUserWidgetBase* GetRegisteredPrimaryLayoutLayer(const FGameplayTag& LayerName);
 	void SetActiveInputPrimaryLayoutLayer(const FGameplayTag& LayerName);
+	const FGameplayTag& GetPreviousActiveInputPrimaryLayoutLayer() const;
 	bool IsContentOnTopOfPrimaryLayoutLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget) const;
 
-	void SetUIInputsEnabled(bool Enable);
+	void BindUIInputActions(UEnhancedInputComponent* EnhancedInputComponent);
+	void BindToMouseMoveEvents(UProject1GameViewportClientBase* Project1GameViewportClient);
+	void UnbindFromMouseMoveEvents(UProject1GameViewportClientBase* Project1GameViewportClient);
+
+	FORCEINLINE TObjectPtr<UUIInputMapping> GetUIInputMapping() const { return UIInputMapping; }
 
 protected:
 	void BeginPlay() override;
@@ -56,6 +59,8 @@ private:
 	void OnRightClickTriggered(const FInputActionValue& Value);
 	void OnMouseWheelTriggered(const FInputActionValue& Value);
 	void OnNavigateTriggered(const FInputActionValue& Value);
+	void OnNavigateNoMoveTriggered(const FInputActionValue& Value);
+	void OnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value);
 	void OnConfirmTriggered(const FInputActionValue& Value);
 	void OnCancelTriggered(const FInputActionValue& Value);
 	void OnTabTriggered(const FInputActionValue& Value);

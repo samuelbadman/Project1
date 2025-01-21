@@ -6,6 +6,9 @@
 #include "PlayerControllers/Project1PlayerControllerBase.h"
 #include "TitleScreenPlayerController.generated.h"
 
+class UProject1GameViewportClientBase;
+class AProject1HUDBase;
+
 /**
  * 
  */
@@ -13,6 +16,10 @@ UCLASS()
 class PROJECT1_API ATitleScreenPlayerController : public AProject1PlayerControllerBase
 {
 	GENERATED_BODY()
+
+private:
+	TObjectPtr<UProject1GameViewportClientBase> Project1GameViewportClient{ nullptr };
+	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -23,4 +30,5 @@ public:
 
 private:
 	void BeginPlay() override;
+	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

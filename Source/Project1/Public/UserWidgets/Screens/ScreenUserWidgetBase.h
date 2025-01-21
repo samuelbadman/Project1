@@ -66,6 +66,12 @@ public:
 	void OnNavigateTriggered(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void OnNavigateNoMoveTriggered(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void OnConfirmTriggered(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -83,6 +89,8 @@ public:
 	virtual void NativeOnRightClickTriggered(const FInputActionValue& Value) {};
 	virtual void NativeOnMouseWheelTriggered(const FInputActionValue& Value) {};
 	virtual void NativeOnNavigateTriggered(const FInputActionValue& Value) {};
+	virtual void NativeOnNavigateNoMoveTriggered(const FInputActionValue& Value) {};
+	virtual void NativeOnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value) {};
 	virtual void NativeOnConfirmTriggered(const FInputActionValue& Value) {};
 	virtual void NativeOnCancelTriggered(const FInputActionValue& Value) {};
 	virtual void NativeOnTabTriggered(const FInputActionValue& Value) {};

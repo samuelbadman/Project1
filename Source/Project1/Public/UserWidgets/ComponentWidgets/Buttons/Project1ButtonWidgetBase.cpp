@@ -50,14 +50,14 @@ void UProject1ButtonWidgetBase::NativeOnInitialized()
 				if (NewUnderMouse)
 				{
 					// Mouse cursor has entered button geometry
-					NativeOnMouseEnteredGeomery();
+					NativeOnMouseEnteredGeometry();
 					OnMouseEnteredGeometry();
 					OnMouseEnteredGeometryDelegate.Broadcast(this);
 				}
 				else
 				{
 					// Mouse cursor has left button geometry
-					NativeOnMouseLeftGeomery();
+					NativeOnMouseLeftGeometry();
 					OnMouseLeftGeometry();
 					OnMouseLeftGeometryDelegate.Broadcast(this);
 				}

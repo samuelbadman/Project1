@@ -68,6 +68,7 @@ ULayerUserWidgetBase* UPrimaryLayoutUserWidgetBase::GetRegisteredLayer(const FGa
 
 void UPrimaryLayoutUserWidgetBase::SetActiveInputLayer(const FGameplayTag& LayerName)
 {
+	PreviousActiveInputLayerName = ActiveInputLayerName;
 	ActiveInputLayerName = LayerName;
 }
 
@@ -134,6 +135,24 @@ void UPrimaryLayoutUserWidgetBase::RouteOnNavigateTriggered(const FInputActionVa
 	if (IsValid(ActiveInputLayer))
 	{
 		ActiveInputLayer->ReceiveOnNavigateTriggered(Value);
+	}
+}
+
+void UPrimaryLayoutUserWidgetBase::RouteOnNavigateNoMoveTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnNavigateNoMoveTriggered(Value);
+	}
+}
+
+void UPrimaryLayoutUserWidgetBase::RouteOnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value)
+{
+	const TObjectPtr<ULayerUserWidgetBase> ActiveInputLayer = GetActiveInputLayer();
+	if (IsValid(ActiveInputLayer))
+	{
+		ActiveInputLayer->ReceiveOnNavigateNoMoveNoRepeatTriggered(Value);
 	}
 }
 

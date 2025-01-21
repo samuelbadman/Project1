@@ -72,6 +72,6 @@ private:
 	virtual void NativeOnPressed() {};
 	virtual void NativeOnBecomeActive() {};
 	virtual void NativeOnEndActive() {};
-	virtual void NativeOnMouseEnteredGeomery() {};
-	virtual void NativeOnMouseLeftGeomery() {};
+	virtual void NativeOnMouseEnteredGeometry() {};
+	virtual void NativeOnMouseLeftGeometry() {};
 };
