@@ -32,31 +32,40 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|LookInputs")
 	TObjectPtr<UInputMappingContext> LookInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|LookInputs")
 	int32 LookInputMappingContextPriority{ 0 };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|LookInputs")
 	TObjectPtr<UInputAction> LookAbsoluteInputAction{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|LookInputs")
 	TObjectPtr<UInputAction> LookAnalogInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ResetLookInputs")
 	TObjectPtr<UInputMappingContext> ResetLookInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ResetLookInputs")
 	int32 ResetLookInputMappingContextPriority{ 0 };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ResetLookInputs")
 	TObjectPtr<UInputAction> ResetLookInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|MoveInputs")
 	TObjectPtr<UInputMappingContext> MoveInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|MoveInputs")
 	int32 MoveInputMappingContextPriority{ 0 };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|MoveInputs")
 	TObjectPtr<UInputAction> MoveInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|JumpInputs")
 	TObjectPtr<UInputMappingContext> JumpInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|JumpInputs")
 	int32 JumpInputMappingContextPriority{ 0 };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|JumpInputs")
 	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
 
