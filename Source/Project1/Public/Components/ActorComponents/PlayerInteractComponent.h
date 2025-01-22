@@ -43,6 +43,7 @@ public:
 	void SetupNewPawn(TObjectPtr<APawn> Pawn);
 	TObjectPtr<AActor> GetTargetInteractable() const;
 	void IncrementTargetInteractableIndex(int32 Increment);
+	int32 GetNumOverlappedInteractables() const;
 
 	void EnableInteract();
 	void DisableInteract();

@@ -37,7 +37,10 @@ void UInteractPromptScreen::NativeOnPushedToLayerStack()
 
 void UInteractPromptScreen::NativeOnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value)
 {
-	PlayerInteractComponent->IncrementTargetInteractableIndex(static_cast<int32>(Value.Get<FVector2D>().X));
+	if (PlayerInteractComponent->GetNumOverlappedInteractables() > 1)
+	{
+		PlayerInteractComponent->IncrementTargetInteractableIndex(static_cast<int32>(Value.Get<FVector2D>().X));
+	}
 }
 
 void UInteractPromptScreen::NativeOnConfirmTriggered(const FInputActionValue& Value)

@@ -61,6 +61,11 @@ void UPlayerInteractComponent::IncrementTargetInteractableIndex(int32 Increment)
 	));
 }
 
+int32 UPlayerInteractComponent::GetNumOverlappedInteractables() const
+{
+	return OverlappedInteractables.Num();
+}
+
 void UPlayerInteractComponent::DisableInteract()
 {
 	PlayerInteractCollisionActor->GetCapsuleCollision()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
