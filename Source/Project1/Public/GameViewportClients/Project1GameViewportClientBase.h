@@ -17,23 +17,17 @@ class PROJECT1_API UProject1GameViewportClientBase : public UGameViewportClient
 {
 	GENERATED_BODY()
 	
+public:
+	FOnInputDeviceChangedDelegateSignature OnInputDeviceChangedDelegate{};
+	FOnMouseMovedDelegateSignature OnMouseMovedDelegate{};
+
 private:
 	UPROPERTY(EditDefaultsOnly)
 	float DetectMouseMoveInterval{ 0.000001f };
 
 	FVector2D PreviousMousePosition{ FVector2D::ZeroVector };
 	bool bUsingGamepad{ true };
-	FOnInputDeviceChangedDelegateSignature OnInputDeviceChangedDelegate{};
-
-	// Bound events to this delegate can potentially be called every frame
-	FOnMouseMovedDelegateSignature OnMouseMovedDelegate{};
-
 	FTimerHandle DetectMouseMoveTimerHandle{};
-
-public:
-	// The project's game viewport client class can be retrieved from the game instance
-	FORCEINLINE FOnInputDeviceChangedDelegateSignature& GetOnInputDeviceChangedDelegate() { return OnInputDeviceChangedDelegate; }
-	FORCEINLINE FOnMouseMovedDelegateSignature& GetOnMouseMovedDelegate() { return OnMouseMovedDelegate; }
 
 protected:
 	void Init(struct FWorldContext& WorldContext, UGameInstance* OwningGameInstance, bool bCreateNewAudioDevice = true) override;

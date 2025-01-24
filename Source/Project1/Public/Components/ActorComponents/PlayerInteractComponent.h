@@ -45,7 +45,10 @@ public:
 	void IncrementTargetInteractableIndex(int32 Increment);
 	int32 GetNumOverlappedInteractables() const;
 
+	UFUNCTION(BlueprintCallable)
 	void EnableInteract();
+
+	UFUNCTION(BlueprintCallable)
 	void DisableInteract();
 
 private:

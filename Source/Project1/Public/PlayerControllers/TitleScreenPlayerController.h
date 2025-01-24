@@ -7,7 +7,6 @@
 #include "TitleScreenPlayerController.generated.h"
 
 class UProject1GameViewportClientBase;
-class AProject1HUDBase;
 
 /**
  * 
@@ -19,7 +18,7 @@ class PROJECT1_API ATitleScreenPlayerController : public AProject1PlayerControll
 
 private:
 	TObjectPtr<UProject1GameViewportClientBase> Project1GameViewportClient{ nullptr };
-	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
+	FDelegateHandle OnMouseMovedDelegateHandle{};
 
 public:
 	UPROPERTY(EditAnywhere)

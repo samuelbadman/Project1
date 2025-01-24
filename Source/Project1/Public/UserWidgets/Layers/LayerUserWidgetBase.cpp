@@ -2,27 +2,30 @@
 
 
 #include "LayerUserWidgetBase.h"
-#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameInstances/Project1GameInstanceBase.h"
-#include "UserWidgets/Screens/ScreenUserWidgetBase.h"
+#include "UserWidgets/Screens/Widgets/ScreenUserWidgetBase.h"
 #include "Components/PanelWidget.h"
+#include "UserWidgets/Screens/ScreenLoadPayloads/ScreenWidgetLoadPayloadBase.h"
 
 void ULayerUserWidgetBase::SetLayerName(const FGameplayTag& Name)
 {
 	LayerName = Name;
 }
 
-void ULayerUserWidgetBase::PushContent(const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass)
+void ULayerUserWidgetBase::PushContent(const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass, const TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayloadObject)
 {
 	if (UKismetSystemLibrary::IsValidSoftClassReference(WidgetClass))
 	{
+		FStreamableManager& StreamableManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetStreamableManager() };
 		const TObjectPtr<UWidgetLayerClassASyncLoadHandle> NewHandle{ NewObject<UWidgetLayerClassASyncLoadHandle>() };
 
 		PushedContentClassASyncLoadHandles.Add(NewHandle);
 
 		NewHandle->WidgetLayer = this;
-		NewHandle->StreamableHandle = Cast<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetStreamableManager().RequestAsyncLoad(
+		NewHandle->LoadPayload = LoadPayloadObject; 
+		NewHandle->StreamableHandle = StreamableManager.RequestAsyncLoad(
 			WidgetClass.ToSoftObjectPath(),
 			FStreamableDelegate::CreateUObject(NewHandle, &UWidgetLayerClassASyncLoadHandle::OnLoadedClass)
 		);
@@ -55,7 +58,7 @@ void ULayerUserWidgetBase::PopContent()
 	if (IsValid(Top))
 	{
 		PanelWidget->AddChild(Top);
-		Top->SetVisibility(ScreenWidgetShownSlateVisibility);
+		Top->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 }
 
@@ -74,7 +77,7 @@ void ULayerUserWidgetBase::CollapseTop()
 	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
 	if (IsValid(Top))
 	{
-		Top->SetVisibility(ScreenWidgetCollapsedSlateVisibility);
+		Top->SetVisibility(ESlateVisibility::Collapsed);
 		Top->NativeOnCollapsed();
 		Top->OnCollapsed();
 	}
@@ -85,7 +88,7 @@ void ULayerUserWidgetBase::ShowTop()
 	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek()};
 	if (IsValid(Top))
 	{
-		Top->SetVisibility(ScreenWidgetShownSlateVisibility);
+		Top->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		Top->NativeOnShown();
 		Top->OnShown();
 	}
@@ -110,131 +113,22 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 
 	PushedWidget->SetOwningLayerName(LayerName);
 
-	ShowTop();
+	if (IsValid(Handle->LoadPayload))
+	{
+		PushedWidget->NativeConsumeLoadPayload(Handle->LoadPayload);
+		PushedWidget->ConsumeLoadPayload(Handle->LoadPayload);
+	}
 
 	PushedContentClassASyncLoadHandles.Remove(Handle);
+
+	// Show the screen widget without calling the screen's on shown events. This is so that on pushed screen events can behave similarly to a begin play event
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+	if (IsValid(Top))
+	{
+		Top->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
 
 	PushedWidget->NativeOnPushedToLayerStack();
 	PushedWidget->OnPushedToLayerStack();
 	OnContentPushedToLayerDelegate.Broadcast(PushedWidget);
-}
-
-void ULayerUserWidgetBase::ReceiveOnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnMouseMoved(NewMousePosition, OldMousePosition, MouseMoveDelta);
-		Top->OnMouseMoved(NewMousePosition, OldMousePosition, MouseMoveDelta);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnLeftClickTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnLeftClickTriggered(Value);
-		Top->OnLeftClickTriggered(Value);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnMiddleClickTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnMiddleClickTriggered(Value);
-		Top->OnMiddleClickTriggered(Value);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnRightClickTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnRightClickTriggered(Value);
-		Top->OnRightClickTriggered(Value);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnMouseWheelTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnMouseWheelTriggered(Value);
-		Top->OnMouseWheelTriggered(Value);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnNavigateTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnNavigateTriggered(Value);
-		Top->OnNavigateTriggered(Value);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnNavigateNoMoveTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnNavigateNoMoveTriggered(Value);
-		Top->OnNavigateNoMoveTriggered(Value);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnNavigateNoMoveNoRepeatTriggered(Value);
-		Top->OnNavigateNoMoveNoRepeatTriggered(Value);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnConfirmTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnConfirmTriggered(Value);
-		Top->OnConfirmTriggered(Value);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnCancelTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnCancelTriggered(Value);
-		Top->OnCancelTriggered(Value);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnTabTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnTabTriggered(Value);
-		Top->OnTabTriggered(Value);
-	}
-}
-
-void ULayerUserWidgetBase::ReceiveOnAnyInputTriggered(const FInputActionValue& Value)
-{
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	if (IsValid(Top))
-	{
-		Top->NativeOnAnyInputTriggered(Value);
-		Top->OnAnyInputTriggered(Value);
-	}
 }

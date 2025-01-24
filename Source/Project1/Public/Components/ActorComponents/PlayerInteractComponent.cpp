@@ -21,10 +21,16 @@ void UPlayerInteractComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 	const TObjectPtr<UCapsuleComponent> PlayerMovementCollision{ Character->GetCapsuleComponent() };
 
 	// Setup player collision actor
+	const float InteractCollisionRadius{ PlayerMovementCollision->GetScaledCapsuleRadius() * InteractCollisionRadiusMultiplier };
+	const float InteractCollisionHalfHeight{ PlayerMovementCollision->GetScaledCapsuleHalfHeight() * InteractCollisionHalfHeightMultiplier };
+
 	if (!IsValid(PlayerInteractCollisionActor))
 	{
-		// Player interact collision is not valid. Spawn player interact collision at player pawn
-		PlayerInteractCollisionActor = GetWorld()->SpawnActor<APlayerInteractCollision>(APlayerInteractCollision::StaticClass(), Character->GetActorTransform());
+		// Player interact collision is not valid. Spawn player interact collision in front of player pawn
+		const FVector CharacterLocation{ Character->GetActorLocation() };
+		const FRotator CharacterOrientation{ Character->GetActorRotation() };
+		const FVector SpawnLocation{ CharacterLocation + (CharacterOrientation.Vector() * InteractCollisionRadius) };
+		PlayerInteractCollisionActor = GetWorld()->SpawnActor<APlayerInteractCollision>(APlayerInteractCollision::StaticClass(), SpawnLocation, CharacterOrientation);
 
 		// Bind to shape component overlap events
 		UCapsuleComponent& PlayerInteractCollision{ *(PlayerInteractCollisionActor->GetCapsuleCollision()) };
@@ -33,13 +39,10 @@ void UPlayerInteractComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 	}
 
 	// Resize player interact collision
-	PlayerInteractCollisionActor->SetCapsuleCollisionSize(
-		PlayerMovementCollision->GetUnscaledCapsuleRadius() * InteractCollisionRadiusMultiplier,
-		PlayerMovementCollision->GetUnscaledCapsuleHalfHeight() * InteractCollisionHalfHeightMultiplier
-	);
+	PlayerInteractCollisionActor->SetCapsuleCollisionSize(InteractCollisionRadius, InteractCollisionHalfHeight);
 
 	// Attach player interact collision to player pawn, snapping to its transform
-	PlayerInteractCollisionActor->AttachToComponent(PlayerMovementCollision, FAttachmentTransformRules::SnapToTargetIncludingScale);
+	PlayerInteractCollisionActor->AttachToComponent(PlayerMovementCollision, FAttachmentTransformRules::KeepWorldTransform);
 }
 
 TObjectPtr<AActor> UPlayerInteractComponent::GetTargetInteractable() const

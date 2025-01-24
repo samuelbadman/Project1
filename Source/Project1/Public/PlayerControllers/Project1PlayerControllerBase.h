@@ -32,7 +32,10 @@ private:
 	bool DefaultCenterCursorInViewportOnBecomeVisible{ true };
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible);
+
+	UFUNCTION(BlueprintCallable)
 	bool IsMouseCursorVisible() const { return bShowMouseCursor; }
 
 protected:

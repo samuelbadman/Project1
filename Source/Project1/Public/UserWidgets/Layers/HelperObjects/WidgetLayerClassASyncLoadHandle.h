@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "GameplayTagContainer.h"
 #include "WidgetLayerClassASyncLoadHandle.generated.h"
 
 class ULayerUserWidgetBase;
 struct FStreamableHandle;
+class UScreenWidgetLoadPayloadBase;
 
 /**
  * 
@@ -21,7 +21,9 @@ class PROJECT1_API UWidgetLayerClassASyncLoadHandle : public UObject
 public:
 	TObjectPtr<ULayerUserWidgetBase> WidgetLayer{ nullptr };
 	TSharedPtr<FStreamableHandle> StreamableHandle{ nullptr };
-	FGameplayTag WidgetIdentifier{};
+
+	UPROPERTY() // Marked UPROPERTY so that the payload object is not deleted by garbage collection until the ASync load handle is destroyed
+	TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload{ nullptr };
 
 	void OnLoadedClass();
 };

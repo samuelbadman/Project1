@@ -4,11 +4,9 @@
 #include "GamePlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Components/ActorComponents/PlayerCharacterControllerComponent.h"
 #include "PlayerCameraManagers/GamePlayerCameraManager.h"
+#include "Components/ActorComponents/PlayerCharacterControllerComponent.h"
 #include "Components/ActorComponents/PlayerInteractComponent.h"
-#include "HUDs/Project1HUDBase.h"
-#include "DataAssets/UIInputMapping.h"
 
 AGamePlayerController::AGamePlayerController()
 {
@@ -16,11 +14,26 @@ AGamePlayerController::AGamePlayerController()
 	PlayerInteractComponent = CreateDefaultSubobject<UPlayerInteractComponent>(FName(TEXT("PlayerInteractComponent")));
 }
 
+void AGamePlayerController::AddInteractPromptUIMappingContext()
+{
+	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(InteractPromptUIInputMappingContext, InteractPromptUIInputMappingContextPriority);
+}
+
+void AGamePlayerController::RemoveInteractPromptUIMappingContext()
+{
+	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(InteractPromptUIInputMappingContext);
+}
+
 void AGamePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
 	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent{ CastChecked<UEnhancedInputComponent>(InputComponent) };
+
+	EnhancedInputComponent->BindAction(InteractPromptUIInteractInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUIInteractTriggered);
+	EnhancedInputComponent->BindAction(InteractPromptUISwitchActionInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUISwitchActionTriggered);
 
 	EnhancedInputComponent->BindAction(LookAbsoluteInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAbsoluteTriggered);
 	EnhancedInputComponent->BindAction(LookAnalogInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAnalogTriggered);
@@ -54,19 +67,23 @@ void AGamePlayerController::BeginPlay()
 	// Get world
 	World = GetWorld();
 
-	// Bind player interact events
-	PlayerInteractComponent->OnBeginInteractableOverlapDelegate.AddUObject(this, &AGamePlayerController::OnInteractableBeginPlayerOverlap);
-	PlayerInteractComponent->OnEndInteractableOverlapDelegate.AddUObject(this, &AGamePlayerController::OnInteractableEndPlayerOverlap);
+	// Add game input mapping contexts
+	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 
-	// TODO: Delay before adding mapping contexts at the start of the game as held inputs from old levels will trigger pressed inputs that are not wanted
-	Project1HUD = CastChecked<AProject1HUDBase>(GetHUD());
-	Project1HUD->BindUIInputActions(CastChecked<UEnhancedInputComponent>(InputComponent));
-
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem{ GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>() };
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(LookInputMappingContext, LookInputMappingContextPriority);
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(ResetLookInputMappingContext, ResetLookInputMappingContextPriority);
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MoveInputMappingContext, MoveInputMappingContextPriority);
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(JumpInputMappingContext, JumpInputMappingContextPriority);
+}
+
+void AGamePlayerController::OnInteractPromptUIInteractTriggered(const FInputActionValue& Value)
+{
+	InteractPromptUIInteractTriggered.Broadcast(Value);
+}
+
+void AGamePlayerController::OnInteractPromptUISwitchActionTriggered(const FInputActionValue& Value)
+{
+	InteractPromptUISwitchActionTriggered.Broadcast(Value);
 }
 
 void AGamePlayerController::OnLookAbsoluteTriggered(const FInputActionValue& Value)
@@ -141,30 +158,4 @@ void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
 void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Jump input triggered")));
-}
-
-void AGamePlayerController::OnInteractableBeginPlayerOverlap(TWeakObjectPtr<AActor> Interactable, int32 NumOverlappedInteractables)
-{
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem{ GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>() };
-	const TObjectPtr<UUIInputMapping> UIInputMapping{ Project1HUD->GetUIInputMapping() };
-
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(
-		UIInputMapping->GetUINavigateNoMoveNoRepeatInputMappingContext(), 
-		UIInputMapping->GetUINavigateNoMoveNoRepeatInputMappingContextPriority());
-
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(UIInputMapping->GetUIConfirmInputMappingContext(), UIInputMapping->GetUIConfirmInputMappingContextPriority());
-
-	Project1HUD->SetActiveInputPrimaryLayoutLayer(InteractPromptWidgetLayerName);
-}
-
-void AGamePlayerController::OnInteractableEndPlayerOverlap(TWeakObjectPtr<AActor> Interactable, int32 NumOverlappedInteractables)
-{
-	if (NumOverlappedInteractables == 0)
-	{
-		const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem{ GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>() };
-		const TObjectPtr<UUIInputMapping> UIInputMapping{ Project1HUD->GetUIInputMapping() };
-
-		EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(UIInputMapping->GetUINavigateNoMoveNoRepeatInputMappingContext());
-		EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(UIInputMapping->GetUIConfirmInputMappingContext());
-	}
 }

@@ -10,10 +10,8 @@ class UPrimaryLayoutUserWidgetBase;
 struct FGameplayTag;
 class UScreenUserWidgetBase;
 class ULayerUserWidgetBase;
-struct FInputActionValue;
-class UEnhancedInputComponent;
-class UUIInputMapping;
 class UProject1GameViewportClientBase;
+class UScreenWidgetLoadPayloadBase;
 
 /**
  *
@@ -24,45 +22,31 @@ class PROJECT1_API AProject1HUDBase : public AHUD
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UUIInputMapping> UIInputMapping{ nullptr };
-
 	UPROPERTY(EditDefaultsOnly, Category = "PrimaryWidgetLayout")
 	TSubclassOf<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidgetClass{ nullptr };
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidget{ nullptr };
 
-	FDelegateHandle OnMouseMovedDelegateHandle{};
-
 public:
-	void PushContentToPrimaryLayoutLayer(const FGameplayTag& LayerName, const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass);
-	void PopContentFromPrimaryLayoutLayer(const FGameplayTag& LayerName);
-	ULayerUserWidgetBase* GetRegisteredPrimaryLayoutLayer(const FGameplayTag& LayerName);
-	void SetActiveInputPrimaryLayoutLayer(const FGameplayTag& LayerName);
-	const FGameplayTag& GetPreviousActiveInputPrimaryLayoutLayer() const;
-	bool IsContentOnTopOfPrimaryLayoutLayer(const FGameplayTag& LayerName, TObjectPtr<UScreenUserWidgetBase> Widget) const;
+	void PushContentToPrimaryLayoutWidgetLayer(
+		const FGameplayTag& LayerName, 
+		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass, 
+		UScreenWidgetLoadPayloadBase* const LoadPayloadObject = nullptr
+	);
+	void PopContentFromPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName);
+	TObjectPtr<ULayerUserWidgetBase> GetRegisteredPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName) const;
 
-	void BindUIInputActions(UEnhancedInputComponent* EnhancedInputComponent);
-	void BindToMouseMoveEvents(UProject1GameViewportClientBase* Project1GameViewportClient);
-	void UnbindFromMouseMoveEvents(UProject1GameViewportClientBase* Project1GameViewportClient);
-
-	FORCEINLINE TObjectPtr<UUIInputMapping> GetUIInputMapping() const { return UIInputMapping; }
+	// Helper function to setup and push a confirm modal to a widget layer
+	UFUNCTION(BlueprintCallable)
+	void PushConfirmModalToWidgetLayer(
+		const FGameplayTag& LayerName,
+		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
+		const FText& ModalPromptText,
+		const FText& Option1Text,
+		const FText& Option2Text
+	);
 
 protected:
 	void BeginPlay() override;
-
-private:
-	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
-	void OnLeftClickTriggered(const FInputActionValue& Value);
-	void OnMiddleClickTriggered(const FInputActionValue& Value);
-	void OnRightClickTriggered(const FInputActionValue& Value);
-	void OnMouseWheelTriggered(const FInputActionValue& Value);
-	void OnNavigateTriggered(const FInputActionValue& Value);
-	void OnNavigateNoMoveTriggered(const FInputActionValue& Value);
-	void OnNavigateNoMoveNoRepeatTriggered(const FInputActionValue& Value);
-	void OnConfirmTriggered(const FInputActionValue& Value);
-	void OnCancelTriggered(const FInputActionValue& Value);
-	void OnTabTriggered(const FInputActionValue& Value);
-	void OnAnyInputTriggered(const FInputActionValue& Value);
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "HUDs/Project1HUDBase.h"
+#include "GameplayTagContainer.h"
 #include "GameHUD.generated.h"
 
 /**
@@ -13,5 +14,5 @@ UCLASS()
 class PROJECT1_API AGameHUD : public AProject1HUDBase
 {
 	GENERATED_BODY()
-	
+
 };
