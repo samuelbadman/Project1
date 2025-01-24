@@ -24,7 +24,7 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	bool RegisterLayer(const FGameplayTag& LayerName, ULayerUserWidgetBase* LayerWidget);
+	bool RegisterLayer(const FGameplayTag& LayerName, int32 InLayerPriority, ULayerUserWidgetBase* LayerWidget);
 
 	UFUNCTION(BlueprintCallable)
 	bool UnregisterLayer(const FGameplayTag& LayerName);
@@ -41,4 +41,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	ULayerUserWidgetBase* GetRegisteredLayer(const FGameplayTag& LayerName);
+
+	bool DoesLayerBlockContentInput(const int32 ContentLayerPriority) const;
 };

@@ -14,6 +14,7 @@ void UProject1GameViewportClientBase::Init(FWorldContext& WorldContext, UGameIns
 bool UProject1GameViewportClientBase::InputKey(const FInputKeyEventArgs& EventArgs)
 {
 	UpdateUsingGamepadState(EventArgs.Key.IsGamepadKey());
+	OnInputKey.Broadcast(EventArgs);
 	return Super::InputKey(EventArgs);
 }
 
@@ -41,8 +42,16 @@ void UProject1GameViewportClientBase::DetectMouseMove()
 
 void UProject1GameViewportClientBase::OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
 {
+	static bool FirstCall{ true };
+	if (FirstCall)
+	{
+		FirstCall = false;
+		UpdateUsingGamepadState(false);
+		return;
+	}
+
 	UpdateUsingGamepadState(false);
-	OnMouseMovedDelegate.Broadcast(NewMousePosition, OldMousePosition, MouseMoveDelta);
+	MouseMoved.Broadcast(NewMousePosition, OldMousePosition, MouseMoveDelta);
 }
 
 void UProject1GameViewportClientBase::UpdateUsingGamepadState(bool GamepadInput)
@@ -66,5 +75,5 @@ void UProject1GameViewportClientBase::UpdateUsingGamepadState(bool GamepadInput)
 void UProject1GameViewportClientBase::ChangeGamepadState(bool UsingGamepad)
 {
 	bUsingGamepad = UsingGamepad;
-	OnInputDeviceChangedDelegate.Broadcast(UsingGamepad);
+	InputDeviceChanged.Broadcast(UsingGamepad);
 }

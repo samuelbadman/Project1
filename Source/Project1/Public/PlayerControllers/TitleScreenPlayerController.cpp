@@ -4,6 +4,29 @@
 #include "TitleScreenPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameViewportClients/Project1GameViewportClientBase.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+
+void ATitleScreenPlayerController::AddPressAnyInputInputMappingContext()
+{
+	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(PressAnyInputInputMappingContext, PressAnyInputMappingContextPriority);
+}
+
+void ATitleScreenPlayerController::RemovePressAnyInputInputMappingContext()
+{
+	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(PressAnyInputInputMappingContext);
+}
+
+void ATitleScreenPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent{ CastChecked<UEnhancedInputComponent>(InputComponent) };
+
+	EnhancedInputComponent->BindAction(PressAnyInputInputAction, ETriggerEvent::Triggered, this, &ATitleScreenPlayerController::OnPressAnyInputTriggered);
+}
 
 void ATitleScreenPlayerController::BeginPlay()
 {
@@ -13,12 +36,15 @@ void ATitleScreenPlayerController::BeginPlay()
 	Project1GameViewportClient = CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient());
 
 	// Bind to on input device changed events
-	OnMouseMovedDelegateHandle = Project1GameViewportClient->OnMouseMovedDelegate.AddWeakLambda(this,
+	OnMouseMovedDelegateHandle = Project1GameViewportClient->MouseMoved.AddWeakLambda(this,
 		[this](const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta) {
 			SetMouseCursorVisibility(EMouseCursorVisibility::Visible, bLockMouseToViewportWhenShown, bCenterMouseInViewportWhenShown);
 		});
 
-	// TODO: Hide cursor on any keyboard or gamepad input
+	OnInputKeyDelegateHandle = Project1GameViewportClient->OnInputKey.AddWeakLambda(this,
+		[this](const FInputKeyEventArgs& EventArgs) {
+			SetMouseCursorVisibility(EMouseCursorVisibility::Hidden, bLockMouseToViewportWhenShown, bCenterMouseInViewportWhenShown);
+		});
 }
 
 void ATitleScreenPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -26,6 +52,14 @@ void ATitleScreenPlayerController::EndPlay(const EEndPlayReason::Type EndPlayRea
 	Super::EndPlay(EndPlayReason);
 
 	// Unbind from game viewport client events
-	Project1GameViewportClient->OnMouseMovedDelegate.Remove(OnMouseMovedDelegateHandle);
+	Project1GameViewportClient->MouseMoved.Remove(OnMouseMovedDelegateHandle);
 	OnMouseMovedDelegateHandle.Reset();
+
+	Project1GameViewportClient->OnInputKey.Remove(OnInputKeyDelegateHandle);
+	OnInputKeyDelegateHandle.Reset();
+}
+
+void ATitleScreenPlayerController::OnPressAnyInputTriggered(const FInputActionValue& Value)
+{
+	PressAnyInputTriggered.Broadcast(Value);
 }

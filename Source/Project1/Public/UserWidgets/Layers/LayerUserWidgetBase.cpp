@@ -9,11 +9,6 @@
 #include "Components/PanelWidget.h"
 #include "UserWidgets/Screens/ScreenLoadPayloads/ScreenWidgetLoadPayloadBase.h"
 
-void ULayerUserWidgetBase::SetLayerName(const FGameplayTag& Name)
-{
-	LayerName = Name;
-}
-
 void ULayerUserWidgetBase::PushContent(const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass, const TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayloadObject)
 {
 	if (UKismetSystemLibrary::IsValidSoftClassReference(WidgetClass))
@@ -41,7 +36,7 @@ void ULayerUserWidgetBase::PopContent()
 
 	// Set top to the current widget on top of the stack
 	TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
-	Top->SetOwningLayerName({});
+	Top->SetOwningLayer({});
 	Top->RemoveFromParent();
 	WidgetStack.RemoveAt(WidgetStack.Num() - 1);
 
@@ -51,7 +46,7 @@ void ULayerUserWidgetBase::PopContent()
 	Top->NativeOnPoppedFromLayerStack();
 	Top->OnPoppedFromLayerStack();
 
-	OnContentPoppedFromLayerDelegate.Broadcast(Top);
+	ContentPoppedFromLayer.Broadcast(Top);
 
 	// Update top to the new widget that is currently on top of the stack. There may not be one so this can be null
 	Top = Peek();
@@ -99,6 +94,23 @@ bool ULayerUserWidgetBase::IsEmpty() const
 	return WidgetStack.IsEmpty();
 }
 
+bool ULayerUserWidgetBase::IsContentTop(TObjectPtr<UScreenUserWidgetBase> Content) const
+{
+	return (Peek() == Content);
+}
+
+bool ULayerUserWidgetBase::ShouldBlockLowerPriorityLayerInput() const
+{
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
+
+	if (!IsValid(Top))
+	{
+		return false;
+	}
+
+	return Top->bBlockLowerPriorityLayerInput;
+}
+
 void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLayerClassASyncLoadHandle> Handle)
 {
 	const TObjectPtr<UScreenUserWidgetBase> PushedWidget{ CreateWidget<UScreenUserWidgetBase>(GetOwningPlayer(), Handle->StreamableHandle->GetLoadedAsset<UClass>()) };
@@ -111,7 +123,7 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 	WidgetStack.Add(PushedWidget);
 	PanelWidget->AddChild(PushedWidget);
 
-	PushedWidget->SetOwningLayerName(LayerName);
+	PushedWidget->SetOwningLayer(this);
 
 	if (IsValid(Handle->LoadPayload))
 	{
@@ -130,5 +142,5 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 
 	PushedWidget->NativeOnPushedToLayerStack();
 	PushedWidget->OnPushedToLayerStack();
-	OnContentPushedToLayerDelegate.Broadcast(PushedWidget);
+	ContentPushedToLayer.Broadcast(PushedWidget);
 }

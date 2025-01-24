@@ -24,6 +24,11 @@ TObjectPtr<ULayerUserWidgetBase> AProject1HUDBase::GetRegisteredPrimaryLayoutWid
 	return PrimaryLayoutWidget->GetRegisteredLayer(LayerName);
 }
 
+bool AProject1HUDBase::DoesPrimaryLayoutWidgetLayerBlockContentInput(const int32 ContentLayerPriority) const
+{
+	return PrimaryLayoutWidget->DoesLayerBlockContentInput(ContentLayerPriority);
+}
+
 void AProject1HUDBase::PushConfirmModalToWidgetLayer(
 	const FGameplayTag& LayerName, 
 	const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,

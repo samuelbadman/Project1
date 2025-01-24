@@ -97,16 +97,24 @@ void UInteractPromptScreen::OnTargetInteractableChanged(TWeakObjectPtr<AActor> N
 
 void UInteractPromptScreen::OnInteractTriggered(const FInputActionValue& Value)
 {
-	if (const TObjectPtr<AActor> TargetInteractable = PlayerInteractComponent->GetTargetInteractable())
+	// Only want to handle inputs when the widget is on top of the owning layer
+	if (CanReceiveInput())
 	{
-		IInteractable::Execute_OnInteractedWith(TargetInteractable, GamePlayerController->GetPawn());
+		if (const TObjectPtr<AActor> TargetInteractable = PlayerInteractComponent->GetTargetInteractable())
+		{
+			IInteractable::Execute_OnInteractedWith(TargetInteractable, GamePlayerController->GetPawn());
+		}
 	}
 }
 
 void UInteractPromptScreen::OnSwitchActionTriggered(const FInputActionValue& Value)
 {
-	if (PlayerInteractComponent->GetNumOverlappedInteractables() > 1)
+	// Only want to handle inputs when the widget is on top of the owning layer
+	if(CanReceiveInput())
 	{
-		PlayerInteractComponent->IncrementTargetInteractableIndex(static_cast<int32>(Value.Get<float>()));
+		if (PlayerInteractComponent->GetNumOverlappedInteractables() > 1)
+		{
+			PlayerInteractComponent->IncrementTargetInteractableIndex(static_cast<int32>(Value.Get<float>()));
+		}
 	}
 }

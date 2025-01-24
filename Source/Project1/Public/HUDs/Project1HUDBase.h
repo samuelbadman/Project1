@@ -36,6 +36,7 @@ public:
 	);
 	void PopContentFromPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName);
 	TObjectPtr<ULayerUserWidgetBase> GetRegisteredPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName) const;
+	bool DoesPrimaryLayoutWidgetLayerBlockContentInput(const int32 ContentLayerPriority) const;
 
 	// Helper function to setup and push a confirm modal to a widget layer
 	UFUNCTION(BlueprintCallable)

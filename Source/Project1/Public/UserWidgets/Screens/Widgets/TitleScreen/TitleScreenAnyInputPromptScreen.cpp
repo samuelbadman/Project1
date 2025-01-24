@@ -4,20 +4,36 @@
 #include "TitleScreenAnyInputPromptScreen.h"
 #include "HUDs/Project1HUDBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "PlayerControllers/TitleScreenPlayerController.h"
 
-void UTitleScreenAnyInputPromptScreen::NativeOnInitialized()
+void UTitleScreenAnyInputPromptScreen::NativeOnPushedToLayerStack()
 {
-	Super::NativeOnInitialized();
+	TitleScreenPlayerController = CastChecked<ATitleScreenPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	Project1HUD = CastChecked<AProject1HUDBase>(TitleScreenPlayerController->GetHUD());
 
-	Project1HUD = CastChecked<AProject1HUDBase>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	// Register to events
+	PressAnyInputTriggeredDelegateHandle = TitleScreenPlayerController->PressAnyInputTriggered.AddUObject(this, &UTitleScreenAnyInputPromptScreen::OnPressAnyInputTriggered);
+
+	// Add input mapping context
+	TitleScreenPlayerController->AddPressAnyInputInputMappingContext();
 }
 
-void UTitleScreenAnyInputPromptScreen::NativeOnShown()
+void UTitleScreenAnyInputPromptScreen::NativeOnPoppedFromLayerStack()
 {
-	// TODO: Play animation to fade in UI
+	// Remove input mapping context
+	TitleScreenPlayerController->RemovePressAnyInputInputMappingContext();
+
+	// Unregister from events
+	TitleScreenPlayerController->PressAnyInputTriggered.Remove(PressAnyInputTriggeredDelegateHandle);
+	PressAnyInputTriggeredDelegateHandle.Reset();
 }
 
-//void UTitleScreenAnyInputPromptScreen::NativeOnAnyInputTriggered(const FInputActionValue& Value)
-//{
-//	Project1HUD->PushContentToPrimaryLayoutWidgetLayer(TitleScreenMainMenuScreenTargetLayerName, TitleScreenMainMenuScreenClass);
-//}
+void UTitleScreenAnyInputPromptScreen::OnPressAnyInputTriggered(const FInputActionValue& Value)
+{
+	// Only handle input if on top of owning widget layer
+	if (CanReceiveInput())
+	{
+		// Push main menu screen to target widget layer
+		Project1HUD->PushContentToPrimaryLayoutWidgetLayer(TitleScreenMainMenuScreenTargetLayerName, TitleScreenMainMenuScreenClass);
+	}
+}

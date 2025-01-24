@@ -4,7 +4,7 @@
 #include "PrimaryLayoutUserWidgetBase.h"
 #include "UserWidgets/Layers/LayerUserWidgetBase.h"
 
-bool UPrimaryLayoutUserWidgetBase::RegisterLayer(const FGameplayTag& LayerName, ULayerUserWidgetBase* LayerWidget)
+bool UPrimaryLayoutUserWidgetBase::RegisterLayer(const FGameplayTag& LayerName, int32 InLayerPriority, ULayerUserWidgetBase* LayerWidget)
 {
 	if (!IsValid(LayerWidget))
 	{
@@ -18,6 +18,7 @@ bool UPrimaryLayoutUserWidgetBase::RegisterLayer(const FGameplayTag& LayerName, 
 
 	TObjectPtr<ULayerUserWidgetBase>& RegisteredLayer{ Layers.Add(LayerName, LayerWidget) };
 	RegisteredLayer->SetLayerName(LayerName);
+	RegisteredLayer->SetLayerPriority(InLayerPriority);
 
 	return true;
 }
@@ -68,4 +69,26 @@ ULayerUserWidgetBase* UPrimaryLayoutUserWidgetBase::GetRegisteredLayer(const FGa
 	}
 
 	return (*pLayer);
+}
+
+bool UPrimaryLayoutUserWidgetBase::DoesLayerBlockContentInput(const int32 ContentLayerPriority) const
+{
+	// For each layer
+	for (const TPair<FGameplayTag, TObjectPtr<ULayerUserWidgetBase>>& Pair : Layers)
+	{
+		// Does the layer have a higher priority
+		// Layers with the same priority will not block input
+		if (Pair.Value->GetLayerPriority() > ContentLayerPriority)
+		{
+			// Should the layer block input
+			if (Pair.Value->ShouldBlockLowerPriorityLayerInput())
+			{
+				// Block input
+				return true;
+			}
+		}
+	}
+
+	// No layer blocked input
+	return false;
 }

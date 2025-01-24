@@ -16,12 +16,18 @@ class PROJECT1_API UScreenUserWidgetBase : public UProject1UserWidgetBase
 {
 	GENERATED_BODY()
 
+public:
+	UPROPERTY(EditAnywhere)
+	bool bBlockLowerPriorityLayerInput{ true };
+
 private:
-	// The name of the UI widget layer that owns this screen. The name of the widget layer the screen widget was pushed to
-	FGameplayTag OwningLayerName{};
+	// A reference to the HUD
+	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
+	// A reference to the widget layer the screen is in
+	TObjectPtr<ULayerUserWidgetBase> OwningLayer{ nullptr };
 
 public:
-	void SetOwningLayerName(const FGameplayTag& LayerName);
+	void SetOwningLayer(TObjectPtr<ULayerUserWidgetBase> Layer);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPushedToLayerStack();
@@ -49,5 +55,14 @@ public:
 	// Called when the widget has finished loading if a valid load payload object was provided when pushing the screen widget to a widget layer
 	virtual void NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload) {};
 
-	FORCEINLINE const FGameplayTag& GetOwningLayerName() const { return OwningLayerName; }
+	const FGameplayTag& GetOwningLayerName() const;
+	bool CanReceiveInput() const;
+
+	FORCEINLINE TObjectPtr<ULayerUserWidgetBase> GetOwningLayer() const { return OwningLayer; }
+
+private:
+	void NativeOnInitialized() override;
+
+	bool IsTopOfOwningLayer() const;
+	bool IsInputBlockedByHigherLayer() const;
 };

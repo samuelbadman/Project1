@@ -6,8 +6,9 @@
 #include "Engine/GameViewportClient.h"
 #include "Project1GameViewportClientBase.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnInputDeviceChangedDelegateSignature, bool /* UsingGamepad */);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnMouseMovedDelegateSignature, const FVector2D& /*NewMousePosition*/, const FVector2D& /*OldMousePosition*/, const FVector2D& /*MouseMoveDelta*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnInputDeviceChangedDelegate, bool /* UsingGamepad */);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnMouseMovedDelegate, const FVector2D& /*NewMousePosition*/, const FVector2D& /*OldMousePosition*/, const FVector2D& /*MouseMoveDelta*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnInputKeyDelegate, const FInputKeyEventArgs& /* EventArgs */);
 
 /**
  * 
@@ -18,8 +19,9 @@ class PROJECT1_API UProject1GameViewportClientBase : public UGameViewportClient
 	GENERATED_BODY()
 	
 public:
-	FOnInputDeviceChangedDelegateSignature OnInputDeviceChangedDelegate{};
-	FOnMouseMovedDelegateSignature OnMouseMovedDelegate{};
+	FOnInputDeviceChangedDelegate InputDeviceChanged{};
+	FOnMouseMovedDelegate MouseMoved{};
+	FOnInputKeyDelegate OnInputKey{};
 
 private:
 	UPROPERTY(EditDefaultsOnly)

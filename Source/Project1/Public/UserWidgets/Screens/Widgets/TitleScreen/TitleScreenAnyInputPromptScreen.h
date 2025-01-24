@@ -6,7 +6,9 @@
 #include "UserWidgets/Screens/Widgets/ScreenUserWidgetBase.h"
 #include "TitleScreenAnyInputPromptScreen.generated.h"
 
+class ATitleScreenPlayerController;
 class AProject1HUDBase;
+struct FInputActionValue;
 
 /**
  * 
@@ -24,10 +26,14 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag TitleScreenMainMenuScreenTargetLayerName{};
 
+	TObjectPtr<ATitleScreenPlayerController> TitleScreenPlayerController{ nullptr };
 	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
 
+	FDelegateHandle PressAnyInputTriggeredDelegateHandle{};
+
 private:
-	void NativeOnInitialized() override;
-	// Called when the widget is manually shown on top of a widget layer stack by calling ShowTop on the layer
-	void NativeOnShown() override;
+	void NativeOnPushedToLayerStack() override;
+	void NativeOnPoppedFromLayerStack() override;
+
+	void OnPressAnyInputTriggered(const FInputActionValue& Value);
 };
