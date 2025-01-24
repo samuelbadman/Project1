@@ -13,6 +13,9 @@ class UProject1GameViewportClientBase;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPressAnyInputTriggeredDelegate, const FInputActionValue& /* Value */);
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMainMenuUIConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMainMenuUINavigateTriggeredDelegate, const FInputActionValue& /* Value */);
+
 /**
  * 
  */
@@ -30,6 +33,9 @@ public:
 
 	FOnPressAnyInputTriggeredDelegate PressAnyInputTriggered{};
 
+	FOnMainMenuUIConfirmTriggeredDelegate MainMenuUIConfirmTriggered{};
+	FOnMainMenuUINavigateTriggeredDelegate MainMenuUINavigateTriggered{};
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInput")
 	TObjectPtr<UInputMappingContext> PressAnyInputInputMappingContext{ nullptr };
@@ -40,6 +46,20 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInput")
 	TObjectPtr<UInputAction> PressAnyInputInputAction{ nullptr };
 
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuUI")
+	TObjectPtr<UInputMappingContext> MainMenuUIInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuUI")
+	int32 MainMenuUIInputMappingContextPriority{ 10 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuUI")
+	TObjectPtr<UInputAction> MainMenuUIConfirmInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuUI")
+	TObjectPtr<UInputAction> MainMenuUINavigateInputAction{ nullptr };
+
+
 	TObjectPtr<UProject1GameViewportClientBase> Project1GameViewportClient{ nullptr };
 	FDelegateHandle OnMouseMovedDelegateHandle{};
 	FDelegateHandle OnInputKeyDelegateHandle{};
@@ -48,10 +68,16 @@ public:
 	void AddPressAnyInputInputMappingContext();
 	void RemovePressAnyInputInputMappingContext();
 
+	void AddMainMenuUIInputMappingContext();
+	void RemoveMainMenuUIInputMappingContext();
+
 private:
 	void SetupInputComponent() override;
 	void BeginPlay() override;
 	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void OnPressAnyInputTriggered(const FInputActionValue& Value);
+
+	void OnMainMenuUIConfirmTriggered(const FInputActionValue& Value);
+	void OnMainMenuUINavigateTriggered(const FInputActionValue& Value);
 };

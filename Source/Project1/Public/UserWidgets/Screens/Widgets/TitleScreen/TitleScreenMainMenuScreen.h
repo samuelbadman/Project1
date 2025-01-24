@@ -6,6 +6,9 @@
 #include "UserWidgets/Screens/Widgets/ScreenUserWidgetBase.h"
 #include "TitleScreenMainMenuScreen.generated.h"
 
+class ATitleScreenPlayerController;
+struct FInputActionValue;
+
 /**
  *
  */
@@ -14,4 +17,16 @@ class UTitleScreenMainMenuScreen : public UScreenUserWidgetBase
 {
 	GENERATED_BODY()
 
+private:
+	TObjectPtr<ATitleScreenPlayerController> TitleScreenPlayerController{ nullptr };
+
+	FDelegateHandle MainMenuUIConfirmTriggeredDelegateHandle{};
+	FDelegateHandle MainMenuUINavigateTriggeredDelegateHandle{};
+
+private:
+	void NativeOnPushedToLayerStack() override;
+	void NativeOnPoppedFromLayerStack() override;
+
+	void OnMainMenuUIConfirmTriggered(const FInputActionValue& Value);
+	void OnMainMenuUINavigateTriggered(const FInputActionValue& Value);
 };

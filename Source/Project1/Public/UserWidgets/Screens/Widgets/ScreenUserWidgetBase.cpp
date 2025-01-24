@@ -18,6 +18,8 @@ const FGameplayTag& UScreenUserWidgetBase::GetOwningLayerName() const
 
 bool UScreenUserWidgetBase::CanReceiveInput() const
 {
+	// A screen widget can only receive input if is on the top of its owning layer's widget stack and there is not another screen on a widget layer with a higher priority than
+	// the screen widget's owning layer's priority
 	return ((IsTopOfOwningLayer()) &&
 		(!IsInputBlockedByHigherLayer()));
 }

@@ -19,6 +19,18 @@ void ATitleScreenPlayerController::RemovePressAnyInputInputMappingContext()
 	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(PressAnyInputInputMappingContext);
 }
 
+void ATitleScreenPlayerController::AddMainMenuUIInputMappingContext()
+{
+	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MainMenuUIInputMappingContext, MainMenuUIInputMappingContextPriority);
+}
+
+void ATitleScreenPlayerController::RemoveMainMenuUIInputMappingContext()
+{
+	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(MainMenuUIInputMappingContext);
+}
+
 void ATitleScreenPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -26,6 +38,9 @@ void ATitleScreenPlayerController::SetupInputComponent()
 	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent{ CastChecked<UEnhancedInputComponent>(InputComponent) };
 
 	EnhancedInputComponent->BindAction(PressAnyInputInputAction, ETriggerEvent::Triggered, this, &ATitleScreenPlayerController::OnPressAnyInputTriggered);
+
+	EnhancedInputComponent->BindAction(MainMenuUIConfirmInputAction, ETriggerEvent::Triggered, this, &ATitleScreenPlayerController::OnMainMenuUIConfirmTriggered);
+	EnhancedInputComponent->BindAction(MainMenuUINavigateInputAction, ETriggerEvent::Triggered, this, &ATitleScreenPlayerController::OnMainMenuUINavigateTriggered);
 }
 
 void ATitleScreenPlayerController::BeginPlay()
@@ -43,7 +58,13 @@ void ATitleScreenPlayerController::BeginPlay()
 
 	OnInputKeyDelegateHandle = Project1GameViewportClient->OnInputKey.AddWeakLambda(this,
 		[this](const FInputKeyEventArgs& EventArgs) {
-			SetMouseCursorVisibility(EMouseCursorVisibility::Hidden, bLockMouseToViewportWhenShown, bCenterMouseInViewportWhenShown);
+			EMouseCursorVisibility NewCursorVisibility{ ((EventArgs.Key == EKeys::LeftMouseButton) ||
+				(EventArgs.Key == EKeys::MiddleMouseButton) ||
+				(EventArgs.Key == EKeys::RightMouseButton) ||
+				(EventArgs.Key == EKeys::MouseScrollUp) ||
+				(EventArgs.Key == EKeys::MouseScrollDown)) ? EMouseCursorVisibility::Visible : EMouseCursorVisibility::Hidden };
+
+			SetMouseCursorVisibility(NewCursorVisibility, bLockMouseToViewportWhenShown, bCenterMouseInViewportWhenShown);
 		});
 }
 
@@ -62,4 +83,14 @@ void ATitleScreenPlayerController::EndPlay(const EEndPlayReason::Type EndPlayRea
 void ATitleScreenPlayerController::OnPressAnyInputTriggered(const FInputActionValue& Value)
 {
 	PressAnyInputTriggered.Broadcast(Value);
+}
+
+void ATitleScreenPlayerController::OnMainMenuUIConfirmTriggered(const FInputActionValue& Value)
+{
+	MainMenuUIConfirmTriggered.Broadcast(Value);
+}
+
+void ATitleScreenPlayerController::OnMainMenuUINavigateTriggered(const FInputActionValue& Value)
+{
+	MainMenuUINavigateTriggered.Broadcast(Value);
 }
