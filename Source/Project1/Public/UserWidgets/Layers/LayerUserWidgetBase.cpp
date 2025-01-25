@@ -9,6 +9,9 @@
 #include "Components/PanelWidget.h"
 #include "UserWidgets/Screens/ScreenLoadPayloads/ScreenWidgetLoadPayloadBase.h"
 
+static constexpr ESlateVisibility ScreenShownSlateVisibility{ ESlateVisibility::SelfHitTestInvisible };
+static constexpr ESlateVisibility ScreenHiddenSlateVisibility{ ESlateVisibility::Collapsed };
+
 void ULayerUserWidgetBase::PushContent(const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass, const TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayloadObject)
 {
 	if (UKismetSystemLibrary::IsValidSoftClassReference(WidgetClass))
@@ -19,7 +22,7 @@ void ULayerUserWidgetBase::PushContent(const TSoftClassPtr<UScreenUserWidgetBase
 		PushedContentClassASyncLoadHandles.Add(NewHandle);
 
 		NewHandle->WidgetLayer = this;
-		NewHandle->LoadPayload = LoadPayloadObject; 
+		NewHandle->LoadPayload = LoadPayloadObject;
 		NewHandle->StreamableHandle = StreamableManager.RequestAsyncLoad(
 			WidgetClass.ToSoftObjectPath(),
 			FStreamableDelegate::CreateUObject(NewHandle, &UWidgetLayerClassASyncLoadHandle::OnLoadedClass)
@@ -53,7 +56,7 @@ void ULayerUserWidgetBase::PopContent()
 	if (IsValid(Top))
 	{
 		PanelWidget->AddChild(Top);
-		Top->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		Top->SetVisibility(ScreenShownSlateVisibility);
 	}
 }
 
@@ -72,7 +75,7 @@ void ULayerUserWidgetBase::CollapseTop()
 	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
 	if (IsValid(Top))
 	{
-		Top->SetVisibility(ESlateVisibility::Collapsed);
+		Top->SetVisibility(ScreenHiddenSlateVisibility);
 		Top->NativeOnCollapsed();
 		Top->OnCollapsed();
 	}
@@ -80,10 +83,10 @@ void ULayerUserWidgetBase::CollapseTop()
 
 void ULayerUserWidgetBase::ShowTop()
 {
-	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek()};
+	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
 	if (IsValid(Top))
 	{
-		Top->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		Top->SetVisibility(ScreenShownSlateVisibility);
 		Top->NativeOnShown();
 		Top->OnShown();
 	}
@@ -137,7 +140,7 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
 	if (IsValid(Top))
 	{
-		Top->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		Top->SetVisibility(ScreenShownSlateVisibility);
 	}
 
 	PushedWidget->NativeOnPushedToLayerStack();
