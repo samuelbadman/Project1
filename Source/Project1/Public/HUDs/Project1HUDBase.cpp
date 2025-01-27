@@ -2,8 +2,8 @@
 
 
 #include "Project1HUDBase.h"
-#include "UserWidgets/PrimaryLayouts/PrimaryLayoutUserWidgetBase.h"
-#include "UserWidgets/Screens/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
+#include "UMG/PrimaryLayouts/PrimaryLayoutUserWidgetBase.h"
+#include "UMG/Screens/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
 
 void AProject1HUDBase::PushContentToPrimaryLayoutWidgetLayer(
 	const FGameplayTag& LayerName,
