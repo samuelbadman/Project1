@@ -9,6 +9,7 @@
 class ATitleScreenPlayerController;
 struct FInputActionValue;
 class UProject1ButtonBase;
+class UScrollBox;
 
 /**
  *
@@ -29,6 +30,9 @@ private:
 public:
 	UFUNCTION(BlueprintCallable)
 	void RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex = 0);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	UScrollBox* GetScrollBox();
 
 private:
 	void NativeOnPushedToLayerStack() override;

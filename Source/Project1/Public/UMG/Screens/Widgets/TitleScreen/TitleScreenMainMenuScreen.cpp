@@ -6,6 +6,7 @@
 #include "PlayerControllers/TitleScreenPlayerController.h"
 #include "InputActionValue.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
+#include "Components/ScrollBox.h"
 
 void UTitleScreenMainMenuScreen::RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex)
 {
@@ -81,6 +82,9 @@ void UTitleScreenMainMenuScreen::OnRegisteredMenuButtonHovered(UProject1ButtonBa
 void UTitleScreenMainMenuScreen::HoverButton(TObjectPtr<UProject1ButtonBase> Button)
 {
 	Button->MakeHovered();
+
+	// Scroll to widget in main menu scroll box
+	GetScrollBox()->ScrollWidgetIntoView(Button);
 }
 
 void UTitleScreenMainMenuScreen::SetHoveredButton(TObjectPtr<UProject1ButtonBase> NewHoveredButton)
