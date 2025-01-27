@@ -15,3 +15,15 @@ bool UProject1UserWidgetBase::IsCursorInsideWidgetGeometry(const FVector2D& Mous
 	return (MousePosition.X > TopLeftPixel.X && MousePosition.X < BottomRightPixel.X &&
 		MousePosition.Y > TopLeftPixel.Y && MousePosition.Y < BottomRightPixel.Y);
 }
+
+TWeakObjectPtr<UWidget> UProject1UserWidgetBase::GetNavigatedWidget(EWidgetNavigationDirection Direction) const
+{
+	switch (Direction)
+	{
+	case EWidgetNavigationDirection::Up: return NavigateUpWidget; break;
+	case EWidgetNavigationDirection::Down: return NavigateDownWidget; break;
+	case EWidgetNavigationDirection::Left: return NavigateLeftWidget; break;
+	case EWidgetNavigationDirection::Right: return NavigateRightWidget; break;
+	}
+	return nullptr;
+}

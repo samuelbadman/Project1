@@ -46,7 +46,13 @@ void UTitleScreenMainMenuScreen::NativeOnPoppedFromLayerStack()
 
 void UTitleScreenMainMenuScreen::OnMainMenuUIConfirmTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Main menu UI confirm triggered")));
+	if (!IsValid(CurrentHoveredButton))
+	{
+		return;
+	}
+
+	// Press the currently hovered button
+	CurrentHoveredButton->PressButton();
 }
 
 void UTitleScreenMainMenuScreen::OnMainMenuUINavigateTriggered(const FInputActionValue& Value)
@@ -57,20 +63,15 @@ void UTitleScreenMainMenuScreen::OnMainMenuUINavigateTriggered(const FInputActio
 	}
 
 	// Only care about vertical navigation as the main menu is a vertical list of buttons
-	EUINavigation Nav{ (Value.Get<FVector2D>().Y > 0) ? EUINavigation::Up : EUINavigation::Down };
+	EWidgetNavigationDirection NavDirection{ (Value.Get<FVector2D>().Y > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down };
 
-	// Get the button to navigate to. Navigation object is only created when navigation settings are set so can be null
-	const TObjectPtr<UWidgetNavigation> WidgetNavigation{ CurrentHoveredButton->Navigation };
-	if (!IsValid(WidgetNavigation))
-	{
-		return;
-	}
+	// Get the button to navigate to. Navigated widgets in the main menu should be buttons
+	const TObjectPtr<UProject1ButtonBase> NavigatedButton{ Cast<UProject1ButtonBase>(CurrentHoveredButton->GetNavigatedWidget(NavDirection).Get()) };
 
-	// Main menu is expected to be built with extended buttons so the widget being navigated to must be an extended button
-	const TObjectPtr<UProject1ButtonBase> NavButton{ Cast<UProject1ButtonBase>(WidgetNavigation->GetNavigationData(Nav).Widget.Get()) };
-	if (IsValid(NavButton))
+	// Hover the button if it is valid
+	if (IsValid(NavigatedButton))
 	{
-		HoverButton(NavButton);
+		HoverButton(NavigatedButton);
 	}
 }
 
