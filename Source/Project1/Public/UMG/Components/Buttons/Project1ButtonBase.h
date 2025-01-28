@@ -6,7 +6,7 @@
 #include "UMG/Project1UserWidgetBase.h"
 #include "Project1ButtonBase.generated.h"
 
-class UImage;
+class UBorder;
 class AProject1PlayerControllerBase;
 class UProject1GameViewportClientBase;
 
@@ -58,6 +58,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool bCanMouseUnhoverButton{ true };
 
+	UPROPERTY(EditAnywhere)
+	FMargin ContentPadding{};
+
 	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
 	TObjectPtr<UProject1GameViewportClientBase> Project1GameViewportClient{ nullptr };
 	FDelegateHandle OnMouseMovedDelegateHandle{};
@@ -68,7 +71,7 @@ private:
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
-	UImage* GetImage();
+	UBorder* GetBorder();
 
 	void SetCanMouseUnhoverButton(bool CanMouseUnhoverButton) { bCanMouseUnhoverButton = CanMouseUnhoverButton; }
 

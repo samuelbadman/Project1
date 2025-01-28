@@ -2,7 +2,8 @@
 
 
 #include "Project1ButtonBase.h"
-#include "Components/Image.h"
+#include "Components/Border.h"
+#include "Components/BorderSlot.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerControllers/Project1PlayerControllerBase.h"
 #include "GameViewportClients/Project1GameViewportClientBase.h"
@@ -11,9 +12,11 @@ void UProject1ButtonBase::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	if (const TObjectPtr<UImage> Image = GetImage())
+	if (const TObjectPtr<UBorder> Border = GetBorder())
 	{
-		Image->SetBrush(NormalBrush);
+		Border->SetBrush(NormalBrush);
+
+		CastChecked<UBorderSlot>(Border->GetSlots()[0])->SetPadding(ContentPadding);
 	}
 }
 
@@ -56,7 +59,7 @@ void UProject1ButtonBase::Deactivate()
 	Project1GameViewportClient->OnInputKey.Remove(OnInputKeyDelegateHandle);
 	OnInputKeyDelegateHandle.Reset();
 
-	GetImage()->SetBrush(NormalBrush);
+	GetBorder()->SetBrush(NormalBrush);
 
 	bActivated = false;
 }
@@ -68,7 +71,7 @@ void UProject1ButtonBase::MakeHovered()
 		return;
 	}
 
-	GetImage()->SetBrush(HoveredBrush);
+	GetBorder()->SetBrush(HoveredBrush);
 
 	bHovered = true;
 	OnHovered.Broadcast(this);
@@ -81,7 +84,7 @@ void UProject1ButtonBase::MakeUnhovered()
 		return;
 	}
 
-	GetImage()->SetBrush(NormalBrush);
+	GetBorder()->SetBrush(NormalBrush);
 
 	bHovered = false;
 	OnUnhovered.Broadcast(this);
