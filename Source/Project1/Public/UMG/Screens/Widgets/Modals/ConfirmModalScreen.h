@@ -56,4 +56,9 @@ private:
 
 	UFUNCTION()
 	void OnOptionButtonHovered(UProject1ButtonBase* ButtonHovered);
+
+	UFUNCTION()
+	void OnOption1Selected(UProject1ButtonBase* ButtonSelected);
+	UFUNCTION()
+	void OnOption2Selected(UProject1ButtonBase* ButtonSelected);
 };

@@ -24,6 +24,13 @@ void UConfirmModalScreen::NativeOnPushedToLayerStack()
 		Button->SetCanMouseUnhoverButton(false);
 	}
 
+	// Register button pressed/clicked events
+	OptionButtons[0]->OnPressed.AddDynamic(this, &UConfirmModalScreen::OnOption1Selected);
+	OptionButtons[0]->OnClicked.AddDynamic(this, &UConfirmModalScreen::OnOption1Selected);
+
+	OptionButtons[1]->OnPressed.AddDynamic(this, &UConfirmModalScreen::OnOption2Selected);
+	OptionButtons[1]->OnClicked.AddDynamic(this, &UConfirmModalScreen::OnOption2Selected);
+
 	// Hover option 1 by default
 	ButtonNavigationComponent->SetCurrentHoveredButton(OptionButtons[0]);
 
@@ -67,9 +74,7 @@ void UConfirmModalScreen::NativeOnPoppedFromLayerStack()
 
 void UConfirmModalScreen::OnConfirmInputTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Confirm modal confirm input: %d"), StaticCast<int32>(Value.Get<bool>())));
-
-
+	ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
 }
 
 void UConfirmModalScreen::OnNavigateInputTriggered(const FInputActionValue& Value)
@@ -94,4 +99,14 @@ void UConfirmModalScreen::OnNavigateInputTriggered(const FInputActionValue& Valu
 void UConfirmModalScreen::OnOptionButtonHovered(UProject1ButtonBase* ButtonHovered)
 {
 	ButtonNavigationComponent->SetCurrentHoveredButton(ButtonHovered, false);
+}
+
+void UConfirmModalScreen::OnOption1Selected(UProject1ButtonBase* ButtonSelected)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, TEXT("Option 1 selected"));
+}
+
+void UConfirmModalScreen::OnOption2Selected(UProject1ButtonBase* ButtonSelected)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, TEXT("Option 2 selected"));
 }

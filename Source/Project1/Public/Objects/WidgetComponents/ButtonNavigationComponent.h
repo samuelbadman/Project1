@@ -23,7 +23,7 @@ private:
 public:
 	void SetCurrentHoveredButton(TObjectPtr<UProject1ButtonBase> NewHoveredButton, bool MakeNewHoveredButtonHovered = true);
 
-	// Returns true if a button was navigated to else, returns false if the button failed to navigate. The button navigate to is returned in NavigatedButton parameter
+	// Returns the button navigated to in the passed direction else null if navigation failed
 	TObjectPtr<UProject1ButtonBase> NavigateButton(EWidgetNavigationDirection Direction);
 	bool IsCurrentHoveredButtonValid() const;
 
