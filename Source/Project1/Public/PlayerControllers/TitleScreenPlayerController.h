@@ -10,11 +10,13 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 class UProject1GameViewportClientBase;
+class UPressAnyInputPromptInputMapping;
+class UMainMenuScreenInputMapping;
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnPressAnyInputTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnyInputTriggeredDelegate, const FInputActionValue& /* Value */);
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnMainMenuUIConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnMainMenuUINavigateTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMainMenuScreenConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMainMenuScreenNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
 
 /**
  * 
@@ -31,46 +33,40 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool bCenterMouseInViewportWhenShown{ false };
 
-	FOnPressAnyInputTriggeredDelegate PressAnyInputTriggered{};
+	FOnAnyInputTriggeredDelegate AnyInputTriggered{};
 
-	FOnMainMenuUIConfirmTriggeredDelegate MainMenuUIConfirmTriggered{};
-	FOnMainMenuUINavigateTriggeredDelegate MainMenuUINavigateTriggered{};
+	FOnMainMenuScreenConfirmTriggeredDelegate MainMenuScreenConfirmTriggered{};
+	FOnMainMenuScreenNavigateTriggeredDelegate MainMenuScreenNavigateTriggered{};
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
-	TObjectPtr<UInputMappingContext> PressAnyInputInputMappingContext{ nullptr };
+	TObjectPtr<UPressAnyInputPromptInputMapping> PressAnyInputPromptInputMapping{ nullptr };
 	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
-	int32 PressAnyInputMappingContextPriority{ 10 };
-	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
-	TObjectPtr<UInputAction> PressAnyInputInputAction{ nullptr };
+	int32 PressAnyInputPromptInputPriority{ 10 };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
-	TObjectPtr<UInputMappingContext> MainMenuUIInputMappingContext{ nullptr };
+	TObjectPtr<UMainMenuScreenInputMapping> MainMenuScreenInputMapping{ nullptr };
 	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
-	int32 MainMenuUIInputMappingContextPriority{ 10 };
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
-	TObjectPtr<UInputAction> MainMenuUIConfirmInputAction{ nullptr };
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
-	TObjectPtr<UInputAction> MainMenuUINavigateInputAction{ nullptr };
+	int32 MainMenuScreenInputPriority{ 10 };
 
 	TObjectPtr<UProject1GameViewportClientBase> Project1GameViewportClient{ nullptr };
 	FDelegateHandle OnMouseMovedDelegateHandle{};
 	FDelegateHandle OnInputKeyDelegateHandle{};
 
 public:
-	void AddPressAnyInputInputMappingContext();
-	void RemovePressAnyInputInputMappingContext();
+	void AddPressAnyInputPromptInputMappingContext();
+	void RemovePressAnyInputPromptInputMappingContext();
 
-	void AddMainMenuUIInputMappingContext();
-	void RemoveMainMenuUIInputMappingContext();
+	void AddMainMenuScreenInputMappingContext();
+	void RemoveMainMenuScreenInputMappingContext();
 
 private:
 	void SetupInputComponent() override;
 	void BeginPlay() override;
 	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	void OnPressAnyInputTriggered(const FInputActionValue& Value);
+	void OnPressAnyInputPromptAnyInputTriggered(const FInputActionValue& Value);
 
-	void OnMainMenuUIConfirmTriggered(const FInputActionValue& Value);
-	void OnMainMenuUINavigateTriggered(const FInputActionValue& Value);
+	void OnMainMenuScreenConfirmTriggered(const FInputActionValue& Value);
+	void OnMainMenuScreenNavigateTriggered(const FInputActionValue& Value);
 };

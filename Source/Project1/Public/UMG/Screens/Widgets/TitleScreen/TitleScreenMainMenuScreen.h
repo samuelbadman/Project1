@@ -38,8 +38,8 @@ private:
 	void NativeOnPushedToLayerStack() override;
 	void NativeOnPoppedFromLayerStack() override;
 
-	void OnMainMenuUIConfirmTriggered(const FInputActionValue& Value);
-	void OnMainMenuUINavigateTriggered(const FInputActionValue& Value);
+	void OnMainMenuScreenConfirmTriggered(const FInputActionValue& Value);
+	void OnMainMenuScreenNavigateTriggered(const FInputActionValue& Value);
 
 	UFUNCTION()
 	void OnRegisteredMenuButtonHovered(UProject1ButtonBase* ButtonHovered);

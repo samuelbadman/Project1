@@ -6,29 +6,31 @@
 #include "GameViewportClients/Project1GameViewportClientBase.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "DataAssets/InputMapping/PressAnyInputPromptInputMapping.h"
+#include "DataAssets/InputMapping/MainMenuScreenInputMapping.h"
 
-void ATitleScreenPlayerController::AddPressAnyInputInputMappingContext()
+void ATitleScreenPlayerController::AddPressAnyInputPromptInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(PressAnyInputInputMappingContext, PressAnyInputMappingContextPriority);
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(PressAnyInputPromptInputMapping->GetInputMappingContext(), PressAnyInputPromptInputPriority);
 }
 
-void ATitleScreenPlayerController::RemovePressAnyInputInputMappingContext()
+void ATitleScreenPlayerController::RemovePressAnyInputPromptInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(PressAnyInputInputMappingContext);
+	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(PressAnyInputPromptInputMapping->GetInputMappingContext());
 }
 
-void ATitleScreenPlayerController::AddMainMenuUIInputMappingContext()
+void ATitleScreenPlayerController::AddMainMenuScreenInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MainMenuUIInputMappingContext, MainMenuUIInputMappingContextPriority);
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MainMenuScreenInputMapping->GetInputMappingContext(), MainMenuScreenInputPriority);
 }
 
-void ATitleScreenPlayerController::RemoveMainMenuUIInputMappingContext()
+void ATitleScreenPlayerController::RemoveMainMenuScreenInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(MainMenuUIInputMappingContext);
+	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(MainMenuScreenInputMapping->GetInputMappingContext());
 }
 
 void ATitleScreenPlayerController::SetupInputComponent()
@@ -37,10 +39,13 @@ void ATitleScreenPlayerController::SetupInputComponent()
 
 	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent{ CastChecked<UEnhancedInputComponent>(InputComponent) };
 
-	EnhancedInputComponent->BindAction(PressAnyInputInputAction, ETriggerEvent::Triggered, this, &ATitleScreenPlayerController::OnPressAnyInputTriggered);
+	EnhancedInputComponent->BindAction(PressAnyInputPromptInputMapping->GetAnyInputInputAction(), ETriggerEvent::Triggered, 
+		this, &ATitleScreenPlayerController::OnPressAnyInputPromptAnyInputTriggered);
 
-	EnhancedInputComponent->BindAction(MainMenuUIConfirmInputAction, ETriggerEvent::Triggered, this, &ATitleScreenPlayerController::OnMainMenuUIConfirmTriggered);
-	EnhancedInputComponent->BindAction(MainMenuUINavigateInputAction, ETriggerEvent::Triggered, this, &ATitleScreenPlayerController::OnMainMenuUINavigateTriggered);
+	EnhancedInputComponent->BindAction(MainMenuScreenInputMapping->GetConfirmInputAction(), ETriggerEvent::Triggered, 
+		this, &ATitleScreenPlayerController::OnMainMenuScreenConfirmTriggered);
+	EnhancedInputComponent->BindAction(MainMenuScreenInputMapping->GetNavigateInputAction(), ETriggerEvent::Triggered, 
+		this, &ATitleScreenPlayerController::OnMainMenuScreenNavigateTriggered);
 }
 
 void ATitleScreenPlayerController::BeginPlay()
@@ -80,17 +85,17 @@ void ATitleScreenPlayerController::EndPlay(const EEndPlayReason::Type EndPlayRea
 	OnInputKeyDelegateHandle.Reset();
 }
 
-void ATitleScreenPlayerController::OnPressAnyInputTriggered(const FInputActionValue& Value)
+void ATitleScreenPlayerController::OnPressAnyInputPromptAnyInputTriggered(const FInputActionValue& Value)
 {
-	PressAnyInputTriggered.Broadcast(Value);
+	AnyInputTriggered.Broadcast(Value);
 }
 
-void ATitleScreenPlayerController::OnMainMenuUIConfirmTriggered(const FInputActionValue& Value)
+void ATitleScreenPlayerController::OnMainMenuScreenConfirmTriggered(const FInputActionValue& Value)
 {
-	MainMenuUIConfirmTriggered.Broadcast(Value);
+	MainMenuScreenConfirmTriggered.Broadcast(Value);
 }
 
-void ATitleScreenPlayerController::OnMainMenuUINavigateTriggered(const FInputActionValue& Value)
+void ATitleScreenPlayerController::OnMainMenuScreenNavigateTriggered(const FInputActionValue& Value)
 {
-	MainMenuUINavigateTriggered.Broadcast(Value);
+	MainMenuScreenNavigateTriggered.Broadcast(Value);
 }

@@ -35,5 +35,5 @@ private:
 	void NativeOnPushedToLayerStack() override;
 	void NativeOnPoppedFromLayerStack() override;
 
-	void OnPressAnyInputTriggered(const FInputActionValue& Value);
+	void OnPressAnyInputPromptAnyInputTriggered(const FInputActionValue& Value);
 };

@@ -12,23 +12,23 @@ void UTitleScreenAnyInputPromptScreen::NativeOnPushedToLayerStack()
 	Project1HUD = CastChecked<AProject1HUDBase>(TitleScreenPlayerController->GetHUD());
 
 	// Register to events
-	PressAnyInputTriggeredDelegateHandle = TitleScreenPlayerController->PressAnyInputTriggered.AddUObject(this, &UTitleScreenAnyInputPromptScreen::OnPressAnyInputTriggered);
+	PressAnyInputTriggeredDelegateHandle = TitleScreenPlayerController->AnyInputTriggered.AddUObject(this, &UTitleScreenAnyInputPromptScreen::OnPressAnyInputPromptAnyInputTriggered);
 
 	// Add input mapping context
-	TitleScreenPlayerController->AddPressAnyInputInputMappingContext();
+	TitleScreenPlayerController->AddPressAnyInputPromptInputMappingContext();
 }
 
 void UTitleScreenAnyInputPromptScreen::NativeOnPoppedFromLayerStack()
 {
 	// Remove input mapping context
-	TitleScreenPlayerController->RemovePressAnyInputInputMappingContext();
+	TitleScreenPlayerController->RemovePressAnyInputPromptInputMappingContext();
 
 	// Unregister from events
-	TitleScreenPlayerController->PressAnyInputTriggered.Remove(PressAnyInputTriggeredDelegateHandle);
+	TitleScreenPlayerController->AnyInputTriggered.Remove(PressAnyInputTriggeredDelegateHandle);
 	PressAnyInputTriggeredDelegateHandle.Reset();
 }
 
-void UTitleScreenAnyInputPromptScreen::OnPressAnyInputTriggered(const FInputActionValue& Value)
+void UTitleScreenAnyInputPromptScreen::OnPressAnyInputPromptAnyInputTriggered(const FInputActionValue& Value)
 {
 	// Only handle input if on top of owning widget layer
 	if (CanReceiveInput())

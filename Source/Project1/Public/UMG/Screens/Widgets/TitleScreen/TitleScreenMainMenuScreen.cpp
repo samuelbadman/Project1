@@ -25,26 +25,26 @@ void UTitleScreenMainMenuScreen::RegisterMenuButtons(const TArray<UProject1Butto
 void UTitleScreenMainMenuScreen::NativeOnPushedToLayerStack()
 {
 	TitleScreenPlayerController = CastChecked<ATitleScreenPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-	TitleScreenPlayerController->AddMainMenuUIInputMappingContext();
+	TitleScreenPlayerController->AddMainMenuScreenInputMappingContext();
 
 	// Register events
-	MainMenuUIConfirmTriggeredDelegateHandle = TitleScreenPlayerController->MainMenuUIConfirmTriggered.AddUObject(this, &UTitleScreenMainMenuScreen::OnMainMenuUIConfirmTriggered);
-	MainMenuUINavigateTriggeredDelegateHandle = TitleScreenPlayerController->MainMenuUINavigateTriggered.AddUObject(this, &UTitleScreenMainMenuScreen::OnMainMenuUINavigateTriggered);
+	MainMenuUIConfirmTriggeredDelegateHandle = TitleScreenPlayerController->MainMenuScreenConfirmTriggered.AddUObject(this, &UTitleScreenMainMenuScreen::OnMainMenuScreenConfirmTriggered);
+	MainMenuUINavigateTriggeredDelegateHandle = TitleScreenPlayerController->MainMenuScreenNavigateTriggered.AddUObject(this, &UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered);
 }
 
 void UTitleScreenMainMenuScreen::NativeOnPoppedFromLayerStack()
 {
-	TitleScreenPlayerController->RemoveMainMenuUIInputMappingContext();
+	TitleScreenPlayerController->RemoveMainMenuScreenInputMappingContext();
 
 	// Unregister events
-	TitleScreenPlayerController->MainMenuUIConfirmTriggered.Remove(MainMenuUIConfirmTriggeredDelegateHandle);
+	TitleScreenPlayerController->MainMenuScreenConfirmTriggered.Remove(MainMenuUIConfirmTriggeredDelegateHandle);
 	MainMenuUIConfirmTriggeredDelegateHandle.Reset();
 
-	TitleScreenPlayerController->MainMenuUINavigateTriggered.Remove(MainMenuUINavigateTriggeredDelegateHandle);
+	TitleScreenPlayerController->MainMenuScreenNavigateTriggered.Remove(MainMenuUINavigateTriggeredDelegateHandle);
 	MainMenuUINavigateTriggeredDelegateHandle.Reset();
 }
 
-void UTitleScreenMainMenuScreen::OnMainMenuUIConfirmTriggered(const FInputActionValue& Value)
+void UTitleScreenMainMenuScreen::OnMainMenuScreenConfirmTriggered(const FInputActionValue& Value)
 {
 	if (!IsValid(CurrentHoveredButton))
 	{
@@ -55,7 +55,7 @@ void UTitleScreenMainMenuScreen::OnMainMenuUIConfirmTriggered(const FInputAction
 	CurrentHoveredButton->PressButton();
 }
 
-void UTitleScreenMainMenuScreen::OnMainMenuUINavigateTriggered(const FInputActionValue& Value)
+void UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered(const FInputActionValue& Value)
 {
 	if (!IsValid(CurrentHoveredButton))
 	{
@@ -63,7 +63,14 @@ void UTitleScreenMainMenuScreen::OnMainMenuUINavigateTriggered(const FInputActio
 	}
 
 	// Only care about vertical navigation as the main menu is a vertical list of buttons
-	EWidgetNavigationDirection NavDirection{ (Value.Get<FVector2D>().Y > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down };
+	const float VerticalInput{ StaticCast<float>(Value.Get<FVector2D>().Y) };
+
+	if (VerticalInput == 0.0f)
+	{
+		return;
+	}
+
+	EWidgetNavigationDirection NavDirection{ (VerticalInput > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down };
 
 	// Get the button to navigate to. Navigated widgets in the main menu should be buttons
 	const TObjectPtr<UProject1ButtonBase> NavigatedButton{ Cast<UProject1ButtonBase>(CurrentHoveredButton->GetNavigatedWidget(NavDirection).Get()) };
