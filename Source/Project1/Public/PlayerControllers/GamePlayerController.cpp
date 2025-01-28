@@ -7,6 +7,8 @@
 #include "PlayerCameraManagers/GamePlayerCameraManager.h"
 #include "Components/ActorComponents/PlayerCharacterControllerComponent.h"
 #include "Components/ActorComponents/PlayerInteractComponent.h"
+#include "DataAssets/InputMapping/InteractPromptInputMapping.h"
+#include "DataAssets/InputMapping/ConfirmModalInputMapping.h"
 
 AGamePlayerController::AGamePlayerController()
 {
@@ -14,16 +16,16 @@ AGamePlayerController::AGamePlayerController()
 	PlayerInteractComponent = CreateDefaultSubobject<UPlayerInteractComponent>(FName(TEXT("PlayerInteractComponent")));
 }
 
-void AGamePlayerController::AddInteractPromptUIMappingContext()
+void AGamePlayerController::AddInteractPromptInputMappingContext()
 {
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(InteractPromptUIInputMappingContext, InteractPromptUIInputMappingContextPriority);
+	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(InteractPromptInputMapping->GetInputMappingContext(), InteractPromptInputPriority);
 }
 
-void AGamePlayerController::RemoveInteractPromptUIMappingContext()
+void AGamePlayerController::RemoveInteractPromptInputMappingContext()
 {
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(InteractPromptUIInputMappingContext);
+	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
+	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(InteractPromptInputMapping->GetInputMappingContext());
 }
 
 void AGamePlayerController::SetupInputComponent()
@@ -32,8 +34,8 @@ void AGamePlayerController::SetupInputComponent()
 
 	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent{ CastChecked<UEnhancedInputComponent>(InputComponent) };
 
-	EnhancedInputComponent->BindAction(InteractPromptUIInteractInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUIInteractTriggered);
-	EnhancedInputComponent->BindAction(InteractPromptUISwitchActionInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUISwitchActionTriggered);
+	EnhancedInputComponent->BindAction(InteractPromptInputMapping->GetInteractInputAction(), ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUIInteractTriggered);
+	EnhancedInputComponent->BindAction(InteractPromptInputMapping->GetSwitchActionInputAction(), ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUISwitchActionTriggered);
 
 	EnhancedInputComponent->BindAction(LookAbsoluteInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAbsoluteTriggered);
 	EnhancedInputComponent->BindAction(LookAnalogInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAnalogTriggered);
@@ -78,12 +80,12 @@ void AGamePlayerController::BeginPlay()
 
 void AGamePlayerController::OnInteractPromptUIInteractTriggered(const FInputActionValue& Value)
 {
-	InteractPromptUIInteractTriggered.Broadcast(Value);
+	InteractPromptInteractTriggered.Broadcast(Value);
 }
 
 void AGamePlayerController::OnInteractPromptUISwitchActionTriggered(const FInputActionValue& Value)
 {
-	InteractPromptUISwitchActionTriggered.Broadcast(Value);
+	InteractPromptSwitchActionTriggered.Broadcast(Value);
 }
 
 void AGamePlayerController::OnLookAbsoluteTriggered(const FInputActionValue& Value)

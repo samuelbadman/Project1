@@ -37,28 +37,21 @@ public:
 	FOnMainMenuUINavigateTriggeredDelegate MainMenuUINavigateTriggered{};
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInput")
+	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
 	TObjectPtr<UInputMappingContext> PressAnyInputInputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInput")
+	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
 	int32 PressAnyInputMappingContextPriority{ 10 };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInput")
+	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
 	TObjectPtr<UInputAction> PressAnyInputInputAction{ nullptr };
 
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuUI")
+	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
 	TObjectPtr<UInputMappingContext> MainMenuUIInputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuUI")
+	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
 	int32 MainMenuUIInputMappingContextPriority{ 10 };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuUI")
+	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
 	TObjectPtr<UInputAction> MainMenuUIConfirmInputAction{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuUI")
+	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
 	TObjectPtr<UInputAction> MainMenuUINavigateInputAction{ nullptr };
-
 
 	TObjectPtr<UProject1GameViewportClientBase> Project1GameViewportClient{ nullptr };
 	FDelegateHandle OnMouseMovedDelegateHandle{};

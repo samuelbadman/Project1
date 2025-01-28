@@ -34,18 +34,18 @@ void UInteractPromptScreen::NativeOnPushedToLayerStack()
 	OnTargetInteractableChangedDelegateHandle =
 		PlayerInteractComponent->OnTargetInteractableChangedDelegate.AddUObject(this, &UInteractPromptScreen::OnTargetInteractableChanged);
 
-	GamePlayerController->InteractPromptUIInteractTriggered.AddUObject(this, &UInteractPromptScreen::OnInteractTriggered);
-	GamePlayerController->InteractPromptUISwitchActionTriggered.AddUObject(this, &UInteractPromptScreen::OnSwitchActionTriggered);
+	GamePlayerController->InteractPromptInteractTriggered.AddUObject(this, &UInteractPromptScreen::OnInteractTriggered);
+	GamePlayerController->InteractPromptSwitchActionTriggered.AddUObject(this, &UInteractPromptScreen::OnSwitchActionTriggered);
 }
 
 void UInteractPromptScreen::NativeOnShown()
 {
-	GamePlayerController->AddInteractPromptUIMappingContext();
+	GamePlayerController->AddInteractPromptInputMappingContext();
 }
 
 void UInteractPromptScreen::NativeOnCollapsed()
 {
-	GamePlayerController->RemoveInteractPromptUIMappingContext();
+	GamePlayerController->RemoveInteractPromptInputMappingContext();
 }
 
 void UInteractPromptScreen::NativeOnPoppedFromLayerStack()
@@ -59,10 +59,10 @@ void UInteractPromptScreen::NativeOnPoppedFromLayerStack()
 	PlayerInteractComponent->OnTargetInteractableChangedDelegate.Remove(OnTargetInteractableChangedDelegateHandle);
 	OnTargetInteractableChangedDelegateHandle.Reset();
 
-	GamePlayerController->InteractPromptUIInteractTriggered.Remove(OnInteractTriggeredDelegateHandle);
+	GamePlayerController->InteractPromptInteractTriggered.Remove(OnInteractTriggeredDelegateHandle);
 	OnInteractTriggeredDelegateHandle.Reset();
 
-	GamePlayerController->InteractPromptUISwitchActionTriggered.Remove(OnSwitchActionTriggeredDelegateHandle);
+	GamePlayerController->InteractPromptSwitchActionTriggered.Remove(OnSwitchActionTriggeredDelegateHandle);
 	OnSwitchActionTriggeredDelegateHandle.Reset();
 }
 

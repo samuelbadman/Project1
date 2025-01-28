@@ -3,6 +3,27 @@
 
 #include "ConfirmModalScreen.h"
 #include "UMG/Screens/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
+#include "UMG/Components/Buttons/Project1ButtonBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "PlayerControllers/Project1PlayerControllerBase.h"
+#include "InputActionValue.h"
+
+void UConfirmModalScreen::NativeOnPushedToLayerStack()
+{
+	// Hover option 1 by default
+	CurrentHoveredButton = GetOption1Button();
+	CurrentHoveredButton->MakeHovered();
+
+	// Get player controller
+	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
+
+	// Register to confirm modal inputs
+	ConfirmInputTriggeredDelegateHandle = Project1PlayerController->ConfirmModalConfirmTriggered.AddUObject(this, &UConfirmModalScreen::OnConfirmInputTriggered);
+	NavigateInputTriggeredDelegateHandle = Project1PlayerController->ConfirmModalNavigateTriggered.AddUObject(this, &UConfirmModalScreen::OnNavigateInputTriggered);
+
+	// Add confirm modal inputs
+	Project1PlayerController->AddConfirmModalInputMappingContext();
+}
 
 void UConfirmModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload)
 {
@@ -16,4 +37,27 @@ void UConfirmModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadP
 
 	// Bind option delegates
 
+}
+
+void UConfirmModalScreen::NativeOnPoppedFromLayerStack()
+{
+	// Unregister confirm modal inputs
+	Project1PlayerController->ConfirmModalConfirmTriggered.Remove(ConfirmInputTriggeredDelegateHandle);
+	ConfirmInputTriggeredDelegateHandle.Reset();
+
+	Project1PlayerController->ConfirmModalConfirmTriggered.Remove(NavigateInputTriggeredDelegateHandle);
+	NavigateInputTriggeredDelegateHandle.Reset();
+
+	// Remove confirm modal inputs
+	Project1PlayerController->RemoveConfirmModalInputMappingContext();
+}
+
+void UConfirmModalScreen::OnConfirmInputTriggered(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Confirm modal confirm input: %d"), StaticCast<int32>(Value.Get<bool>())));
+}
+
+void UConfirmModalScreen::OnNavigateInputTriggered(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Confirm modal navigate input: %s"), *Value.Get<FVector2D>().ToString()));
 }

@@ -6,6 +6,10 @@
 #include "UMG/Screens/Widgets/Modals/ModalScreenBase.h"
 #include "ConfirmModalScreen.generated.h"
 
+class AProject1PlayerControllerBase;
+class UProject1ButtonBase;
+struct FInputActionValue;
+
 /**
  * 
  */
@@ -14,6 +18,13 @@ class PROJECT1_API UConfirmModalScreen : public UModalScreenBase
 {
 	GENERATED_BODY()
 	
+private:
+	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
+	TObjectPtr<UProject1ButtonBase> CurrentHoveredButton{ nullptr };
+
+	FDelegateHandle ConfirmInputTriggeredDelegateHandle{};
+	FDelegateHandle NavigateInputTriggeredDelegateHandle{};
+
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetModalPromptText(const FText& Text);
@@ -24,6 +35,14 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetOption2Text(const FText& Text);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	UProject1ButtonBase* GetOption1Button();
+
 private:
+	void NativeOnPushedToLayerStack() override;
 	void NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload) override;
+	void NativeOnPoppedFromLayerStack() override;
+
+	void OnConfirmInputTriggered(const FInputActionValue& Value);
+	void OnNavigateInputTriggered(const FInputActionValue& Value);
 };
