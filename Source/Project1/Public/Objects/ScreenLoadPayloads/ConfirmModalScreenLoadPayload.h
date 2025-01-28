@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UMG/Screens/ScreenLoadPayloads/ScreenWidgetLoadPayloadBase.h"
+#include "Objects/ScreenLoadPayloads/ScreenWidgetLoadPayloadBase.h"
 #include "ConfirmModalScreenLoadPayload.generated.h"
 
 UDELEGATE()

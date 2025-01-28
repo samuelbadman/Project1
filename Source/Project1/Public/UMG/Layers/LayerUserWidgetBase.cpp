@@ -7,7 +7,7 @@
 #include "GameInstances/Project1GameInstanceBase.h"
 #include "UMG/Screens/Widgets/ScreenUserWidgetBase.h"
 #include "Components/PanelWidget.h"
-#include "UMG/Screens/ScreenLoadPayloads/ScreenWidgetLoadPayloadBase.h"
+#include "Objects/ScreenLoadPayloads/ScreenWidgetLoadPayloadBase.h"
 
 static constexpr ESlateVisibility ScreenShownSlateVisibility{ ESlateVisibility::SelfHitTestInvisible };
 static constexpr ESlateVisibility ScreenHiddenSlateVisibility{ ESlateVisibility::Collapsed };

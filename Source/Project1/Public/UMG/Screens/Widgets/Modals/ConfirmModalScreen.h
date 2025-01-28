@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UMG/Screens/Widgets/Modals/ModalScreenBase.h"
-#include "UMG/Screens/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
+#include "Objects/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
 #include "ConfirmModalScreen.generated.h"
 
 class AProject1PlayerControllerBase;
