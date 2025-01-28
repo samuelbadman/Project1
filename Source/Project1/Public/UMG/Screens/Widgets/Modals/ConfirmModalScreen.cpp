@@ -2,7 +2,6 @@
 
 
 #include "ConfirmModalScreen.h"
-#include "UMG/Screens/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerControllers/Project1PlayerControllerBase.h"
@@ -55,8 +54,9 @@ void UConfirmModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadP
 	SetOption1Text(Payload->Option1Text);
 	SetOption2Text(Payload->Option2Text);
 
-	// Bind option delegates
-
+	// Copy option delegates
+	Option1SelectedDelegate = Payload->Option1SelectedDelegate;
+	Option2SelectedDelegate = Payload->Option2SelectedDelegate;
 }
 
 void UConfirmModalScreen::NativeOnPoppedFromLayerStack()
@@ -103,10 +103,10 @@ void UConfirmModalScreen::OnOptionButtonHovered(UProject1ButtonBase* ButtonHover
 
 void UConfirmModalScreen::OnOption1Selected(UProject1ButtonBase* ButtonSelected)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, TEXT("Option 1 selected"));
+	Option1SelectedDelegate.ExecuteIfBound();
 }
 
 void UConfirmModalScreen::OnOption2Selected(UProject1ButtonBase* ButtonSelected)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, TEXT("Option 2 selected"));
+	Option2SelectedDelegate.ExecuteIfBound();
 }

@@ -12,6 +12,7 @@ class UScreenUserWidgetBase;
 class ULayerUserWidgetBase;
 class UProject1GameViewportClientBase;
 class UScreenWidgetLoadPayloadBase;
+class FConfirmModalOptionSelectedDelegate;
 
 /**
  *
@@ -45,7 +46,9 @@ public:
 		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
 		const FText ModalPromptText,
 		const FText Option1Text,
-		const FText Option2Text
+		const FText Option2Text,
+		const FConfirmModalOptionSelectedDelegate& Option1SelectedDelegate,
+		const FConfirmModalOptionSelectedDelegate& Option2SelectedDelegate
 	);
 
 protected:

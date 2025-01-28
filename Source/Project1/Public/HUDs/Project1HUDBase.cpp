@@ -34,18 +34,19 @@ void AProject1HUDBase::PushConfirmModalToWidgetLayer(
 	const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
 	const FText ModalPromptText,
 	const FText Option1Text,
-	const FText Option2Text
+	const FText Option2Text,
+	const FConfirmModalOptionSelectedDelegate& Option1SelectedDelegate,
+	const FConfirmModalOptionSelectedDelegate& Option2SelectedDelegate
 )
 {
 	const TObjectPtr<UConfirmModalScreenLoadPayload> ModalLoadPayload{ NewObject<UConfirmModalScreenLoadPayload>() };
 	ModalLoadPayload->ModalPromptText = ModalPromptText;
 	ModalLoadPayload->Option1Text = Option1Text;
 	ModalLoadPayload->Option2Text = Option2Text;
+	ModalLoadPayload->Option1SelectedDelegate = Option1SelectedDelegate;
+	ModalLoadPayload->Option2SelectedDelegate = Option2SelectedDelegate;
 
 	PushContentToPrimaryLayoutWidgetLayer(LayerName, WidgetClass, ModalLoadPayload);
-
-	// TODO: Complete this function with delegate binding for what to call when options are pressed in the modal
-
 }
 
 void AProject1HUDBase::BeginPlay()

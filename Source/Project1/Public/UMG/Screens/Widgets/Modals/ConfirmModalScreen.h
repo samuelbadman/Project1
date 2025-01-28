@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UMG/Screens/Widgets/Modals/ModalScreenBase.h"
+#include "UMG/Screens/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
 #include "ConfirmModalScreen.generated.h"
 
 class AProject1PlayerControllerBase;
@@ -27,6 +28,9 @@ private:
 
 	FDelegateHandle ConfirmInputTriggeredDelegateHandle{};
 	FDelegateHandle NavigateInputTriggeredDelegateHandle{};
+
+	FConfirmModalOptionSelectedDelegate Option1SelectedDelegate{};
+	FConfirmModalOptionSelectedDelegate Option2SelectedDelegate{};
 
 public:
 	UConfirmModalScreen();

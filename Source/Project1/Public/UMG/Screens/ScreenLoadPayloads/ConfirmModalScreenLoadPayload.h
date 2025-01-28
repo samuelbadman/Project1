@@ -6,6 +6,9 @@
 #include "UMG/Screens/ScreenLoadPayloads/ScreenWidgetLoadPayloadBase.h"
 #include "ConfirmModalScreenLoadPayload.generated.h"
 
+UDELEGATE()
+DECLARE_DYNAMIC_DELEGATE(FConfirmModalOptionSelectedDelegate);
+
 /**
  *
  */
@@ -18,4 +21,6 @@ public:
 	FText ModalPromptText{};
 	FText Option1Text{};
 	FText Option2Text{};
+	FConfirmModalOptionSelectedDelegate Option1SelectedDelegate{};
+	FConfirmModalOptionSelectedDelegate Option2SelectedDelegate{};
 };
