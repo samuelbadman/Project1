@@ -7,6 +7,7 @@
 #include "Project1ButtonBase.generated.h"
 
 class UImage;
+class AProject1PlayerControllerBase;
 class UProject1GameViewportClientBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHoveredDelegate, UProject1ButtonBase*, ButtonHovered);
@@ -57,6 +58,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool bCanMouseUnhoverButton{ true };
 
+	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
 	TObjectPtr<UProject1GameViewportClientBase> Project1GameViewportClient{ nullptr };
 	FDelegateHandle OnMouseMovedDelegateHandle{};
 	FDelegateHandle OnInputKeyDelegateHandle{};
@@ -76,6 +78,9 @@ public:
 	void MakeUnhovered();
 
 	void PressButton();
+
+	FORCEINLINE bool IsActivated() const { return bActivated; }
+	FORCEINLINE bool IsHovered() const { return bHovered; }
 
 private:
 	void NativePreConstruct() override;

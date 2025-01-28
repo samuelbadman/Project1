@@ -23,16 +23,16 @@ class PROJECT1_API UProject1UserWidgetBase : public UUserWidget
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(EditAnywhere, Category = "Project Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = "Project 1 Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
 	TObjectPtr<UWidget> NavigateUpWidget{ nullptr };
 
-	UPROPERTY(EditAnywhere, Category = "Project Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = "Project 1 Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
 	TObjectPtr<UWidget> NavigateDownWidget{ nullptr };
 
-	UPROPERTY(EditAnywhere, Category = "Project Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = "Project 1 Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
 	TObjectPtr<UWidget> NavigateLeftWidget{ nullptr };
 
-	UPROPERTY(EditAnywhere, Category = "Project Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = "Project 1 Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
 	TObjectPtr<UWidget> NavigateRightWidget{ nullptr };
 
 public:

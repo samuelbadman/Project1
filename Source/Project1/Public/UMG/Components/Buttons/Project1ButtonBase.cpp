@@ -4,6 +4,7 @@
 #include "Project1ButtonBase.h"
 #include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
+#include "PlayerControllers/Project1PlayerControllerBase.h"
 #include "GameViewportClients/Project1GameViewportClientBase.h"
 
 void UProject1ButtonBase::NativePreConstruct()
@@ -20,6 +21,7 @@ void UProject1ButtonBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
 	Project1GameViewportClient = CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient());
 
 	if (bStartActivated)
@@ -54,10 +56,7 @@ void UProject1ButtonBase::Deactivate()
 	Project1GameViewportClient->OnInputKey.Remove(OnInputKeyDelegateHandle);
 	OnInputKeyDelegateHandle.Reset();
 
-	if (const TObjectPtr<UImage> Image = GetImage())
-	{
-		Image->SetBrush(NormalBrush);
-	}
+	GetImage()->SetBrush(NormalBrush);
 
 	bActivated = false;
 }
@@ -69,13 +68,10 @@ void UProject1ButtonBase::MakeHovered()
 		return;
 	}
 
-	if (const TObjectPtr<UImage> Image = GetImage())
-	{
-		Image->SetBrush(HoveredBrush);
+	GetImage()->SetBrush(HoveredBrush);
 
-		bHovered = true;
-		OnHovered.Broadcast(this);
-	}
+	bHovered = true;
+	OnHovered.Broadcast(this);
 }
 
 void UProject1ButtonBase::MakeUnhovered()
@@ -85,13 +81,10 @@ void UProject1ButtonBase::MakeUnhovered()
 		return;
 	}
 
-	if (const TObjectPtr<UImage> Image = GetImage())
-	{
-		Image->SetBrush(NormalBrush);
+	GetImage()->SetBrush(NormalBrush);
 
-		bHovered = false;
-		OnUnhovered.Broadcast(this);
-	}
+	bHovered = false;
+	OnUnhovered.Broadcast(this);
 }
 
 void UProject1ButtonBase::PressButton()
@@ -101,6 +94,12 @@ void UProject1ButtonBase::PressButton()
 
 void UProject1ButtonBase::OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
 {
+	// Only attempt to update hovered state when the cursor is shown
+	if (!Project1PlayerController->IsMouseCursorVisible())
+	{
+		return;
+	}
+
 	if (IsCursorInsideWidgetGeometry(NewMousePosition))
 	{
 		if (!bHovered)

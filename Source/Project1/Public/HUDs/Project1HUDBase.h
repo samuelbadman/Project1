@@ -43,9 +43,9 @@ public:
 	void PushConfirmModalToWidgetLayer(
 		const FGameplayTag& LayerName,
 		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
-		const FText& ModalPromptText,
-		const FText& Option1Text,
-		const FText& Option2Text
+		const FText ModalPromptText,
+		const FText Option1Text,
+		const FText Option2Text
 	);
 
 protected:
