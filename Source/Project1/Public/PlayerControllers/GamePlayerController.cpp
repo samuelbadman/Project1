@@ -7,8 +7,6 @@
 #include "PlayerCameraManagers/GamePlayerCameraManager.h"
 #include "Components/ActorComponents/PlayerCharacterControllerComponent.h"
 #include "Components/ActorComponents/PlayerInteractComponent.h"
-#include "DataAssets/InputMapping/InteractPromptInputMapping.h"
-#include "DataAssets/InputMapping/ConfirmModalInputMapping.h"
 
 AGamePlayerController::AGamePlayerController()
 {
@@ -19,13 +17,13 @@ AGamePlayerController::AGamePlayerController()
 void AGamePlayerController::AddInteractPromptInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(InteractPromptInputMapping->GetInputMappingContext(), InteractPromptInputPriority);
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(InteractPromptInputMappingContext, InteractPromptInputPriority);
 }
 
 void AGamePlayerController::RemoveInteractPromptInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(InteractPromptInputMapping->GetInputMappingContext());
+	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(InteractPromptInputMappingContext);
 }
 
 void AGamePlayerController::SetupInputComponent()
@@ -34,8 +32,8 @@ void AGamePlayerController::SetupInputComponent()
 
 	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent{ CastChecked<UEnhancedInputComponent>(InputComponent) };
 
-	EnhancedInputComponent->BindAction(InteractPromptInputMapping->GetInteractInputAction(), ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUIInteractTriggered);
-	EnhancedInputComponent->BindAction(InteractPromptInputMapping->GetSwitchActionInputAction(), ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUISwitchActionTriggered);
+	EnhancedInputComponent->BindAction(InteractPromptInteractInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUIInteractTriggered);
+	EnhancedInputComponent->BindAction(InteractPromptSwitchActionInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUISwitchActionTriggered);
 
 	EnhancedInputComponent->BindAction(LookAbsoluteInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAbsoluteTriggered);
 	EnhancedInputComponent->BindAction(LookAnalogInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAnalogTriggered);

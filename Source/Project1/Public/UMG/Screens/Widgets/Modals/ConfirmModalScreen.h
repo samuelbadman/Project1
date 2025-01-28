@@ -9,6 +9,7 @@
 class AProject1PlayerControllerBase;
 class UProject1ButtonBase;
 struct FInputActionValue;
+class UButtonNavigationComponent;
 
 /**
  * 
@@ -19,13 +20,17 @@ class PROJECT1_API UConfirmModalScreen : public UModalScreenBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY()
+	TObjectPtr<UButtonNavigationComponent> ButtonNavigationComponent{ nullptr };
+
 	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
-	TObjectPtr<UProject1ButtonBase> CurrentHoveredButton{ nullptr };
 
 	FDelegateHandle ConfirmInputTriggeredDelegateHandle{};
 	FDelegateHandle NavigateInputTriggeredDelegateHandle{};
 
 public:
+	UConfirmModalScreen();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetModalPromptText(const FText& Text);
 
@@ -38,6 +43,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	UProject1ButtonBase* GetOption1Button();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	UProject1ButtonBase* GetOption2Button();
+
 private:
 	void NativeOnPushedToLayerStack() override;
 	void NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload) override;
@@ -45,4 +53,7 @@ private:
 
 	void OnConfirmInputTriggered(const FInputActionValue& Value);
 	void OnNavigateInputTriggered(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void OnOptionButtonHovered(UProject1ButtonBase* ButtonHovered);
 };

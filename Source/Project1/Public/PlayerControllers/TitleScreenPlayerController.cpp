@@ -6,31 +6,29 @@
 #include "GameViewportClients/Project1GameViewportClientBase.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "DataAssets/InputMapping/PressAnyInputPromptInputMapping.h"
-#include "DataAssets/InputMapping/MainMenuScreenInputMapping.h"
 
 void ATitleScreenPlayerController::AddPressAnyInputPromptInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(PressAnyInputPromptInputMapping->GetInputMappingContext(), PressAnyInputPromptInputPriority);
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(PressAnyInputPromptInputMappingContext, PressAnyInputPromptInputPriority);
 }
 
 void ATitleScreenPlayerController::RemovePressAnyInputPromptInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(PressAnyInputPromptInputMapping->GetInputMappingContext());
+	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(PressAnyInputPromptInputMappingContext);
 }
 
 void ATitleScreenPlayerController::AddMainMenuScreenInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MainMenuScreenInputMapping->GetInputMappingContext(), MainMenuScreenInputPriority);
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MainMenuScreenInputMappingContext, MainMenuScreenInputPriority);
 }
 
 void ATitleScreenPlayerController::RemoveMainMenuScreenInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(MainMenuScreenInputMapping->GetInputMappingContext());
+	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(MainMenuScreenInputMappingContext);
 }
 
 void ATitleScreenPlayerController::SetupInputComponent()
@@ -39,12 +37,12 @@ void ATitleScreenPlayerController::SetupInputComponent()
 
 	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent{ CastChecked<UEnhancedInputComponent>(InputComponent) };
 
-	EnhancedInputComponent->BindAction(PressAnyInputPromptInputMapping->GetAnyInputInputAction(), ETriggerEvent::Triggered, 
+	EnhancedInputComponent->BindAction(PressAnyInputPromptAnyInputInputAction, ETriggerEvent::Triggered,
 		this, &ATitleScreenPlayerController::OnPressAnyInputPromptAnyInputTriggered);
 
-	EnhancedInputComponent->BindAction(MainMenuScreenInputMapping->GetConfirmInputAction(), ETriggerEvent::Triggered, 
+	EnhancedInputComponent->BindAction(MainMenuScreenConfirmInputAction, ETriggerEvent::Triggered,
 		this, &ATitleScreenPlayerController::OnMainMenuScreenConfirmTriggered);
-	EnhancedInputComponent->BindAction(MainMenuScreenInputMapping->GetNavigateInputAction(), ETriggerEvent::Triggered, 
+	EnhancedInputComponent->BindAction(MainMenuScreenNavigateInputAction, ETriggerEvent::Triggered,
 		this, &ATitleScreenPlayerController::OnMainMenuScreenNavigateTriggered);
 }
 

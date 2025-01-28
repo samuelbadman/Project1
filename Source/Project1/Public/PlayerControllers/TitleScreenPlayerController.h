@@ -6,12 +6,7 @@
 #include "PlayerControllers/Project1PlayerControllerBase.h"
 #include "TitleScreenPlayerController.generated.h"
 
-class UInputMappingContext;
-class UInputAction;
-struct FInputActionValue;
 class UProject1GameViewportClientBase;
-class UPressAnyInputPromptInputMapping;
-class UMainMenuScreenInputMapping;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAnyInputTriggeredDelegate, const FInputActionValue& /* Value */);
 
@@ -40,14 +35,25 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
-	TObjectPtr<UPressAnyInputPromptInputMapping> PressAnyInputPromptInputMapping{ nullptr };
+	TObjectPtr<UInputMappingContext> PressAnyInputPromptInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
 	int32 PressAnyInputPromptInputPriority{ 10 };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
+	TObjectPtr<UInputAction> PressAnyInputPromptAnyInputInputAction{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
-	TObjectPtr<UMainMenuScreenInputMapping> MainMenuScreenInputMapping{ nullptr };
+	TObjectPtr<UInputMappingContext> MainMenuScreenInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
 	int32 MainMenuScreenInputPriority{ 10 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
+	TObjectPtr<UInputAction> MainMenuScreenConfirmInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
+	TObjectPtr<UInputAction> MainMenuScreenNavigateInputAction{ nullptr };
 
 	TObjectPtr<UProject1GameViewportClientBase> Project1GameViewportClient{ nullptr };
 	FDelegateHandle OnMouseMovedDelegateHandle{};

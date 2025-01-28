@@ -7,10 +7,11 @@
 #include "Project1PlayerControllerBase.generated.h"
 
 class UEnhancedInputLocalPlayerSubsystem;
+class UInputAction;
+class UInputMappingContext;
 struct FInputActionValue;
-class UConfirmModalInputMapping;
 
-// Inputs that are used by multiple player controllers need to be set up in the base class
+// Inputs that are used by multiple player controllers need to be set up in the project's base player controller class
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnConfirmModalConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnConfirmModalNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
@@ -34,10 +35,6 @@ public:
 	FOnConfirmModalConfirmTriggeredDelegate ConfirmModalConfirmTriggered{};
 	FOnConfirmModalNavigateTriggeredDelegate ConfirmModalNavigateTriggered{};
 
-protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
-	TObjectPtr<UConfirmModalInputMapping> ConfirmModalInputMapping{ nullptr };
-
 private:
 	UPROPERTY(EditDefaultsOnly)
 	EMouseCursorVisibility DefaultMouseCursorVisibility{ EMouseCursorVisibility::Hidden };
@@ -49,7 +46,16 @@ private:
 	bool DefaultCenterCursorInViewportOnBecomeVisible{ true };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
+	TObjectPtr<UInputMappingContext> ConfirmModalInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
 	int32 ConfirmModalInputPriority{ 11 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
+	TObjectPtr<UInputAction> ConfirmModalConfirmInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
+	TObjectPtr<UInputAction> ConfirmModalNavigateInputAction{ nullptr };
 
 public:
 	UFUNCTION(BlueprintCallable)

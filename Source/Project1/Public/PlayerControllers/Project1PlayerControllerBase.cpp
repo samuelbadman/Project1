@@ -3,7 +3,6 @@
 
 #include "Project1PlayerControllerBase.h"
 #include "EnhancedInputSubsystems.h"
-#include "DataAssets/InputMapping/ConfirmModalInputMapping.h"
 #include "EnhancedInputComponent.h"
 
 void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible)
@@ -45,13 +44,13 @@ void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibil
 void AProject1PlayerControllerBase::AddConfirmModalInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(ConfirmModalInputMapping->GetInputMappingContext(), ConfirmModalInputPriority);
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(ConfirmModalInputMappingContext, ConfirmModalInputPriority);
 }
 
 void AProject1PlayerControllerBase::RemoveConfirmModalInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(ConfirmModalInputMapping->GetInputMappingContext());
+	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(ConfirmModalInputMappingContext);
 }
 
 void AProject1PlayerControllerBase::BeginPlay()
@@ -77,8 +76,8 @@ void AProject1PlayerControllerBase::SetupInputComponent()
 
 	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent{ CastChecked<UEnhancedInputComponent>(InputComponent) };
 
-	EnhancedInputComponent->BindAction(ConfirmModalInputMapping->GetConfirmInputAction(), ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnConfirmModalConfirmTriggered);
-	EnhancedInputComponent->BindAction(ConfirmModalInputMapping->GetNavigateInputAction(), ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnConfirmModalNavigateTriggered);
+	EnhancedInputComponent->BindAction(ConfirmModalConfirmInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnConfirmModalConfirmTriggered);
+	EnhancedInputComponent->BindAction(ConfirmModalNavigateInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnConfirmModalNavigateTriggered);
 }
 
 void AProject1PlayerControllerBase::CenterMouseCursorInViewport()

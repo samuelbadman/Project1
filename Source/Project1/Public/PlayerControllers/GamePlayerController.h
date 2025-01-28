@@ -7,13 +7,9 @@
 #include "GameplayTagContainer.h"
 #include "GamePlayerController.generated.h"
 
-class UInputMappingContext;
-class UInputAction;
-struct FInputActionValue;
 class AGamePlayerCameraManager;
 class UPlayerCharacterControllerComponent;
 class UPlayerInteractComponent;
-class UInteractPromptInputMapping;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptInteractTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptSwitchActionTriggeredDelegate, const FInputActionValue& /* Value */);
@@ -38,37 +34,53 @@ private:
 	TObjectPtr<UPlayerInteractComponent> PlayerInteractComponent{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|InteractPrompt")
-	TObjectPtr<UInteractPromptInputMapping> InteractPromptInputMapping{ nullptr };
+	TObjectPtr<UInputMappingContext> InteractPromptInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|InteractPrompt")
 	int32 InteractPromptInputPriority{ 10 };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|InteractPrompt")
+	TObjectPtr<UInputAction> InteractPromptInteractInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|InteractPrompt")
+	TObjectPtr<UInputAction> InteractPromptSwitchActionInputAction{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Look")
 	TObjectPtr<UInputMappingContext> LookInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Look")
 	int32 LookInputMappingContextPriority{ 0 };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Look")
 	TObjectPtr<UInputAction> LookAbsoluteInputAction{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Look")
 	TObjectPtr<UInputAction> LookAnalogInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ResetLook")
 	TObjectPtr<UInputMappingContext> ResetLookInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ResetLook")
 	int32 ResetLookInputMappingContextPriority{ 0 };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ResetLook")
 	TObjectPtr<UInputAction> ResetLookInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Move")
 	TObjectPtr<UInputMappingContext> MoveInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Move")
 	int32 MoveInputMappingContextPriority{ 0 };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Move")
 	TObjectPtr<UInputAction> MoveInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Jump")
 	TObjectPtr<UInputMappingContext> JumpInputMappingContext{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Jump")
 	int32 JumpInputMappingContextPriority{ 0 };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Jump")
 	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
 

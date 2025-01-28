@@ -7,12 +7,25 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerControllers/Project1PlayerControllerBase.h"
 #include "InputActionValue.h"
+#include "Objects/WidgetComponents/ButtonNavigationComponent.h"
+
+UConfirmModalScreen::UConfirmModalScreen()
+{
+	ButtonNavigationComponent = CreateDefaultSubobject<UButtonNavigationComponent>(FName(TEXT("ButtonNavigationComponent")));
+}
 
 void UConfirmModalScreen::NativeOnPushedToLayerStack()
 {
+	// Setup option buttons
+	const TArray<UProject1ButtonBase*> OptionButtons(std::initializer_list<UProject1ButtonBase*>{GetOption1Button(), GetOption2Button()});
+	for (UProject1ButtonBase* Button : OptionButtons)
+	{
+		Button->OnHovered.AddDynamic(this, &UConfirmModalScreen::OnOptionButtonHovered);
+		Button->SetCanMouseUnhoverButton(false);
+	}
+
 	// Hover option 1 by default
-	CurrentHoveredButton = GetOption1Button();
-	CurrentHoveredButton->MakeHovered();
+	ButtonNavigationComponent->SetCurrentHoveredButton(OptionButtons[0]);
 
 	// Get player controller
 	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
@@ -55,9 +68,30 @@ void UConfirmModalScreen::NativeOnPoppedFromLayerStack()
 void UConfirmModalScreen::OnConfirmInputTriggered(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Confirm modal confirm input: %d"), StaticCast<int32>(Value.Get<bool>())));
+
+
 }
 
 void UConfirmModalScreen::OnNavigateInputTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Confirm modal navigate input: %s"), *Value.Get<FVector2D>().ToString()));
+	// Only care about horizontal navigation
+	const float HorizontalInput{ StaticCast<float>(Value.Get<FVector2D>().X) };
+
+	if (HorizontalInput == 0.0f)
+	{
+		return;
+	}
+
+	const EWidgetNavigationDirection NavDirection{ (HorizontalInput > 0) ? EWidgetNavigationDirection::Right : EWidgetNavigationDirection::Left };
+
+	const TObjectPtr<UProject1ButtonBase> NavButton{ ButtonNavigationComponent->NavigateButton(NavDirection) };
+	if (IsValid(NavButton))
+	{
+		ButtonNavigationComponent->SetCurrentHoveredButton(NavButton);
+	}
+}
+
+void UConfirmModalScreen::OnOptionButtonHovered(UProject1ButtonBase* ButtonHovered)
+{
+	ButtonNavigationComponent->SetCurrentHoveredButton(ButtonHovered, false);
 }

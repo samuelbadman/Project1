@@ -7,6 +7,12 @@
 #include "InputActionValue.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 #include "Components/ScrollBox.h"
+#include "Objects/WidgetComponents/ButtonNavigationComponent.h"
+
+UTitleScreenMainMenuScreen::UTitleScreenMainMenuScreen()
+{
+	ButtonNavigationComponent = CreateDefaultSubobject<UButtonNavigationComponent>(FName(TEXT("ButtonNavigationComponent")));
+}
 
 void UTitleScreenMainMenuScreen::RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex)
 {
@@ -16,7 +22,7 @@ void UTitleScreenMainMenuScreen::RegisterMenuButtons(const TArray<UProject1Butto
 		Button->SetCanMouseUnhoverButton(false);
 	}
 
-	if(Buttons.IsValidIndex(DefaultHoveredButtonIndex))
+	if (Buttons.IsValidIndex(DefaultHoveredButtonIndex))
 	{
 		HoverButton(Buttons[DefaultHoveredButtonIndex]);
 	}
@@ -46,18 +52,18 @@ void UTitleScreenMainMenuScreen::NativeOnPoppedFromLayerStack()
 
 void UTitleScreenMainMenuScreen::OnMainMenuScreenConfirmTriggered(const FInputActionValue& Value)
 {
-	if (!IsValid(CurrentHoveredButton))
+	if (!ButtonNavigationComponent->IsCurrentHoveredButtonValid())
 	{
 		return;
 	}
 
 	// Press the currently hovered button
-	CurrentHoveredButton->PressButton();
+	ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
 }
 
 void UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered(const FInputActionValue& Value)
 {
-	if (!IsValid(CurrentHoveredButton))
+	if (!ButtonNavigationComponent->IsCurrentHoveredButtonValid())
 	{
 		return;
 	}
@@ -72,10 +78,7 @@ void UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered(const FInputA
 
 	EWidgetNavigationDirection NavDirection{ (VerticalInput > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down };
 
-	// Get the button to navigate to. Navigated widgets in the main menu should be buttons
-	const TObjectPtr<UProject1ButtonBase> NavigatedButton{ Cast<UProject1ButtonBase>(CurrentHoveredButton->GetNavigatedWidget(NavDirection).Get()) };
-
-	// Hover the button if it is valid
+	const TObjectPtr<UProject1ButtonBase> NavigatedButton{ ButtonNavigationComponent->NavigateButton(NavDirection) };
 	if (IsValid(NavigatedButton))
 	{
 		HoverButton(NavigatedButton);
@@ -84,26 +87,14 @@ void UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered(const FInputA
 
 void UTitleScreenMainMenuScreen::OnRegisteredMenuButtonHovered(UProject1ButtonBase* ButtonHovered)
 {
-	SetHoveredButton(ButtonHovered);
+	// Button has hovered itself from mouse cursor interaction so update currently hovered button in button navigation component without hovering the button again
+	ButtonNavigationComponent->SetCurrentHoveredButton(ButtonHovered, false);
 }
 
 void UTitleScreenMainMenuScreen::HoverButton(TObjectPtr<UProject1ButtonBase> Button)
 {
-	Button->MakeHovered();
+	ButtonNavigationComponent->SetCurrentHoveredButton(Button);
 
 	// Scroll to widget in main menu scroll box
 	GetScrollBox()->ScrollWidgetIntoView(Button);
-}
-
-void UTitleScreenMainMenuScreen::SetHoveredButton(TObjectPtr<UProject1ButtonBase> NewHoveredButton)
-{
-	if (NewHoveredButton != CurrentHoveredButton)
-	{
-		if (IsValid(CurrentHoveredButton))
-		{
-			CurrentHoveredButton->MakeUnhovered();
-		}
-	}
-
-	CurrentHoveredButton = NewHoveredButton;
 }
