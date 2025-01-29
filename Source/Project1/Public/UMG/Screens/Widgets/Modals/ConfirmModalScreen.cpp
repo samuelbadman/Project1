@@ -74,25 +74,31 @@ void UConfirmModalScreen::NativeOnPoppedFromLayerStack()
 
 void UConfirmModalScreen::OnConfirmInputTriggered(const FInputActionValue& Value)
 {
-	ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
+	if (CanReceiveInput())
+	{
+		ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
+	}
 }
 
 void UConfirmModalScreen::OnNavigateInputTriggered(const FInputActionValue& Value)
 {
-	// Only care about horizontal navigation
-	const float HorizontalInput{ StaticCast<float>(Value.Get<FVector2D>().X) };
-
-	if (HorizontalInput == 0.0f)
+	if(CanReceiveInput())
 	{
-		return;
-	}
+		// Only care about horizontal navigation
+		const float HorizontalInput{ StaticCast<float>(Value.Get<FVector2D>().X) };
 
-	const EWidgetNavigationDirection NavDirection{ (HorizontalInput > 0) ? EWidgetNavigationDirection::Right : EWidgetNavigationDirection::Left };
+		if (HorizontalInput == 0.0f)
+		{
+			return;
+		}
 
-	const TObjectPtr<UProject1ButtonBase> NavButton{ ButtonNavigationComponent->NavigateButton(NavDirection) };
-	if (IsValid(NavButton))
-	{
-		ButtonNavigationComponent->SetCurrentHoveredButton(NavButton);
+		const EWidgetNavigationDirection NavDirection{ (HorizontalInput > 0) ? EWidgetNavigationDirection::Right : EWidgetNavigationDirection::Left };
+
+		const TObjectPtr<UProject1ButtonBase> NavButton{ ButtonNavigationComponent->NavigateButton(NavDirection) };
+		if (IsValid(NavButton))
+		{
+			ButtonNavigationComponent->SetCurrentHoveredButton(NavButton);
+		}
 	}
 }
 
