@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UMG/Screens/Widgets/Modals/ModalScreenBase.h"
+#include "UMG/Screens/Modals/ModalScreenBase.h"
 #include "Objects/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
 #include "ConfirmModalScreen.generated.h"
 

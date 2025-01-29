@@ -4,6 +4,7 @@
 #include "Project1HUDBase.h"
 #include "UMG/PrimaryLayouts/PrimaryLayoutUserWidgetBase.h"
 #include "Objects/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
+#include "Objects/ScreenLoadPayloads/DynamicModalScreenLoadPayload.h"
 
 void AProject1HUDBase::PushContentToPrimaryLayoutWidgetLayer(
 	const FGameplayTag& LayerName,
@@ -45,6 +46,20 @@ void AProject1HUDBase::PushConfirmModalToWidgetLayer(
 	ModalLoadPayload->Option2Text = Option2Text;
 	ModalLoadPayload->Option1SelectedDelegate = Option1SelectedDelegate;
 	ModalLoadPayload->Option2SelectedDelegate = Option2SelectedDelegate;
+
+	PushContentToPrimaryLayoutWidgetLayer(LayerName, WidgetClass, ModalLoadPayload);
+}
+
+void AProject1HUDBase::PushDynamicModalToWidgetLayer(
+	const FGameplayTag& LayerName,
+	const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
+	const FText ModalPromptText,
+	const TArray<FDynamicModalOptionData>& Options
+	)
+{
+	const TObjectPtr<UDynamicModalScreenLoadPayload> ModalLoadPayload{ NewObject<UDynamicModalScreenLoadPayload>() };
+	ModalLoadPayload->ModalPromptText = ModalPromptText;
+	ModalLoadPayload->Options = Options;
 
 	PushContentToPrimaryLayoutWidgetLayer(LayerName, WidgetClass, ModalLoadPayload);
 }

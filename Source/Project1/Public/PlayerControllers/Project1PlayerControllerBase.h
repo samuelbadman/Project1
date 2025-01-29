@@ -16,6 +16,9 @@ struct FInputActionValue;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnConfirmModalConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnConfirmModalNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDynamicModalConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDynamicModalNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
+
 UENUM()
 enum class EMouseCursorVisibility : uint8
 {
@@ -34,6 +37,9 @@ class PROJECT1_API AProject1PlayerControllerBase : public APlayerController
 public:
 	FOnConfirmModalConfirmTriggeredDelegate ConfirmModalConfirmTriggered{};
 	FOnConfirmModalNavigateTriggeredDelegate ConfirmModalNavigateTriggered{};
+
+	FOnDynamicModalConfirmTriggeredDelegate DynamicModalConfirmTriggered{};
+	FOnDynamicModalNavigateTriggeredDelegate DynamicModalNavigateTriggered{};
 
 private:
 	UPROPERTY(EditDefaultsOnly)
@@ -57,6 +63,18 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
 	TObjectPtr<UInputAction> ConfirmModalNavigateInputAction{ nullptr };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
+	TObjectPtr<UInputMappingContext> DynamicModalInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
+	int32 DynamicModalInputPriority{ 11 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
+	TObjectPtr<UInputAction> DynamicModalConfirmInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
+	TObjectPtr<UInputAction> DynamicModalNavigateInputAction{ nullptr };
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible);
@@ -66,6 +84,9 @@ public:
 
 	void AddConfirmModalInputMappingContext();
 	void RemoveConfirmModalInputMappingContext();
+
+	void AddDynamicModalInputMappingContext();
+	void RemoveDynamicModalInputMappingContext();
 
 protected:
 	void SetupInputComponent() override;
@@ -80,5 +101,8 @@ private:
 	void CenterMouseCursorInViewport();
 
 	void OnConfirmModalConfirmTriggered(const FInputActionValue& Value);
-	void OnConfirmModalNavigateTriggered(const FInputActionValue& Value);
+	void OnConfirmModalNavigateTriggered(const FInputActionValue& Value);	
+	
+	void OnDynamicModalConfirmTriggered(const FInputActionValue& Value);
+	void OnDynamicModalNavigateTriggered(const FInputActionValue& Value);
 };

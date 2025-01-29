@@ -43,14 +43,22 @@ void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibil
 
 void AProject1PlayerControllerBase::AddConfirmModalInputMappingContext()
 {
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(ConfirmModalInputMappingContext, ConfirmModalInputPriority);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(ConfirmModalInputMappingContext, ConfirmModalInputPriority);
 }
 
 void AProject1PlayerControllerBase::RemoveConfirmModalInputMappingContext()
 {
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(ConfirmModalInputMappingContext);
+	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(ConfirmModalInputMappingContext);
+}
+
+void AProject1PlayerControllerBase::AddDynamicModalInputMappingContext()
+{
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(DynamicModalInputMappingContext, DynamicModalInputPriority);
+}
+
+void AProject1PlayerControllerBase::RemoveDynamicModalInputMappingContext()
+{
+	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(DynamicModalInputMappingContext);
 }
 
 void AProject1PlayerControllerBase::BeginPlay()
@@ -78,6 +86,9 @@ void AProject1PlayerControllerBase::SetupInputComponent()
 
 	EnhancedInputComponent->BindAction(ConfirmModalConfirmInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnConfirmModalConfirmTriggered);
 	EnhancedInputComponent->BindAction(ConfirmModalNavigateInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnConfirmModalNavigateTriggered);
+
+	EnhancedInputComponent->BindAction(DynamicModalConfirmInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnDynamicModalConfirmTriggered);
+	EnhancedInputComponent->BindAction(DynamicModalNavigateInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnDynamicModalNavigateTriggered);
 }
 
 void AProject1PlayerControllerBase::CenterMouseCursorInViewport()
@@ -95,4 +106,14 @@ void AProject1PlayerControllerBase::OnConfirmModalConfirmTriggered(const FInputA
 void AProject1PlayerControllerBase::OnConfirmModalNavigateTriggered(const FInputActionValue& Value)
 {
 	ConfirmModalNavigateTriggered.Broadcast(Value);
+}
+
+void AProject1PlayerControllerBase::OnDynamicModalConfirmTriggered(const FInputActionValue& Value)
+{
+	DynamicModalConfirmTriggered.Broadcast(Value);
+}
+
+void AProject1PlayerControllerBase::OnDynamicModalNavigateTriggered(const FInputActionValue& Value)
+{
+	DynamicModalNavigateTriggered.Broadcast(Value);
 }

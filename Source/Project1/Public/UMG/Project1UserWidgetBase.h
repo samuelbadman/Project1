@@ -37,5 +37,7 @@ private:
 
 public:
 	bool IsCursorInsideWidgetGeometry(const FVector2D& MousePosition) const;
+
 	TWeakObjectPtr<UWidget> GetNavigatedWidget(EWidgetNavigationDirection Direction) const;
+	void SetNavigationWidget(EWidgetNavigationDirection Direction, TObjectPtr<UWidget> Widget);
 };

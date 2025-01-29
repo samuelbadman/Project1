@@ -5,7 +5,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameInstances/Project1GameInstanceBase.h"
-#include "UMG/Screens/Widgets/ScreenUserWidgetBase.h"
+#include "UMG/Screens/ScreenUserWidgetBase.h"
 #include "Components/PanelWidget.h"
 #include "Objects/ScreenLoadPayloads/ScreenWidgetLoadPayloadBase.h"
 

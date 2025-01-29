@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UMG/Screens/Widgets/ScreenUserWidgetBase.h"
+#include "UMG/Screens/ScreenUserWidgetBase.h"
 #include "ModalScreenBase.generated.h"
 
 /**

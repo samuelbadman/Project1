@@ -27,3 +27,14 @@ TWeakObjectPtr<UWidget> UProject1UserWidgetBase::GetNavigatedWidget(EWidgetNavig
 	}
 	return nullptr;
 }
+
+void UProject1UserWidgetBase::SetNavigationWidget(EWidgetNavigationDirection Direction, TObjectPtr<UWidget> Widget)
+{
+	switch (Direction)
+	{
+	case EWidgetNavigationDirection::Up: NavigateUpWidget = Widget; break;
+	case EWidgetNavigationDirection::Down: NavigateDownWidget = Widget; break;
+	case EWidgetNavigationDirection::Left: NavigateLeftWidget = Widget; break;
+	case EWidgetNavigationDirection::Right: NavigateRightWidget = Widget; break;
+	}
+}

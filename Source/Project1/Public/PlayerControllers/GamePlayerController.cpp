@@ -17,13 +17,13 @@ AGamePlayerController::AGamePlayerController()
 void AGamePlayerController::AddInteractPromptInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(InteractPromptInputMappingContext, InteractPromptInputPriority);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(InteractPromptInputMappingContext, InteractPromptInputPriority);
 }
 
 void AGamePlayerController::RemoveInteractPromptInputMappingContext()
 {
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(InteractPromptInputMappingContext);
+	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(InteractPromptInputMappingContext);
 }
 
 void AGamePlayerController::SetupInputComponent()
@@ -68,7 +68,7 @@ void AGamePlayerController::BeginPlay()
 	World = GetWorld();
 
 	// Add game input mapping contexts
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
 
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(LookInputMappingContext, LookInputMappingContextPriority);
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(ResetLookInputMappingContext, ResetLookInputMappingContextPriority);

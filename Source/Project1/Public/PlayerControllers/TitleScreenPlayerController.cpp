@@ -9,26 +9,22 @@
 
 void ATitleScreenPlayerController::AddPressAnyInputPromptInputMappingContext()
 {
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(PressAnyInputPromptInputMappingContext, PressAnyInputPromptInputPriority);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(PressAnyInputPromptInputMappingContext, PressAnyInputPromptInputPriority);
 }
 
 void ATitleScreenPlayerController::RemovePressAnyInputPromptInputMappingContext()
 {
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(PressAnyInputPromptInputMappingContext);
+	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(PressAnyInputPromptInputMappingContext);
 }
 
 void ATitleScreenPlayerController::AddMainMenuScreenInputMappingContext()
 {
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MainMenuScreenInputMappingContext, MainMenuScreenInputPriority);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(MainMenuScreenInputMappingContext, MainMenuScreenInputPriority);
 }
 
 void ATitleScreenPlayerController::RemoveMainMenuScreenInputMappingContext()
 {
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-	EnhancedInputLocalPlayerSubsystem->RemoveMappingContext(MainMenuScreenInputMappingContext);
+	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(MainMenuScreenInputMappingContext);
 }
 
 void ATitleScreenPlayerController::SetupInputComponent()

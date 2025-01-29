@@ -31,8 +31,8 @@ private:
 
 public:
 	void PushContentToPrimaryLayoutWidgetLayer(
-		const FGameplayTag& LayerName, 
-		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass, 
+		const FGameplayTag& LayerName,
+		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
 		UScreenWidgetLoadPayloadBase* const LoadPayloadObject = nullptr
 	);
 	void PopContentFromPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName);
@@ -49,6 +49,15 @@ public:
 		const FText Option2Text,
 		const FConfirmModalOptionSelectedDelegate& Option1SelectedDelegate,
 		const FConfirmModalOptionSelectedDelegate& Option2SelectedDelegate
+	);
+
+	// Helper function to setup and push a dynamic modal to a widget layer
+	UFUNCTION(BlueprintCallable)
+	void PushDynamicModalToWidgetLayer(
+		const FGameplayTag& LayerName,
+		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
+		const FText ModalPromptText,
+		const TArray<FDynamicModalOptionData>& Options
 	);
 
 protected:
