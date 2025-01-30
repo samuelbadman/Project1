@@ -3,6 +3,7 @@
 
 #include "Project1HUDBase.h"
 #include "UMG/PrimaryLayouts/PrimaryLayoutUserWidgetBase.h"
+#include "UMG/Layers/LayerUserWidgetBase.h"
 #include "Objects/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
 #include "Objects/ScreenLoadPayloads/DynamicModalScreenLoadPayload.h"
 
@@ -28,6 +29,11 @@ TObjectPtr<ULayerUserWidgetBase> AProject1HUDBase::GetRegisteredPrimaryLayoutWid
 bool AProject1HUDBase::DoesPrimaryLayoutWidgetLayerBlockContentInput(const int32 ContentLayerPriority) const
 {
 	return PrimaryLayoutWidget->DoesLayerBlockContentInput(ContentLayerPriority);
+}
+
+bool AProject1HUDBase::IsPrimaryLayoutWidgetLayerEmpty(const FGameplayTag& LayerName) const
+{
+	return PrimaryLayoutWidget->GetRegisteredLayer(LayerName)->IsEmpty();
 }
 
 void AProject1HUDBase::PushConfirmModalToWidgetLayer(

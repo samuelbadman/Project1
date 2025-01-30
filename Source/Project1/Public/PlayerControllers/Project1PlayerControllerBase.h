@@ -55,7 +55,7 @@ private:
 	TObjectPtr<UInputMappingContext> ConfirmModalInputMappingContext{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
-	int32 ConfirmModalInputPriority{ 11 };
+	int32 ConfirmModalInputPriority{ 15 };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
 	TObjectPtr<UInputAction> ConfirmModalConfirmInputAction{ nullptr };
@@ -67,7 +67,7 @@ private:
 	TObjectPtr<UInputMappingContext> DynamicModalInputMappingContext{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
-	int32 DynamicModalInputPriority{ 11 };
+	int32 DynamicModalInputPriority{ 15 };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
 	TObjectPtr<UInputAction> DynamicModalConfirmInputAction{ nullptr };

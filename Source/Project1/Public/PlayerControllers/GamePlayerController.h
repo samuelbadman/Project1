@@ -14,6 +14,8 @@ class UPlayerInteractComponent;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptInteractTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptSwitchActionTriggeredDelegate, const FInputActionValue& /* Value */);
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDialogueScreenConfirmTriggered, const FInputActionValue& /* Value */);
+
 /**
  *
  */
@@ -25,6 +27,8 @@ class PROJECT1_API AGamePlayerController : public AProject1PlayerControllerBase
 public:
 	FOnInteractPromptInteractTriggeredDelegate InteractPromptInteractTriggered{};
 	FOnInteractPromptSwitchActionTriggeredDelegate InteractPromptSwitchActionTriggered{};
+
+	FOnDialogueScreenConfirmTriggered DialogueScreenConfirmTriggered{};
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -44,6 +48,15 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|InteractPrompt")
 	TObjectPtr<UInputAction> InteractPromptSwitchActionInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|DialogueScreen")
+	TObjectPtr<UInputMappingContext> DialogueScreenInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|DialogueScreen")
+	int32 DialogueScreenInputPriority{ 11 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|DialogueScreen")
+	TObjectPtr<UInputAction> DialogueScreenConfirmInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Look")
 	TObjectPtr<UInputMappingContext> LookInputMappingContext{ nullptr };
@@ -102,6 +115,9 @@ public:
 	void AddInteractPromptInputMappingContext();
 	void RemoveInteractPromptInputMappingContext();
 
+	void AddDialogueScreenInputMappingContext();
+	void RemoveDialogueScreenInputMappingContext();
+
 	FORCEINLINE TObjectPtr<UPlayerInteractComponent> GetPlayerInteractComponent() const { return PlayerInteractComponent; }
 
 private:
@@ -111,6 +127,8 @@ private:
 
 	void OnInteractPromptUIInteractTriggered(const FInputActionValue& Value);
 	void OnInteractPromptUISwitchActionTriggered(const FInputActionValue& Value);
+
+	void OnDialogueScreenConfirmTriggered(const FInputActionValue& Value);
 
 	void OnLookAbsoluteTriggered(const FInputActionValue& Value);
 	void OnLookAnalogTriggered(const FInputActionValue& Value);

@@ -16,14 +16,22 @@ AGamePlayerController::AGamePlayerController()
 
 void AGamePlayerController::AddInteractPromptInputMappingContext()
 {
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
 	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(InteractPromptInputMappingContext, InteractPromptInputPriority);
 }
 
 void AGamePlayerController::RemoveInteractPromptInputMappingContext()
 {
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
 	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(InteractPromptInputMappingContext);
+}
+
+void AGamePlayerController::AddDialogueScreenInputMappingContext()
+{
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(DialogueScreenInputMappingContext, DialogueScreenInputPriority);
+}
+
+void AGamePlayerController::RemoveDialogueScreenInputMappingContext()
+{
+	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(DialogueScreenInputMappingContext);
 }
 
 void AGamePlayerController::SetupInputComponent()
@@ -34,6 +42,8 @@ void AGamePlayerController::SetupInputComponent()
 
 	EnhancedInputComponent->BindAction(InteractPromptInteractInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUIInteractTriggered);
 	EnhancedInputComponent->BindAction(InteractPromptSwitchActionInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUISwitchActionTriggered);
+
+	EnhancedInputComponent->BindAction(DialogueScreenConfirmInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnDialogueScreenConfirmTriggered);
 
 	EnhancedInputComponent->BindAction(LookAbsoluteInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAbsoluteTriggered);
 	EnhancedInputComponent->BindAction(LookAnalogInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAnalogTriggered);
@@ -84,6 +94,11 @@ void AGamePlayerController::OnInteractPromptUIInteractTriggered(const FInputActi
 void AGamePlayerController::OnInteractPromptUISwitchActionTriggered(const FInputActionValue& Value)
 {
 	InteractPromptSwitchActionTriggered.Broadcast(Value);
+}
+
+void AGamePlayerController::OnDialogueScreenConfirmTriggered(const FInputActionValue& Value)
+{
+	DialogueScreenConfirmTriggered.Broadcast(Value);
 }
 
 void AGamePlayerController::OnLookAbsoluteTriggered(const FInputActionValue& Value)
