@@ -30,14 +30,23 @@ private:
 	TObjectPtr<UPrimaryLayoutUserWidgetBase> PrimaryLayoutWidget{ nullptr };
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void PushContentToPrimaryLayoutWidgetLayer(
 		const FGameplayTag& LayerName,
 		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
 		UScreenWidgetLoadPayloadBase* const LoadPayloadObject = nullptr
 	);
+
+	UFUNCTION(BlueprintCallable)
 	void PopContentFromPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName);
-	TObjectPtr<ULayerUserWidgetBase> GetRegisteredPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName) const;
+
+	UFUNCTION(BlueprintCallable)
+	ULayerUserWidgetBase* GetRegisteredPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName) const;
+
+	UFUNCTION(BlueprintCallable)
 	bool DoesPrimaryLayoutWidgetLayerBlockContentInput(const int32 ContentLayerPriority) const;
+
+	UFUNCTION(BlueprintCallable)
 	bool IsPrimaryLayoutWidgetLayerEmpty(const FGameplayTag& LayerName) const;
 
 	// Helper function to setup and push a confirm modal to a widget layer

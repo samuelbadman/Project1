@@ -7,22 +7,27 @@
 #include "HUDs/Project1HUDBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Objects/ScreenLoadPayloads/DialogueScreenLoadPayload.h"
+#include "Objects/ScreenLoadPayloads/DynamicModalScreenLoadPayload.h"
+#include "Components/ActorComponents/DialogueComponent.h"
+#include "UMG/Screens/Modals/DynamicModalScreen.h"
 
 void UDialogueManagerBase::BeginPlay()
 {
 	Project1HUD = CastChecked<AProject1HUDBase>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 }
 
-void UDialogueManagerBase::BeginDialogueBranch(TObjectPtr<UDialogueNode> BranchRootNode, TObjectPtr<UDialogueComponent> Component)
+void UDialogueManagerBase::BeginDialogueBranch(const FGameplayTag& BranchName, TObjectPtr<UDialogueComponent> Component)
 {
 	// TODO: Reject dialogue branch if dialogue is currently playing
+	const TObjectPtr<UDialogueNode> RootNode{ Component->GetDialogueTree()[BranchName] };
 
 	ComponentPlayingDialogue = Component;
-	PlayDialogueNode(BranchRootNode);
+	PlayingBranchName = BranchName;
+	PlayDialogueNode(RootNode);
 
 	// Push dialogue screen widget to widget layer
 	const TObjectPtr<UDialogueScreenLoadPayload> DialogueScreenLoadPayload{ NewObject<UDialogueScreenLoadPayload>() };
-	DialogueScreenLoadPayload->InitialDialogueLineText = BranchRootNode->GetDialogueLine();
+	DialogueScreenLoadPayload->InitialDialogueLineText = RootNode->GetDialogueLine();
 
 	Project1HUD->PushContentToPrimaryLayoutWidgetLayer(DialogueScreenWidgetLayerName, DialogueScreenWidgetClass, DialogueScreenLoadPayload);
 }
@@ -37,15 +42,39 @@ void UDialogueManagerBase::ProgressDialogue()
 	if (IsValid(NextNode))
 	{
 		PlayDialogueNode(NextNode);
+		return;
 	}
-	else
-	{
-		// Reached the end of the dialogue branch
-		Project1HUD->PopContentFromPrimaryLayoutWidgetLayer(DialogueScreenWidgetLayerName);
 
-		ComponentPlayingDialogue = nullptr;
-		CurrentPlayingNode = nullptr;
+	// Reached the end of the dialogue branch
+	// If the node has dialogue options, show the options in a dynamic modal screen
+	if (CurrentPlayingNode->DefinesDialogueOptions())
+	{
+		const TArray<FDialogueOption>& DialogueOptions{ CurrentPlayingNode->GetDialogueOptions() };
+		TArray<FDynamicModalOptionData> ModalOptions{};
+		ModalOptions.Reserve(DialogueOptions.Num());
+
+		for (const FDialogueOption& DialogueOption : DialogueOptions)
+		{
+			FDynamicModalOptionData ModalData{};
+			ModalData.OptionText = DialogueOption.OptionButtonText;
+			ModalData.OptionSelectedDelegate.BindUFunction(ComponentPlayingDialogue->GetOwner(), DialogueOption.CallbackUFunctionName);
+
+			ModalOptions.Add(ModalData);
+		}
+
+		Project1HUD->PushDynamicModalToWidgetLayer(ModalWidgetLayerName, DynamicModalWidgetClass, CurrentPlayingNode->GetDialogueOptionModalPromptText(), ModalOptions);
 	}
+
+	// Remove dialogue screen
+	Project1HUD->PopContentFromPrimaryLayoutWidgetLayer(DialogueScreenWidgetLayerName);
+
+	// Notify playing component a branch has finished playing
+	ComponentPlayingDialogue->NotifyDialogueBranchCompleted(PlayingBranchName);
+
+	// Reset current playing variables
+	ComponentPlayingDialogue = nullptr;
+	CurrentPlayingNode = nullptr;
+	PlayingBranchName = {};
 }
 
 void UDialogueManagerBase::PlayDialogueNode(TObjectPtr<UDialogueNode> Node)

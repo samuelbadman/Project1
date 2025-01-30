@@ -11,6 +11,7 @@ class UDialogueScreen;
 class UDialogueNode;
 class AProject1HUDBase;
 class UDialogueComponent;
+class UDynamicModalScreen;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayedDialogueNodeDelegate, TObjectPtr<UDialogueNode> /* DialogueNode */);
 
@@ -26,22 +27,29 @@ public:
 	FOnPlayedDialogueNodeDelegate OnPlayedDialogueNode{};
 
 private:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "DialogueScreen")
 	TSoftClassPtr<UDialogueScreen> DialogueScreenWidgetClass{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "DialogueScreen")
 	FGameplayTag DialogueScreenWidgetLayerName{};
+
+	UPROPERTY(EditDefaultsOnly, Category = "DynamicModal")
+	TSoftClassPtr<UDynamicModalScreen> DynamicModalWidgetClass{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "DynamicModal")
+	FGameplayTag ModalWidgetLayerName{};
 
 	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
 
 	TObjectPtr<UDialogueComponent> ComponentPlayingDialogue{ nullptr };
 	UPROPERTY()
 	TObjectPtr<UDialogueNode> CurrentPlayingNode{ nullptr };
+	FGameplayTag PlayingBranchName{};
 
 public:
 	void BeginPlay();
 
-	void BeginDialogueBranch(TObjectPtr<UDialogueNode> BranchRootNode, TObjectPtr<UDialogueComponent> Component);
+	void BeginDialogueBranch(const FGameplayTag& BranchName, TObjectPtr<UDialogueComponent> Component);
 	void ProgressDialogue();
 
 private:

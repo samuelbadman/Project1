@@ -10,6 +10,8 @@
 class UDialogueNode;
 class UDialogueManagerBase;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDialogueBranchCompleteDelegate, const FGameplayTag&, CompletedBranch);
+
 /**
  * 
  */
@@ -18,6 +20,10 @@ class PROJECT1_API UDialogueComponent : public UProject1ActorComponentBase
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Dialouge Branch Complete"))
+	FOnDialogueBranchCompleteDelegate OnDialogueBranchComplete{};
+
 private:
 	// A branching dialogue is stored inside a tree structure in each dialogue component. A branch is identified by a unique gameplay tag alongside a linked list of dialogue nodes.
 	// A dialogue component implements a dialogue for an actor that can be talked to. An actor may have more than 1 dialogue component if necessary. Each dialogue chain down to a
@@ -34,6 +40,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PlayBranch(const FGameplayTag& Branch);
+
+	void NotifyDialogueBranchCompleted(const FGameplayTag& CompletedBranch);
+
+	FORCEINLINE const TMap<FGameplayTag, TObjectPtr<UDialogueNode>>& GetDialogueTree() const { return DialogueTree; }
 
 private:
 	void BeginPlay() override;

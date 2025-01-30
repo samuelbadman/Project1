@@ -8,6 +8,19 @@
 
 class UDialogueComponent;
 
+USTRUCT(BlueprintType)
+struct FDialogueOption
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FText OptionButtonText{};
+
+	// Function must be marked UFUNCTION() or be a blueprint function
+	UPROPERTY(EditDefaultsOnly)
+	FName CallbackUFunctionName{};
+};
+
 /**
  * 
  */
@@ -17,15 +30,24 @@ class PROJECT1_API UDialogueNode : public UObject
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DialogueNode", meta = (MultiLine = "true", AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DialogueNode", meta = (MultiLine = "true", AllowPrivateAccess = "true"))
 	FText DialogueLine{};
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DialogueNode", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly)
+	FText DialogueOptionModalPromptText{};
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DialogueNode", meta = (MultiLine = "true", AllowPrivateAccess = "true"))
+	TArray<FDialogueOption> DialogueOptions{};
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DialogueNode", meta = (MultiLine = "true", AllowPrivateAccess = "true"))
 	TObjectPtr<UDialogueNode> NextNode{};
 
 public:
 	FORCEINLINE const FText& GetDialogueLine() const { return DialogueLine; }
 	FORCEINLINE TObjectPtr<UDialogueNode> GetNextDialogueNode() const { return NextNode; }
+	FORCEINLINE const FText& GetDialogueOptionModalPromptText() const { return DialogueOptionModalPromptText; }
+	FORCEINLINE const TArray<FDialogueOption>& GetDialogueOptions() const { return DialogueOptions; }
+	FORCEINLINE bool DefinesDialogueOptions() const { return (DialogueOptions.Num() > 0); }
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPlayed(UDialogueComponent* ComponentPlayedDialogue);

@@ -21,7 +21,7 @@ void AProject1HUDBase::PopContentFromPrimaryLayoutWidgetLayer(const FGameplayTag
 	PrimaryLayoutWidget->PopContentFromLayer(LayerName);
 }
 
-TObjectPtr<ULayerUserWidgetBase> AProject1HUDBase::GetRegisteredPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName) const
+ULayerUserWidgetBase* AProject1HUDBase::GetRegisteredPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName) const
 {
 	return PrimaryLayoutWidget->GetRegisteredLayer(LayerName);
 }

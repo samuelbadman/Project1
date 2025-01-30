@@ -13,7 +13,12 @@ UDialogueComponent::UDialogueComponent()
 
 void UDialogueComponent::PlayBranch(const FGameplayTag& Branch)
 {
-	DialogueManager->BeginDialogueBranch(DialogueTree[Branch], this);
+	DialogueManager->BeginDialogueBranch(Branch, this);
+}
+
+void UDialogueComponent::NotifyDialogueBranchCompleted(const FGameplayTag& CompletedBranch)
+{
+	OnDialogueBranchComplete.Broadcast(CompletedBranch);
 }
 
 void UDialogueComponent::BeginPlay()
