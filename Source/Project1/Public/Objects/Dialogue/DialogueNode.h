@@ -53,5 +53,8 @@ public:
 	void OnPlayed(UDialogueComponent* ComponentPlayedDialogue);
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void Tick(float DeltaSeconds, UDialogueComponent* ComponentPlayedDialogue);
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void OnFinished(UDialogueComponent* ComponentPlayedDialogue);
 };

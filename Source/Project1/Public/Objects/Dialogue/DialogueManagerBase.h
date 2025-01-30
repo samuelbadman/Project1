@@ -48,10 +48,12 @@ private:
 
 public:
 	void BeginPlay();
+	void Tick(float DeltaSeconds);
 
 	void BeginDialogueBranch(const FGameplayTag& BranchName, TObjectPtr<UDialogueComponent> Component);
 	void ProgressDialogue();
 
 private:
 	void PlayDialogueNode(TObjectPtr<UDialogueNode> Node);
+	bool IsPlayingDialogueNode() const;
 };

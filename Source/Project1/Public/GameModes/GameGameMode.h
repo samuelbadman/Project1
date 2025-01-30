@@ -25,11 +25,14 @@ private:
 	TObjectPtr<UDialogueManagerBase> DialogueManagerInstance{ nullptr };
 
 public:
+	AGameGameMode();
+
 	FORCEINLINE UDialogueManagerBase* GetDialogueManager() const { return DialogueManagerInstance; }
 
 private:
 	void StartPlay() override;
 	void BeginPlay() override;
+	void Tick(float DeltaSeconds) override;
 
 	void CreateDialogueManager();
 };

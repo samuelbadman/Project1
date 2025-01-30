@@ -4,6 +4,11 @@
 #include "GameGameMode.h"
 #include "Objects/Dialogue/DialogueManagerBase.h"
 
+AGameGameMode::AGameGameMode()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
 void AGameGameMode::StartPlay()
 {
 	// Create dialogue manager instance before beginning play on actors to ensure that dialogue manager instance is valid during actor begin play
@@ -17,6 +22,12 @@ void AGameGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	DialogueManagerInstance->BeginPlay();
+}
+
+void AGameGameMode::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	DialogueManagerInstance->Tick(DeltaSeconds);
 }
 
 void AGameGameMode::CreateDialogueManager()

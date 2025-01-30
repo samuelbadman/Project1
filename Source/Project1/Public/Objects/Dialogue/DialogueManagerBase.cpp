@@ -16,6 +16,14 @@ void UDialogueManagerBase::BeginPlay()
 	Project1HUD = CastChecked<AProject1HUDBase>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 }
 
+void UDialogueManagerBase::Tick(float DeltaSeconds)
+{
+	if (IsPlayingDialogueNode())
+	{
+		CurrentPlayingNode->Tick(DeltaSeconds, ComponentPlayingDialogue);
+	}
+}
+
 void UDialogueManagerBase::BeginDialogueBranch(const FGameplayTag& BranchName, TObjectPtr<UDialogueComponent> Component)
 {
 	// TODO: Reject dialogue branch if dialogue is currently playing
@@ -82,4 +90,9 @@ void UDialogueManagerBase::PlayDialogueNode(TObjectPtr<UDialogueNode> Node)
 	CurrentPlayingNode = Node;
 	Node->OnPlayed(ComponentPlayingDialogue);
 	OnPlayedDialogueNode.Broadcast(Node);
+}
+
+bool UDialogueManagerBase::IsPlayingDialogueNode() const
+{
+	return IsValid(CurrentPlayingNode);
 }
