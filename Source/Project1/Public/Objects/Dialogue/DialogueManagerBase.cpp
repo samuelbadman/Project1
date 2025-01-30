@@ -6,37 +6,51 @@
 #include "UMG/Screens/Game/DialogueScreen.h"
 #include "HUDs/Project1HUDBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Objects/ScreenLoadPayloads/DialogueScreenLoadPayload.h"
 
 void UDialogueManagerBase::BeginPlay()
 {
 	Project1HUD = CastChecked<AProject1HUDBase>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 }
 
-void UDialogueManagerBase::BeginDialogueBranch(TObjectPtr<UDialogueNode> BranchRootNode)
+void UDialogueManagerBase::BeginDialogueBranch(TObjectPtr<UDialogueNode> BranchRootNode, TObjectPtr<UDialogueComponent> Component)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Beginning dialogue branch")));
+	// TODO: Reject dialogue branch if dialogue is currently playing
 
-	// Can only play a dialogue branch if one is not already playing
-	//if (!Project1HUD->IsPrimaryLayoutWidgetLayerEmpty(DialogueScreenWidgetLayerName))
-	//{
-	//	return;
-	//}
-
+	ComponentPlayingDialogue = Component;
 	PlayDialogueNode(BranchRootNode);
-	Project1HUD->PushContentToPrimaryLayoutWidgetLayer(DialogueScreenWidgetLayerName, DialogueScreenWidgetClass);
+
+	// Push dialogue screen widget to widget layer
+	const TObjectPtr<UDialogueScreenLoadPayload> DialogueScreenLoadPayload{ NewObject<UDialogueScreenLoadPayload>() };
+	DialogueScreenLoadPayload->InitialDialogueLineText = BranchRootNode->GetDialogueLine();
+
+	Project1HUD->PushContentToPrimaryLayoutWidgetLayer(DialogueScreenWidgetLayerName, DialogueScreenWidgetClass, DialogueScreenLoadPayload);
 }
 
-const FText* UDialogueManagerBase::GetCurrentPlayingNodeDialogueLineText() const
+void UDialogueManagerBase::ProgressDialogue()
 {
-	if (!IsValid(CurrentPlayingNode))
-	{
-		return nullptr;
-	}
+	// Finish the current playing node
+	CurrentPlayingNode->OnFinished(ComponentPlayingDialogue);
 
-	return &(CurrentPlayingNode->GetDialogueLine());
+	// Does the current playing node have a next one
+	const TObjectPtr<UDialogueNode> NextNode{ CurrentPlayingNode->GetNextDialogueNode() };
+	if (IsValid(NextNode))
+	{
+		PlayDialogueNode(NextNode);
+	}
+	else
+	{
+		// Reached the end of the dialogue branch
+		Project1HUD->PopContentFromPrimaryLayoutWidgetLayer(DialogueScreenWidgetLayerName);
+
+		ComponentPlayingDialogue = nullptr;
+		CurrentPlayingNode = nullptr;
+	}
 }
 
 void UDialogueManagerBase::PlayDialogueNode(TObjectPtr<UDialogueNode> Node)
 {
 	CurrentPlayingNode = Node;
+	Node->OnPlayed(ComponentPlayingDialogue);
+	OnPlayedDialogueNode.Broadcast(Node);
 }

@@ -9,6 +9,7 @@
 class AGamePlayerController;
 struct FInputActionValue;
 class UDialogueManagerBase;
+class UDialogueNode;
 
 /**
  * 
@@ -22,6 +23,7 @@ private:
 	TObjectPtr<UDialogueManagerBase> DialogueManager{ nullptr };
 	TObjectPtr<AGamePlayerController> GamePlayerController{ nullptr };
 	FDelegateHandle ConfirmTriggeredDelegateHandle{};
+	FDelegateHandle DialogueNodePlayedDelegateHandle{};
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
@@ -30,6 +32,8 @@ public:
 private:
 	void NativeOnPushedToLayerStack() override;
 	void NativeOnPoppedFromLayerStack() override;
+	void NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload) override;
 
 	void OnConfirmTriggered(const FInputActionValue& Value);
+	void OnDialogueNodePlayed(const TObjectPtr<UDialogueNode> DialogueNode);
 };

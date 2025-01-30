@@ -13,7 +13,7 @@ UDialogueComponent::UDialogueComponent()
 
 void UDialogueComponent::PlayBranch(const FGameplayTag& Branch)
 {
-	DialogueManager->BeginDialogueBranch(DialogueTree[Branch]);
+	DialogueManager->BeginDialogueBranch(DialogueTree[Branch], this);
 }
 
 void UDialogueComponent::BeginPlay()

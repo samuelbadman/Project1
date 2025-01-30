@@ -7,6 +7,8 @@
 #include "InputActionValue.h"
 #include "GameModes/GameGameMode.h"
 #include "Objects/Dialogue/DialogueManagerBase.h"
+#include "Objects/ScreenLoadPayloads/DialogueScreenLoadPayload.h"
+#include "Objects/Dialogue/DialogueNode.h"
 
 void UDialogueScreen::NativeOnPushedToLayerStack()
 {
@@ -19,12 +21,8 @@ void UDialogueScreen::NativeOnPushedToLayerStack()
 	// Register dialogue screen input events
 	ConfirmTriggeredDelegateHandle = GamePlayerController->DialogueScreenConfirmTriggered.AddUObject(this, &UDialogueScreen::OnConfirmTriggered);
 
-	// Display initial dialogue line
-	const FText* pInitialLineText{ DialogueManager->GetCurrentPlayingNodeDialogueLineText() };
-	if (pInitialLineText)
-	{
-		SetDialogueLineText(*(DialogueManager->GetCurrentPlayingNodeDialogueLineText()));
-	}
+	// Register dialogue manager events
+	DialogueNodePlayedDelegateHandle = DialogueManager->OnPlayedDialogueNode.AddUObject(this, &UDialogueScreen::OnDialogueNodePlayed);
 
 	// Add dialogue screen inputs
 	GamePlayerController->AddDialogueScreenInputMappingContext();
@@ -36,11 +34,28 @@ void UDialogueScreen::NativeOnPoppedFromLayerStack()
 	GamePlayerController->DialogueScreenConfirmTriggered.Remove(ConfirmTriggeredDelegateHandle);
 	ConfirmTriggeredDelegateHandle.Reset();
 
+	// Remove dialogue manager events
+	DialogueManager->OnPlayedDialogueNode.Remove(DialogueNodePlayedDelegateHandle);
+	DialogueNodePlayedDelegateHandle.Reset();
+
 	// Remove dialogue screen inputs
 	GamePlayerController->RemoveDialogueScreenInputMappingContext();
 }
 
+void UDialogueScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload)
+{
+	const TObjectPtr<UDialogueScreenLoadPayload> Payload{ CastChecked<UDialogueScreenLoadPayload>(LoadPayload) };
+
+	// Set initial dialogue line
+	SetDialogueLineText(Payload->InitialDialogueLineText);
+}
+
 void UDialogueScreen::OnConfirmTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Dialogue screen confirm: %d"), StaticCast<int32>(Value.Get<bool>())));
+	DialogueManager->ProgressDialogue();
+}
+
+void UDialogueScreen::OnDialogueNodePlayed(const TObjectPtr<UDialogueNode> DialogueNode)
+{
+	SetDialogueLineText(DialogueNode->GetDialogueLine());
 }

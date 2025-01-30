@@ -6,6 +6,8 @@
 #include "UObject/NoExportTypes.h"
 #include "DialogueNode.generated.h"
 
+class UDialogueComponent;
+
 /**
  * 
  */
@@ -24,4 +26,10 @@ private:
 public:
 	FORCEINLINE const FText& GetDialogueLine() const { return DialogueLine; }
 	FORCEINLINE TObjectPtr<UDialogueNode> GetNextDialogueNode() const { return NextNode; }
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPlayed(UDialogueComponent* ComponentPlayedDialogue);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnFinished(UDialogueComponent* ComponentPlayedDialogue);
 };
