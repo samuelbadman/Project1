@@ -18,10 +18,12 @@ public:
 	// Returns the in euler angle in the range 0 - 180/-180 degrees to 0 - 360 degrees
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Project1BlueprintFunctionLibrary", meta = (DisplayName = "Convert Euler Angle To 360 Degrees"))
 	static double ConvertEulerAngleTo360Degrees(const double Euler);
+	static float ConvertEulerAngleTo360Degrees(const float Euler);
 
 	// Returns the in angle in the range 0 - 360 degrees normalized to 0 - 1 range
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Project1BlueprintFunctionLibrary", meta = (DisplayName = "Normalize 360 Degrees Angle"))
 	static double Normalize360DegreesAngle(const double Angle);
+	static float Normalize360DegreesAngle(const float Angle);
 
 	// Returns Index incremented by IncrementAmount wrapped within the range 0 - ArrayElementCount. Works both ways so, IncrementAmount can be positive or negative
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Project1BlueprintFunctionLibrary", meta = (DisplayName = "Wrap Increment Array Index"))

@@ -6,7 +6,7 @@
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
 #include "Components/Spacer.h"
-#include "UMG/Components/DynamicModalOptionUserWidget.h"
+#include "UMG/Components/DynamicModal/DynamicModalOptionUserWidget.h"
 #include "Blueprint/WidgetTree.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 #include "Objects/WidgetComponents/ButtonNavigationComponent.h"

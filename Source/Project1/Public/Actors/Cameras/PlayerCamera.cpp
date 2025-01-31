@@ -22,7 +22,7 @@ APlayerCamera::APlayerCamera()
 	CameraComponent->SetupAttachment(CameraParentComponent);
 }
 
-void APlayerCamera::Rotate(float Pitch, float Yaw)
+void APlayerCamera::SetRotation(float Pitch, float Yaw)
 {
 	// Separate pitch and yaw to avoid gimbal lock. Pitch is applied locally to the camera parent component and yaw is applied to the actor in world space
 	CameraParentComponent->SetRelativeRotation(FRotator(StaticCast<double>(Pitch), 0.0, 0.0));

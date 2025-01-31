@@ -75,6 +75,8 @@ void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
 		UpdateCameraCollision();
 	}
 
+	OnCameraUpdated.Broadcast(ViewPitchCurrent, ViewYawCurrent);
+
 	Super::UpdateCamera(DeltaTime);
 }
 
@@ -156,7 +158,7 @@ void AGamePlayerCameraManager::UpdateCameraRotation(float DeltaTime)
 		ViewYawTarget = FMath::Wrap(ViewYawTarget, ViewYawMin, ViewYawMax);
 	}
 
-	PlayerCameraActor->Rotate(ViewPitchCurrent, ViewYawCurrent);
+	PlayerCameraActor->SetRotation(ViewPitchCurrent, ViewYawCurrent);
 }
 
 void AGamePlayerCameraManager::UpdateCameraLocation(float DeltaTime)

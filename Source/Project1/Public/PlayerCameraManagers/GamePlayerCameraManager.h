@@ -9,6 +9,8 @@
 class APlayerCamera;
 struct FStreamableHandle;
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCameraUpdatedDelegate, float /* CurrentPitch */, float /* CurrentYaw */);
+
 /**
  * 
  */
@@ -17,6 +19,9 @@ class PROJECT1_API AGamePlayerCameraManager : public AProject1PlayerCameraManage
 {
 	GENERATED_BODY()
 	
+public:
+	FOnCameraUpdatedDelegate OnCameraUpdated{};
+
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<APlayerCamera> PlayerCameraActorClass{ nullptr };

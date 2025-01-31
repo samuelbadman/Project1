@@ -52,7 +52,7 @@ private:
 public:
 	APlayerCamera();
 
-	void Rotate(float Pitch, float Yaw);
+	void SetRotation(float Pitch, float Yaw);
 
 	FORCEINLINE float GetRotateInterpSpeed() const { return RotateInterpSpeed; }
 	FORCEINLINE float GetLocationInterpSpeed() const { return LocationInterpSpeed; }
