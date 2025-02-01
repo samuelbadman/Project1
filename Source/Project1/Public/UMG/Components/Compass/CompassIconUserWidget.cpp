@@ -6,8 +6,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "FunctionLibraries/Project1BlueprintFunctionLibrary.h"
+#include "CompassBarUserWidget.h"
 
-void UCompassIconUserWidget::SetIconTexture(TObjectPtr<UTexture2D> Texture)
+void UCompassIconUserWidget::SetIconTexture(UTexture2D* Texture)
 {
 	ImageDynamicMaterialInstance->SetTextureParameterValue(IconTextureParameterName, Texture);
 }
@@ -17,7 +18,7 @@ void UCompassIconUserWidget::SetIconTint(const FSlateColor& Tint)
 	GetImage()->SetBrushTintColor(Tint);
 }
 
-void UCompassIconUserWidget::UpdateIconScrollUAxisValue(float CurrentCompassBarBackgroundScrollUValue)
+void UCompassIconUserWidget::UpdateIconScrollUAxisValue()
 {
 	// Calculate yaw rotation between the player character and the target location
 	const double TargetYaw = UKismetMathLibrary::FindLookAtRotation(UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorLocation(), TargetWorldLocation).Yaw;
@@ -27,17 +28,29 @@ void UCompassIconUserWidget::UpdateIconScrollUAxisValue(float CurrentCompassBarB
 
 	// Update icon U texture coordinate offset
 	ImageDynamicMaterialInstance->SetScalarParameterValue(ScrollUAxisMaterialParameterName,
-		(static_cast<float>(UProject1BlueprintFunctionLibrary::Normalize360DegreesAngle(TargetYaw360)) * -1.0f) + CurrentCompassBarBackgroundScrollUValue);
+		(static_cast<float>(UProject1BlueprintFunctionLibrary::Normalize360DegreesAngle(TargetYaw360)) * -1.0f) + OwningCompassBar->GetCurrentBackgroundBarScrollUOffset());
 }
 
 void UCompassIconUserWidget::SetWorldLocation(const FVector& WorldLocation)
 {
 	TargetWorldLocation = WorldLocation;
+	UpdateIconScrollUAxisValue();
+}
+
+void UCompassIconUserWidget::SetOwningCompassBar(TObjectPtr<UCompassBarUserWidget> CompassBar)
+{
+	OwningCompassBar = CompassBar;
 }
 
 void UCompassIconUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
 	ImageDynamicMaterialInstance = GetImage()->GetDynamicMaterial();
+}
+
+void UCompassIconUserWidget::BeginDestroy()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, FString::Printf(TEXT("Destroying compass icon: %s"), *GetName()));
+
+	Super::BeginDestroy();
 }

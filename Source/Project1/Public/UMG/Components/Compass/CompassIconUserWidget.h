@@ -7,6 +7,7 @@
 #include "CompassIconUserWidget.generated.h"
 
 class UImage;
+class UCompassBarUserWidget;
 
 /**
  * 
@@ -25,16 +26,27 @@ private:
 
 	TObjectPtr<UMaterialInstanceDynamic> ImageDynamicMaterialInstance{ nullptr };
 	FVector TargetWorldLocation{ FVector::ZeroVector };
+	TObjectPtr<UCompassBarUserWidget> OwningCompassBar{ nullptr };
+	FDelegateHandle OwningCompassBarBackgroundScrollUAxisValueChangedDelegateHandle{};
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	UImage* GetImage();
 
-	void SetIconTexture(TObjectPtr<UTexture2D> Texture);
+	UFUNCTION(BlueprintCallable, Category = "CompassIconUserWidget")
+	void SetIconTexture(UTexture2D* Texture);
+
+	UFUNCTION(BlueprintCallable, Category = "CompassIconUserWidget")
 	void SetIconTint(const FSlateColor& Tint);
+
+	UFUNCTION(BlueprintCallable, Category = "CompassIconUserWidget")
 	void SetWorldLocation(const FVector& WorldLocation);
-	void UpdateIconScrollUAxisValue(float CurrentCompassBarBackgroundScrollUValue);
+
+	void SetOwningCompassBar(TObjectPtr<UCompassBarUserWidget> CompassBar);
+	void UpdateIconScrollUAxisValue();
 
 private:
-	void NativeOnInitialized();
+	void NativeOnInitialized() override;
+
+	void BeginDestroy() override;
 };

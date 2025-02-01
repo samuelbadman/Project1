@@ -16,11 +16,11 @@ UCompassIconUserWidget* UCompassBarUserWidget::AddCompassIcon(UTexture2D* IconTe
 	const TObjectPtr<UCompassIconUserWidget> IconWidget{ CreateWidget<UCompassIconUserWidget>(UGameplayStatics::GetPlayerController(this, 0), LoadedCompassIconWidgetClass) };
 
 	// Setup icon widget
+	IconWidget->SetOwningCompassBar(this);
+
 	IconWidget->SetIconTexture(IconTexture);
 	IconWidget->SetIconTint(IconTint);
 	IconWidget->SetWorldLocation(WorldLocation);
-
-	IconWidget->UpdateIconScrollUAxisValue(GetCurrentBackgroundBarScrollUOffset());
 
 	// Add icon widget to compass bar overlay and setup overlay slot icon is in
 	const TObjectPtr<UOverlaySlot> OverlaySlot{ CastChecked<UOverlaySlot>(GetBarOverlay()->AddChild(IconWidget)) };
@@ -31,6 +31,13 @@ UCompassIconUserWidget* UCompassBarUserWidget::AddCompassIcon(UTexture2D* IconTe
 	IconWidgets.Add(IconWidget);
 
 	return IconWidget;
+}
+
+void UCompassBarUserWidget::RemoveCompassIcon(UCompassIconUserWidget*& IconWidget)
+{
+	IconWidgets.RemoveSingle(IconWidget);
+	IconWidget->RemoveFromParent();
+	IconWidget = nullptr;
 }
 
 void UCompassBarUserWidget::NativeOnInitialized()
@@ -61,15 +68,15 @@ void UCompassBarUserWidget::NativeDestruct()
 
 void UCompassBarUserWidget::OnPlayerCameraUpdated(float CurrentPitch, float CurrentYaw)
 {
-	const float BackgroundBarScrollUValue{ UProject1BlueprintFunctionLibrary::Normalize360DegreesAngle(UProject1BlueprintFunctionLibrary::ConvertEulerAngleTo360Degrees(CurrentYaw)) };
+	const float BackgroundBarScrollUAxisValue{ UProject1BlueprintFunctionLibrary::Normalize360DegreesAngle(UProject1BlueprintFunctionLibrary::ConvertEulerAngleTo360Degrees(CurrentYaw)) };
 
-	// Set background bar image material scroll U offset
-	BackgroundBarDynamicMaterialInstance->SetScalarParameterValue(ScrollUAxisMaterialParameterName, BackgroundBarScrollUValue);
+	// Set background bar image material scroll U axis value
+	BackgroundBarDynamicMaterialInstance->SetScalarParameterValue(ScrollUAxisMaterialParameterName, BackgroundBarScrollUAxisValue);
 
-	// Update each icon's world location
+	// Update added icons' scroll U axis value
 	for (const TObjectPtr<UCompassIconUserWidget>& IconWidget : IconWidgets)
 	{
-		IconWidget->UpdateIconScrollUAxisValue(BackgroundBarScrollUValue);
+		IconWidget->UpdateIconScrollUAxisValue();
 	}
 }
 

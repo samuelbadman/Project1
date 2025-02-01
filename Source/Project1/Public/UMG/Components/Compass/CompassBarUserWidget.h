@@ -39,16 +39,17 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	UOverlay* GetBarOverlay() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "CompassBarUserWidget")
 	UCompassIconUserWidget* AddCompassIcon(UTexture2D* IconTexture, const FSlateColor& IconTint, const FVector& WorldLocation);
 
-	// Need to be able to update icon parameters
+	UFUNCTION(BlueprintCallable, Category = "CompassBarUserWidget")
+	void RemoveCompassIcon(UPARAM(ref) UCompassIconUserWidget*& IconWidget);
+
+	float GetCurrentBackgroundBarScrollUOffset() const;
 
 private:
 	void NativeOnInitialized() override;
 	void NativeDestruct() override;
 
 	void OnPlayerCameraUpdated(float CurrentPitch, float CurrentYaw);
-
-	float GetCurrentBackgroundBarScrollUOffset() const;
 };
