@@ -38,14 +38,15 @@ bool UPrimaryLayoutUserWidgetBase::UnregisterLayer(const FGameplayTag& LayerName
 void UPrimaryLayoutUserWidgetBase::PushContentToLayer(
 	const FGameplayTag& LayerName, 
 	const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
-	UScreenWidgetLoadPayloadBase* const LoadPayloadObject
+	UScreenWidgetLoadPayloadBase* const LoadPayloadObject,
+	bool Async
 )
 {
 	TObjectPtr<ULayerUserWidgetBase>* const pLayer{ Layers.Find(LayerName) };
 
 	if (pLayer)
 	{
-		(*pLayer)->PushContent(WidgetClass, LoadPayloadObject);
+		(*pLayer)->PushContent(WidgetClass, LoadPayloadObject, Async);
 	}
 }
 

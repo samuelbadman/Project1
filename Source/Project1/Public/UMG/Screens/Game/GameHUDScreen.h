@@ -6,6 +6,8 @@
 #include "UMG/Screens/ScreenUserWidgetBase.h"
 #include "GameHUDScreen.generated.h"
 
+class UCompassBarUserWidget;
+
 /**
  * 
  */
@@ -14,4 +16,7 @@ class UGameHUDScreen : public UScreenUserWidgetBase
 {
 	GENERATED_BODY()
 
+public:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	UCompassBarUserWidget* GetCompassBarWidget() const;
 };

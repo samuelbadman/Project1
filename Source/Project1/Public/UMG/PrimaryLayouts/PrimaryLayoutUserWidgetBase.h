@@ -33,7 +33,8 @@ public:
 	void PushContentToLayer(
 		const FGameplayTag& LayerName,
 		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
-		UScreenWidgetLoadPayloadBase* const LoadPayloadObject = nullptr
+		UScreenWidgetLoadPayloadBase* const LoadPayloadObject = nullptr,
+		bool Async = true
 	);
 
 	UFUNCTION(BlueprintCallable)

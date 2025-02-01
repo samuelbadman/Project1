@@ -7,7 +7,9 @@
 #include "CompassBarUserWidget.generated.h"
 
 class UImage;
+class UOverlay;
 class AGamePlayerCameraManager;
+class UCompassIconUserWidget;
 
 /**
  * 
@@ -21,17 +23,32 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	FName ScrollUAxisMaterialParameterName;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSoftClassPtr<UCompassIconUserWidget> CompassIconWidgetClass{ nullptr };
+
 	TObjectPtr<AGamePlayerCameraManager> PlayerCameraManager{ nullptr };
 	TObjectPtr<UMaterialInstanceDynamic> BackgroundBarDynamicMaterialInstance{ nullptr };
 	FDelegateHandle PlayerCameraUpdatedDelegateHandle{};
+	TSubclassOf<UCompassIconUserWidget> LoadedCompassIconWidgetClass{ nullptr };
+	TArray<TObjectPtr<UCompassIconUserWidget>> IconWidgets{};
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
-	UImage* GetBackgroundImage();
+	UImage* GetBackgroundImage() const;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	UOverlay* GetBarOverlay() const;
+
+	UFUNCTION(BlueprintCallable)
+	UCompassIconUserWidget* AddCompassIcon(UTexture2D* IconTexture, const FSlateColor& IconTint, const FVector& WorldLocation);
+
+	// Need to be able to update icon parameters
 
 private:
 	void NativeOnInitialized() override;
 	void NativeDestruct() override;
 
 	void OnPlayerCameraUpdated(float CurrentPitch, float CurrentYaw);
+
+	float GetCurrentBackgroundBarScrollUOffset() const;
 };

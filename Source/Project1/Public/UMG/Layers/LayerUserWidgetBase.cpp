@@ -12,21 +12,30 @@
 static constexpr ESlateVisibility ScreenShownSlateVisibility{ ESlateVisibility::SelfHitTestInvisible };
 static constexpr ESlateVisibility ScreenHiddenSlateVisibility{ ESlateVisibility::Collapsed };
 
-void ULayerUserWidgetBase::PushContent(const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass, const TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayloadObject)
+void ULayerUserWidgetBase::PushContent(const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass, const TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayloadObject, bool Async)
 {
 	if (UKismetSystemLibrary::IsValidSoftClassReference(WidgetClass))
 	{
 		FStreamableManager& StreamableManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetStreamableManager() };
-		const TObjectPtr<UWidgetLayerClassASyncLoadHandle> NewHandle{ NewObject<UWidgetLayerClassASyncLoadHandle>() };
 
-		PushedContentClassASyncLoadHandles.Add(NewHandle);
+		if (Async)
+		{
+			const TObjectPtr<UWidgetLayerClassASyncLoadHandle> NewHandle{ NewObject<UWidgetLayerClassASyncLoadHandle>() };
 
-		NewHandle->WidgetLayer = this;
-		NewHandle->LoadPayload = LoadPayloadObject;
-		NewHandle->StreamableHandle = StreamableManager.RequestAsyncLoad(
-			WidgetClass.ToSoftObjectPath(),
-			FStreamableDelegate::CreateUObject(NewHandle, &UWidgetLayerClassASyncLoadHandle::OnLoadedClass)
-		);
+			PushedContentClassASyncLoadHandles.Add(NewHandle);
+
+			NewHandle->WidgetLayer = this;
+			NewHandle->LoadPayload = LoadPayloadObject;
+			NewHandle->StreamableHandle = StreamableManager.RequestAsyncLoad(
+				WidgetClass.ToSoftObjectPath(),
+				FStreamableDelegate::CreateUObject(NewHandle, &UWidgetLayerClassASyncLoadHandle::OnLoadedClass)
+			);
+		}
+		else
+		{
+			// Load payload is used immediately so no reference is kept to load payload object and it can be garbage collected on the next run of the garbage collector
+			ActionPushedContent(StreamableManager.RequestSyncLoad(WidgetClass.ToSoftObjectPath())->GetLoadedAsset<UClass>(), LoadPayloadObject);
+		}
 	}
 }
 
@@ -114,9 +123,15 @@ bool ULayerUserWidgetBase::ShouldBlockLowerPriorityLayerInput() const
 	return Top->bBlockLowerPriorityLayerInput;
 }
 
-void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLayerClassASyncLoadHandle> Handle)
+void ULayerUserWidgetBase::OnASyncLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLayerClassASyncLoadHandle> Handle)
 {
-	const TObjectPtr<UScreenUserWidgetBase> PushedWidget{ CreateWidget<UScreenUserWidgetBase>(GetOwningPlayer(), Handle->StreamableHandle->GetLoadedAsset<UClass>()) };
+	PushedContentClassASyncLoadHandles.Remove(Handle);
+	ActionPushedContent(Handle->StreamableHandle->GetLoadedAsset<UClass>(), Handle->LoadPayload);
+}
+
+void ULayerUserWidgetBase::ActionPushedContent(TObjectPtr<UClass> Class, TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload)
+{
+	const TObjectPtr<UScreenUserWidgetBase> PushedWidget{ CreateWidget<UScreenUserWidgetBase>(GetOwningPlayer(),Class) };
 
 	CollapseTop();
 
@@ -128,13 +143,11 @@ void ULayerUserWidgetBase::OnLoadedPushedContentWidgetClass(TObjectPtr<UWidgetLa
 
 	PushedWidget->SetOwningLayer(this);
 
-	if (IsValid(Handle->LoadPayload))
+	if (IsValid(LoadPayload))
 	{
-		PushedWidget->NativeConsumeLoadPayload(Handle->LoadPayload);
-		PushedWidget->ConsumeLoadPayload(Handle->LoadPayload);
+		PushedWidget->NativeConsumeLoadPayload(LoadPayload);
+		PushedWidget->ConsumeLoadPayload(LoadPayload);
 	}
-
-	PushedContentClassASyncLoadHandles.Remove(Handle);
 
 	// Show the screen widget without calling the screen's on shown events. This is so that on pushed screen events can behave similarly to a begin play event
 	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };

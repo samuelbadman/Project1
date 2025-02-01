@@ -14,7 +14,7 @@ void AGameGameMode::StartPlay()
 	// Create dialogue manager instance before beginning play on actors to ensure that dialogue manager instance is valid during actor begin play
 	CreateDialogueManager();
 
-	// Parent calls begin play on actors
+	// Parent call calls begin play on actors
 	Super::StartPlay();
 }
 

@@ -7,5 +7,5 @@
 
 void UWidgetLayerClassASyncLoadHandle::OnLoadedClass()
 {
-	WidgetLayer->OnLoadedPushedContentWidgetClass(this);
+	WidgetLayer->OnASyncLoadedPushedContentWidgetClass(this);
 }

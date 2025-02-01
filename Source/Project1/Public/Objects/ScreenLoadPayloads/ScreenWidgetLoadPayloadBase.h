@@ -13,5 +13,5 @@ UCLASS()
 class PROJECT1_API UScreenWidgetLoadPayloadBase : public UObject
 {
 	GENERATED_BODY()
-	
+
 };

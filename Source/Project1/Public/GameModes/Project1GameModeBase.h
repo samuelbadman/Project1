@@ -14,4 +14,6 @@ class PROJECT1_API AProject1GameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+protected:
+	void StartPlay() override;
 };

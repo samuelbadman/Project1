@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "Objects/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
 #include "Project1HUDBase.generated.h"
 
 class UPrimaryLayoutUserWidgetBase;
@@ -12,7 +13,6 @@ class UScreenUserWidgetBase;
 class ULayerUserWidgetBase;
 class UProject1GameViewportClientBase;
 class UScreenWidgetLoadPayloadBase;
-class FConfirmModalOptionSelectedDelegate;
 
 /**
  *
@@ -34,7 +34,8 @@ public:
 	void PushContentToPrimaryLayoutWidgetLayer(
 		const FGameplayTag& LayerName,
 		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
-		UScreenWidgetLoadPayloadBase* const LoadPayloadObject = nullptr
+		UScreenWidgetLoadPayloadBase* const LoadPayloadObject = nullptr,
+		bool Async = true
 	);
 
 	UFUNCTION(BlueprintCallable)
@@ -42,6 +43,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	ULayerUserWidgetBase* GetRegisteredPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName) const;
+
+	UFUNCTION(BlueprintCallable)
+	UScreenUserWidgetBase* PeekPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName) const;
 
 	UFUNCTION(BlueprintCallable)
 	bool DoesPrimaryLayoutWidgetLayerBlockContentInput(const int32 ContentLayerPriority) const;
@@ -58,7 +62,8 @@ public:
 		const FText Option1Text,
 		const FText Option2Text,
 		const FConfirmModalOptionSelectedDelegate& Option1SelectedDelegate,
-		const FConfirmModalOptionSelectedDelegate& Option2SelectedDelegate
+		const FConfirmModalOptionSelectedDelegate& Option2SelectedDelegate,
+		bool Async = true
 	);
 
 	// Helper function to setup and push a dynamic modal to a widget layer
@@ -67,9 +72,9 @@ public:
 		const FGameplayTag& LayerName,
 		const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass,
 		const FText ModalPromptText,
-		const TArray<FDynamicModalOptionData>& Options
+		const TArray<FDynamicModalOptionData>& Options,
+		bool Async = true
 	);
 
-protected:
-	void BeginPlay() override;
+	void CreatePrimaryLayoutWidget();
 };
