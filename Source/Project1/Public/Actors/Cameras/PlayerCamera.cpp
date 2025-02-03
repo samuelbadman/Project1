@@ -47,7 +47,8 @@ FVector APlayerCamera::GetCameraComponentWorldLocation() const
 
 void APlayerCamera::SetCameraComponentRelativeXLocation(float RelativeX)
 {
-	CameraComponent->SetRelativeLocation(FVector(RelativeX, 0.0, 0.0));
+	const FVector CurrentRelLocation{ CameraComponent->GetRelativeLocation() };
+	CameraComponent->SetRelativeLocation(FVector(RelativeX, CurrentRelLocation.Y, CurrentRelLocation.Z));
 }
 
 float APlayerCamera::GetCameraComponentRelativeXLocation() const
@@ -55,16 +56,18 @@ float APlayerCamera::GetCameraComponentRelativeXLocation() const
 	return CameraComponent->GetRelativeLocation().X;
 }
 
+void APlayerCamera::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	SetCameraComponentRelativeXLocation(RelativeXOffset);
+}
+
 void APlayerCamera::ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp, float DeltaTime)
 {
-	CameraComponent->SetRelativeLocation(FVector(
-		FMath::FInterpTo(
-			CameraComponent->GetRelativeLocation().X,
-			FMath::Lerp(RelativeXOffset, Offset, FMath::Abs(CameraForwardDotWorldUp)),
-			DeltaTime,
-			RelativeXOffsetAdjustmentInterpSpeed
-		),
-		0.0,
-		0.0
+	SetCameraComponentRelativeXLocation(FMath::FInterpTo(
+		CameraComponent->GetRelativeLocation().X,
+		FMath::Lerp(RelativeXOffset, Offset, FMath::Abs(CameraForwardDotWorldUp)),
+		DeltaTime,
+		RelativeXOffsetAdjustmentInterpSpeed
 	));
 }

@@ -63,5 +63,7 @@ public:
 	float GetCameraComponentRelativeXLocation() const;
 
 private:
+	void OnConstruction(const FTransform& Transform) override;
+
 	void ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp, float DeltaTime);
 };
