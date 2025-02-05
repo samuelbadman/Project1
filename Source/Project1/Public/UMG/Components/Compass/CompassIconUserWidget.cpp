@@ -47,10 +47,3 @@ void UCompassIconUserWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	ImageDynamicMaterialInstance = GetImage()->GetDynamicMaterial();
 }
-
-void UCompassIconUserWidget::BeginDestroy()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, FString::Printf(TEXT("Destroying compass icon: %s"), *GetName()));
-
-	Super::BeginDestroy();
-}

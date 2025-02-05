@@ -47,6 +47,4 @@ public:
 
 private:
 	void NativeOnInitialized() override;
-
-	void BeginDestroy() override;
 };
