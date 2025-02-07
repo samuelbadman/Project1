@@ -25,4 +25,7 @@ AProject1CharacterBase::AProject1CharacterBase()
 
 	// Do not orient character to movement. This will be done by the controller
 	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	// Automatically possess AI when the character is placed in the world or spawned
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
