@@ -4,16 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponents/Project1ActorComponentBase.h"
+#include "Enums/AICharacterGroundMovementState.h"
 #include "AICharacterControllerComponent.generated.h"
 
 class UCharacterMovementComponent;
-
-enum class EAICharacterGroundMovementStates : uint8
-{
-	Walk,
-	Run
-	// Sprint
-};
 
 /**
  *
@@ -47,7 +41,7 @@ public:
 	UAICharacterControllerComponent();
 
 	void SetupNewPawn(TObjectPtr<APawn> Pawn);
-	void SetGroundMovementState(EAICharacterGroundMovementStates State);
+	void SetGroundMovementState(EAICharacterGroundMovementState State);
 	void SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation);
 
 private:

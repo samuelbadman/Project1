@@ -40,16 +40,16 @@ void UAICharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 	TargetCapsuleWorldOrientation = Character->GetActorQuat();
 }
 
-void UAICharacterControllerComponent::SetGroundMovementState(EAICharacterGroundMovementStates State)
+void UAICharacterControllerComponent::SetGroundMovementState(EAICharacterGroundMovementState State)
 {
 	switch (State)
 	{
-	case EAICharacterGroundMovementStates::Walk:
+	case EAICharacterGroundMovementState::Walk:
 		CharacterMovementComponent->MinAnalogWalkSpeed = WalkSpeed;
 		CharacterMovementComponent->MaxWalkSpeed = WalkSpeed;
 		break;
 
-	case EAICharacterGroundMovementStates::Run:
+	case EAICharacterGroundMovementState::Run:
 		CharacterMovementComponent->MinAnalogWalkSpeed = RunSpeed;
 		CharacterMovementComponent->MaxWalkSpeed = RunSpeed;
 		break;

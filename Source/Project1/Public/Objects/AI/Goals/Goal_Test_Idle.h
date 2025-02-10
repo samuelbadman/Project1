@@ -15,6 +15,14 @@ class PROJECT1_API UGoal_Test_Idle : public UAIGoalBase
 	GENERATED_BODY()
 	
 private:
+	bool bJustMoved;
+
+public:
+	UGoal_Test_Idle();
+
+private:
 	void Start(TObjectPtr<AProject1AIControllerBase> AI) override;
 	void ReevaluateSubGoal(TObjectPtr<AProject1AIControllerBase> AI) override;
+
+	void MoveToRandomReachablePoint(TObjectPtr<AProject1AIControllerBase> AI);
 };

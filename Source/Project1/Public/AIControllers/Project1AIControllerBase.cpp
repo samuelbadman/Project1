@@ -26,7 +26,10 @@ void AProject1AIControllerBase::SetTopGoal(TObjectPtr<UAIGoalBase> Goal)
 	if (IsValid(Goal))
 	{
 		StartGoal(Goal);
-		ReevaluateGoalSubGoal(Goal);
+		if (IsSubGoalQueueEmpty())
+		{
+			ReevaluateGoalSubGoal(Goal);
+		}
 	}
 }
 
@@ -123,6 +126,11 @@ void AProject1AIControllerBase::EnqueueSubGoal(TObjectPtr<UAIGoalBase> Goal)
 void AProject1AIControllerBase::DequeueSubGoal(TObjectPtr<UAIGoalBase> Goal)
 {
 	SubGoalQueue.RemoveSingle(Goal);
+}
+
+bool AProject1AIControllerBase::IsSubGoalQueueEmpty() const
+{
+	return SubGoalQueue.IsEmpty();
 }
 
 void AProject1AIControllerBase::StartGoal(TObjectPtr<UAIGoalBase> Goal)

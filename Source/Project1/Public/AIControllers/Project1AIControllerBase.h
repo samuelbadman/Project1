@@ -57,6 +57,7 @@ private:
 	void PopTopSubGoal();
 	void EnqueueSubGoal(TObjectPtr<UAIGoalBase> Goal);
 	void DequeueSubGoal(TObjectPtr<UAIGoalBase> Goal);
+	bool IsSubGoalQueueEmpty() const;
 };
 
 template<typename T>

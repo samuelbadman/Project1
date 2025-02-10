@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Objects/AI/Goals/AIGoalBase.h"
+#include "Enums/AICharacterGroundMovementState.h"
 #include "Goal_Common_MoveToLocation.generated.h"
+
+enum class EAICharacterGroundMovementState : uint8;
 
 /**
  * 
@@ -16,13 +19,14 @@ class PROJECT1_API UGoal_Common_MoveToLocation : public UAIGoalBase
 	
 private:
 	FVector TargetLocation;
+	EAICharacterGroundMovementState GroundMovementState;
 	float AcceptanceRadius;
 	TObjectPtr<AProject1AIControllerBase> OwningAI;
 
 public:
 	UGoal_Common_MoveToLocation();
 
-	void Initialize(const FVector& InTargetLocation, float InAcceptanceRadius = -1.0f);
+	void Initialize(const FVector& InTargetLocation, EAICharacterGroundMovementState InGroundMovementState, float InAcceptanceRadius = -1.0f);
 
 private:
 	void Stop(TObjectPtr<AProject1AIControllerBase> AI) override;

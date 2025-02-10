@@ -14,7 +14,8 @@ public class Project1 : ModuleRules
 			"Engine", 
 			"InputCore", 
 			"EnhancedInput", 
-			"GameplayTags"
+			"GameplayTags",
+			"NavigationSystem"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
