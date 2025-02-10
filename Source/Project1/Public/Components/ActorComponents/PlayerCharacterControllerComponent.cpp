@@ -81,3 +81,8 @@ void UPlayerCharacterControllerComponent::AddMovement(const FVector& WorldDirect
 
 	Character->AddMovementInput(WorldDirection);
 }
+
+void UPlayerCharacterControllerComponent::SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation)
+{
+	TargetCapsuleWorldOrientation = TargetOrientation;
+}

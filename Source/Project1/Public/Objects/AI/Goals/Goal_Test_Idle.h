@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Objects/AI/Goals/AIGoalBase.h"
-#include "TopGoal_Test_Idle.generated.h"
+#include "Goal_Test_Idle.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT1_API UTopGoal_Test_Idle : public UAIGoalBase
+class PROJECT1_API UGoal_Test_Idle : public UAIGoalBase
 {
 	GENERATED_BODY()
 	

@@ -3,10 +3,12 @@
 
 #include "Project1AIControllerBase.h"
 #include "Objects/AI/Goals/AIGoalBase.h"
+#include "Components/ActorComponents/AICharacterControllerComponent.h"
 
 AProject1AIControllerBase::AProject1AIControllerBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	AICharacterControllerComponent = CreateDefaultSubobject<UAICharacterControllerComponent>(FName(TEXT("AICharacterControllerComponent")));
 	EntryTopGoalClass = nullptr;
 	TopGoal = nullptr;
 	SubGoalQueue = {};
@@ -69,15 +71,18 @@ void AProject1AIControllerBase::ClearSubGoals()
 	ReevaluateGoalSubGoal(TopGoal);
 }
 
+void AProject1AIControllerBase::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	AICharacterControllerComponent->SetupNewPawn(InPawn);
+}
+
 void AProject1AIControllerBase::BeginPlay()
 {
 	Super::BeginPlay();
-	if (IsValid(GetPawn()))
+	if (const TSubclassOf<UAIGoalBase> LoadedEntryTopGoalClass = EntryTopGoalClass.LoadSynchronous())
 	{
-		if(const TSubclassOf<UAIGoalBase> LoadedEntryTopGoalClass = EntryTopGoalClass.LoadSynchronous())
-		{
-			SetTopGoal(CreateGoal<UAIGoalBase>(LoadedEntryTopGoalClass));
-		}
+		SetTopGoal(CreateGoal<UAIGoalBase>(LoadedEntryTopGoalClass));
 	}
 }
 
