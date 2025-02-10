@@ -4,6 +4,7 @@
 #include "Project1CharacterBase.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AIControllers/Project1AIControllerBase.h"
 
 // Sets default values
 AProject1CharacterBase::AProject1CharacterBase()
@@ -28,4 +29,7 @@ AProject1CharacterBase::AProject1CharacterBase()
 
 	// Automatically possess AI when the character is placed in the world or spawned
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	// Set default AI controller class to project AI controller for project characters
+	AIControllerClass = AProject1AIControllerBase::StaticClass();
 }
