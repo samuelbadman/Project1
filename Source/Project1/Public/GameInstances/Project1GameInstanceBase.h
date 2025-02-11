@@ -19,5 +19,7 @@ private:
 	FStreamableManager StreamableManager{};
 
 public:
+	void Init() override;
+
 	FORCEINLINE FStreamableManager& GetStreamableManager() { return StreamableManager; }
 };
