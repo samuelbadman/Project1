@@ -17,9 +17,17 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCharacterAttributesDataAsset> CharacterAttributes;
 
+	FQuat TargetCapsuleWorldOrientation;
+
 public:
 	// Sets default values for this character's properties
 	AProject1CharacterBase();
 
+	void UpdateCapsuleRotation(float DeltaTime);
+	void SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation);
+
 	FORCEINLINE TObjectPtr<UCharacterAttributesDataAsset> GetCharacterAttributes() const { return CharacterAttributes; }
+
+private:
+	void BeginPlay() override;
 };

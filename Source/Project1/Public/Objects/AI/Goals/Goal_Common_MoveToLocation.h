@@ -35,4 +35,6 @@ private:
 
 	UFUNCTION()
 	void OnMoveComplete(FAIRequestID RequestID, EPathFollowingResult::Type Result);
+
+	void RemoveMoveCompleteListener();
 };

@@ -14,6 +14,7 @@ UGoal_Common_MoveToLocation::UGoal_Common_MoveToLocation()
 void UGoal_Common_MoveToLocation::Stop(TObjectPtr<AProject1AIControllerBase> AI)
 {
 	AI->StopMovement();
+	RemoveMoveCompleteListener();
 }
 
 void UGoal_Common_MoveToLocation::Start(TObjectPtr<AProject1AIControllerBase> AI)
@@ -26,7 +27,7 @@ void UGoal_Common_MoveToLocation::Start(TObjectPtr<AProject1AIControllerBase> AI
 
 void UGoal_Common_MoveToLocation::Tick(TObjectPtr<AProject1AIControllerBase> AI, float DeltaSeconds)
 {
-	AI->GetAICharacterController()->SetTargetCapsuleWorldOrientation(AI->GetPawn()->GetVelocity().GetSafeNormal().ToOrientationQuat());
+	AI->GetAICharacterController()->SetControlledCharacterTargetCapsuleWorldOrientation(AI->GetPawn()->GetVelocity().GetSafeNormal().ToOrientationQuat());
 }
 
 void UGoal_Common_MoveToLocation::Initialize(const FVector& InTargetLocation, EAICharacterGroundMovementState InGroundMovementState, float InAcceptanceRadius)
@@ -38,6 +39,11 @@ void UGoal_Common_MoveToLocation::Initialize(const FVector& InTargetLocation, EA
 
 void UGoal_Common_MoveToLocation::OnMoveComplete(FAIRequestID RequestID, EPathFollowingResult::Type Result)
 {
-	OwningAI->ReceiveMoveCompleted.RemoveDynamic(this, &UGoal_Common_MoveToLocation::OnMoveComplete);
+	RemoveMoveCompleteListener();
 	OwningAI->RemoveSubGoal(this);
+}
+
+void UGoal_Common_MoveToLocation::RemoveMoveCompleteListener()
+{
+	OwningAI->ReceiveMoveCompleted.RemoveDynamic(this, &UGoal_Common_MoveToLocation::OnMoveComplete);
 }

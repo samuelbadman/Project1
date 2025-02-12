@@ -24,14 +24,13 @@ private:
 	TObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
 	TObjectPtr<USkeletalMeshComponent> CharacterSkeletalMeshComponent;
 	TObjectPtr<UCharacterAttributesDataAsset> CharacterAttributes;
-	FQuat TargetCapsuleWorldOrientation;
 
 public:
 	UAICharacterControllerComponent();
 
 	void SetupNewPawn(TObjectPtr<APawn> Pawn);
 	void SetGroundMovementState(EAICharacterGroundMovementState State);
-	void SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation);
+	void SetControlledCharacterTargetCapsuleWorldOrientation(const FQuat& TargetOrientation);
 
 private:
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

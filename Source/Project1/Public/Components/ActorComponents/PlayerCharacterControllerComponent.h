@@ -17,13 +17,12 @@ class PROJECT1_API UPlayerCharacterControllerComponent : public UProject1ActorCo
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Move")
-	float RunInputMagnitude{ 0.45f };
+	float RunInputMagnitude;
 
 	TObjectPtr<AProject1CharacterBase> Project1Character;
 	TObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
 	TObjectPtr<USkeletalMeshComponent> CharacterSkeletalMeshComponent;
 	TObjectPtr<UCharacterAttributesDataAsset> CharacterAttributes;
-	FQuat TargetCapsuleWorldOrientation{ FQuat::Identity };
 
 public:	
 	// Sets default values for this component's properties
@@ -31,7 +30,6 @@ public:
 
 	void SetupNewPawn(TObjectPtr<APawn> Pawn);
 	void AddMovement(const FVector& WorldDirection, float MoveInputMagnitude);
-	void SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation);
 
 private:
 	// Called every frame

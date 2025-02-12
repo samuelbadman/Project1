@@ -13,7 +13,6 @@ UAICharacterControllerComponent::UAICharacterControllerComponent()
 	CharacterMovementComponent = nullptr;
 	CharacterSkeletalMeshComponent = nullptr;
 	CharacterAttributes = nullptr;
-	TargetCapsuleWorldOrientation = FQuat::Identity;
 }
 
 void UAICharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
@@ -40,9 +39,6 @@ void UAICharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 
 	// Do not rotate character skeletal mesh with the character
 	CharacterSkeletalMeshComponent->SetAbsolute(false, true, false);
-
-	// Set default target player character capsule rotation
-	TargetCapsuleWorldOrientation = Project1Character->GetActorQuat();
 }
 
 void UAICharacterControllerComponent::SetGroundMovementState(EAICharacterGroundMovementState State)
@@ -67,22 +63,14 @@ void UAICharacterControllerComponent::SetGroundMovementState(EAICharacterGroundM
 	}
 }
 
-void UAICharacterControllerComponent::SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation)
+void UAICharacterControllerComponent::SetControlledCharacterTargetCapsuleWorldOrientation(const FQuat& TargetOrientation)
 {
-	TargetCapsuleWorldOrientation = TargetOrientation;
+	Project1Character->SetTargetCapsuleWorldOrientation(TargetOrientation);
 }
 
 void UAICharacterControllerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// Update character capsule rotation
-	const FQuat NewCharacterOrientation{ FMath::QInterpConstantTo(Project1Character->GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CharacterAttributes->CapsuleRotationSpeed) };
-	Project1Character->SetActorRotation(NewCharacterOrientation);
-
-	// Update player character skeletal mesh rotation. Keep the mesh aligned with the capsule
-	FRotator TargetCharacterMeshRotation{ TargetCapsuleWorldOrientation };
-	// TODO: This sometimes rotates the mesh in the opposite direction to the capsule. Will this be a problem? Matching mesh rotation to capsule for now
-	//CharacterSkeletalMeshComponent->SetWorldRotation(FMath::QInterpConstantTo(CharacterSkeletalMeshComponent->GetComponentQuat(), TargetCharacterMeshRotation.Quaternion(),
-	//	DeltaTime, MeshRotationSpeed));
-	CharacterSkeletalMeshComponent->SetWorldRotation(NewCharacterOrientation);
+	Project1Character->UpdateCapsuleRotation(DeltaTime);
 }

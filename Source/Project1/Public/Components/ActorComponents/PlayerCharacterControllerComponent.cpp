@@ -12,7 +12,7 @@ UPlayerCharacterControllerComponent::UPlayerCharacterControllerComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
+	RunInputMagnitude = 0.45f;
 	Project1Character = nullptr;
 	CharacterMovementComponent = nullptr;
 	CharacterSkeletalMeshComponent = nullptr;
@@ -23,17 +23,7 @@ UPlayerCharacterControllerComponent::UPlayerCharacterControllerComponent()
 void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// Update character capsule rotation
-	const FQuat NewCharacterOrientation{ FMath::QInterpConstantTo(Project1Character->GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CharacterAttributes->CapsuleRotationSpeed) };
-	Project1Character->SetActorRotation(NewCharacterOrientation);
-
-	// Update player character skeletal mesh rotation. Keep the mesh aligned with the capsule
-	FRotator TargetCharacterMeshRotation{ TargetCapsuleWorldOrientation };
-	// TODO: This sometimes rotates the mesh in the opposite direction to the capsule. Will this be a problem? Matching mesh rotation to capsule for now
-	//CharacterSkeletalMeshComponent->SetWorldRotation(FMath::QInterpConstantTo(CharacterSkeletalMeshComponent->GetComponentQuat(), TargetCharacterMeshRotation.Quaternion(),
-	//	DeltaTime, MeshRotationSpeed));
-	CharacterSkeletalMeshComponent->SetWorldRotation(NewCharacterOrientation);
+	Project1Character->UpdateCapsuleRotation(DeltaTime);
 }
 
 void UPlayerCharacterControllerComponent::UpdateGroundMovementState(float MoveInputMagnitude)
@@ -78,21 +68,11 @@ void UPlayerCharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 
 	// Do not rotate character skeletal mesh with the character
 	CharacterSkeletalMeshComponent->SetAbsolute(false, true, false);
-
-	// Set default target player character capsule rotation
-	TargetCapsuleWorldOrientation = Project1Character->GetActorQuat();
 }
 
 void UPlayerCharacterControllerComponent::AddMovement(const FVector& WorldDirection, float MoveInputMagnitude)
 {
-	TargetCapsuleWorldOrientation = WorldDirection.ToOrientationQuat();
-
+	Project1Character->SetTargetCapsuleWorldOrientation(WorldDirection.ToOrientationQuat());
 	UpdateGroundMovementState(MoveInputMagnitude);
-
 	Project1Character->AddMovementInput(WorldDirection);
-}
-
-void UPlayerCharacterControllerComponent::SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation)
-{
-	TargetCapsuleWorldOrientation = TargetOrientation;
 }
