@@ -4,7 +4,6 @@
 #include "Project1CharacterBase.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "AIControllers/Project1AIControllerBase.h"
 
 // Sets default values
 AProject1CharacterBase::AProject1CharacterBase()
@@ -27,10 +26,6 @@ AProject1CharacterBase::AProject1CharacterBase()
 	// Do not orient character to movement. This will be done by the controller
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
-	// Do not automatically possess characters with AI controller. AI characters need to change this setting or manually 
-	// possess themselves with the AI controller to start being an AI controlled character
-	AutoPossessAI = EAutoPossessAI::Disabled;
-
-	// Set default AI controller class to project AI controller for project characters
-	AIControllerClass = AProject1AIControllerBase::StaticClass();
+	// Automatically possess character with AI controller whether spawned or placed in world unless a player controller possesses the character
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
