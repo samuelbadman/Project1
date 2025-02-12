@@ -97,13 +97,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Jump")
 	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
 
-	UPROPERTY(EditAnywhere, Category = "LookSensitivitySettings")
+	UPROPERTY(EditAnywhere, Category = "Look")
 	FVector2D AbsoluteLookInputSensitivity{ 1.0, 1.0 };
 
-	UPROPERTY(EditAnywhere, Category = "LookSensitivitySettings")
+	UPROPERTY(EditAnywhere, Category = "Look")
 	FVector2D AnalogLookInputSensitivity{ 2.0, 2.0 };
 
-	UPROPERTY(EditAnywhere, Category = "MoveSettings")
+	UPROPERTY(EditAnywhere, Category = "Move")
 	float MoveRightViewYawRotationRate{ 25.0f };
 
 	TObjectPtr<UWorld> World{ nullptr };

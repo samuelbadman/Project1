@@ -2,8 +2,9 @@
 
 
 #include "PlayerCharacterControllerComponent.h"
-#include "GameFramework/Character.h"
+#include "Pawns/Characters/Project1CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "DataAssets/CharacterAttributesDataAsset.h"
 
 // Sets default values for this component's properties
 UPlayerCharacterControllerComponent::UPlayerCharacterControllerComponent()
@@ -12,6 +13,10 @@ UPlayerCharacterControllerComponent::UPlayerCharacterControllerComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	Project1Character = nullptr;
+	CharacterMovementComponent = nullptr;
+	CharacterSkeletalMeshComponent = nullptr;
+	CharacterAttributes = nullptr;
 }
 
 // Called every frame
@@ -20,8 +25,8 @@ void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelT
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Update character capsule rotation
-	const FQuat NewCharacterOrientation{ FMath::QInterpConstantTo(Character->GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CapsuleRotationSpeed) };
-	Character->SetActorRotation(NewCharacterOrientation);
+	const FQuat NewCharacterOrientation{ FMath::QInterpConstantTo(Project1Character->GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CharacterAttributes->CapsuleRotationSpeed) };
+	Project1Character->SetActorRotation(NewCharacterOrientation);
 
 	// Update player character skeletal mesh rotation. Keep the mesh aligned with the capsule
 	FRotator TargetCharacterMeshRotation{ TargetCapsuleWorldOrientation };
@@ -36,12 +41,14 @@ void UPlayerCharacterControllerComponent::UpdateGroundMovementState(float MoveIn
 	if (MoveInputMagnitude < RunInputMagnitude)
 	{
 		// Walking
+		const float WalkSpeed{ CharacterAttributes->WalkSpeed };
 		CharacterMovementComponent->MinAnalogWalkSpeed = WalkSpeed;
 		CharacterMovementComponent->MaxWalkSpeed = WalkSpeed;
 	}
 	else
 	{
 		// Running
+		const float RunSpeed{ CharacterAttributes->RunSpeed };
 		CharacterMovementComponent->MinAnalogWalkSpeed = RunSpeed;
 		CharacterMovementComponent->MaxWalkSpeed = RunSpeed;
 	}
@@ -50,18 +57,21 @@ void UPlayerCharacterControllerComponent::UpdateGroundMovementState(float MoveIn
 void UPlayerCharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 {
 	// Get pawn as character
-	Character = CastChecked<ACharacter>(Pawn);
+	Project1Character = CastChecked<AProject1CharacterBase>(Pawn);
 
 	// Get character movement component
-	CharacterMovementComponent = Character->GetCharacterMovement();
+	CharacterMovementComponent = Project1Character->GetCharacterMovement();
 
 	// Get character skeletal mesh component
-	CharacterSkeletalMeshComponent = Character->GetMesh();
+	CharacterSkeletalMeshComponent = Project1Character->GetMesh();
+
+	// Get character attributes
+	CharacterAttributes = Project1Character->GetCharacterAttributes();
 
 	// Clear character use controller rotation settings
-	Character->bUseControllerRotationPitch = false;
-	Character->bUseControllerRotationYaw = false;
-	Character->bUseControllerRotationRoll = false;
+	Project1Character->bUseControllerRotationPitch = false;
+	Project1Character->bUseControllerRotationYaw = false;
+	Project1Character->bUseControllerRotationRoll = false;
 
 	// Do not rotate character with movement
 	CharacterMovementComponent->bOrientRotationToMovement = false;
@@ -70,7 +80,7 @@ void UPlayerCharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 	CharacterSkeletalMeshComponent->SetAbsolute(false, true, false);
 
 	// Set default target player character capsule rotation
-	TargetCapsuleWorldOrientation = Character->GetActorQuat();
+	TargetCapsuleWorldOrientation = Project1Character->GetActorQuat();
 }
 
 void UPlayerCharacterControllerComponent::AddMovement(const FVector& WorldDirection, float MoveInputMagnitude)
@@ -79,7 +89,7 @@ void UPlayerCharacterControllerComponent::AddMovement(const FVector& WorldDirect
 
 	UpdateGroundMovementState(MoveInputMagnitude);
 
-	Character->AddMovementInput(WorldDirection);
+	Project1Character->AddMovementInput(WorldDirection);
 }
 
 void UPlayerCharacterControllerComponent::SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation)

@@ -6,7 +6,9 @@
 #include "Project1ActorComponentBase.h"
 #include "PlayerCharacterControllerComponent.generated.h"
 
+class AProject1CharacterBase;
 class UCharacterMovementComponent;
+class UCharacterAttributesDataAsset;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT1_API UPlayerCharacterControllerComponent : public UProject1ActorComponentBase
@@ -14,27 +16,13 @@ class PROJECT1_API UPlayerCharacterControllerComponent : public UProject1ActorCo
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere)
-	float CapsuleRotationSpeed{ 7.5f };
-
-	//UPROPERTY(EditAnywhere)
-	//float MeshRotationSpeed{ 7.5f };
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Move")
 	float RunInputMagnitude{ 0.45f };
 
-	// TODO: Move data into a component/data asset/character that can be defined per character as different characters may move at different speeds
-	UPROPERTY(EditAnywhere)
-	float WalkSpeed{ 300.0f };
-
-	// TODO: Move data into a component/data asset/character that can be defined per character as different characters may move at different speeds
-	UPROPERTY(EditAnywhere)
-	float RunSpeed{ 600.0f };
-
-	TObjectPtr<ACharacter> Character{ nullptr };
-	TObjectPtr<UCharacterMovementComponent> CharacterMovementComponent{ nullptr };
-	TObjectPtr<USkeletalMeshComponent> CharacterSkeletalMeshComponent{ nullptr };
-
+	TObjectPtr<AProject1CharacterBase> Project1Character;
+	TObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
+	TObjectPtr<USkeletalMeshComponent> CharacterSkeletalMeshComponent;
+	TObjectPtr<UCharacterAttributesDataAsset> CharacterAttributes;
 	FQuat TargetCapsuleWorldOrientation{ FQuat::Identity };
 
 public:	

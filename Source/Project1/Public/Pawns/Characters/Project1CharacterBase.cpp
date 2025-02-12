@@ -8,6 +8,9 @@
 // Sets default values
 AProject1CharacterBase::AProject1CharacterBase()
 {
+	// Set class default values
+	CharacterAttributes = nullptr;
+
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 

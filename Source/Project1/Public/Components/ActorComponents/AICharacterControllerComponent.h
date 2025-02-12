@@ -7,7 +7,9 @@
 #include "Enums/AICharacterGroundMovementState.h"
 #include "AICharacterControllerComponent.generated.h"
 
+class AProject1CharacterBase;
 class UCharacterMovementComponent;
+class UCharacterAttributesDataAsset;
 
 /**
  *
@@ -18,23 +20,10 @@ class PROJECT1_API UAICharacterControllerComponent : public UProject1ActorCompon
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere)
-	float CapsuleRotationSpeed{ 7.5f };
-
-	//UPROPERTY(EditAnywhere)
-	//float MeshRotationSpeed{ 7.5f };
-
-	// TODO: Move data into a component/data asset/character that can be defined per character as different characters may move at different speeds
-	UPROPERTY(EditAnywhere)
-	float WalkSpeed{ 300.0f };
-
-	// TODO: Move data into a component/data asset/character that can be defined per character as different characters may move at different speeds
-	UPROPERTY(EditAnywhere)
-	float RunSpeed{ 600.0f };
-
-	TObjectPtr<ACharacter> Character;
+	TObjectPtr<AProject1CharacterBase> Project1Character;
 	TObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
 	TObjectPtr<USkeletalMeshComponent> CharacterSkeletalMeshComponent;
+	TObjectPtr<UCharacterAttributesDataAsset> CharacterAttributes;
 	FQuat TargetCapsuleWorldOrientation;
 
 public:
