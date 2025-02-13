@@ -4,6 +4,7 @@
 #include "PlayerCamera.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 APlayerCamera::APlayerCamera()
 {
@@ -20,6 +21,13 @@ APlayerCamera::APlayerCamera()
 	// Create camera component and attach to parent scene component. This allows the camera component to be offset back and rotate around the actor root
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(CameraParentComponent);
+
+	// Set default values
+	CameraComponentOffset = FVector::ZeroVector;
+	RelativeXOffset = -300.0f;
+	RelativeXOffsetLookingUp = -50.0f;
+	RelativeXOffsetLookingDown = -400.0f;
+	RelativeXOffsetAdjustmentInterpSpeed = 2.0f;
 }
 
 void APlayerCamera::SetRotation(float Pitch, float Yaw)
@@ -40,34 +48,45 @@ void APlayerCamera::SetRelativeXOffset(float Offset, float OffsetLookingUp, floa
 	RelativeXOffsetLookingDown = OffsetLookingDown;
 }
 
+FVector APlayerCamera::GetCameraComponentWorldOrbitPoint() const
+{
+	return (GetActorLocation() + CameraComponentOffset);
+}
+
 FVector APlayerCamera::GetCameraComponentWorldLocation() const
 {
-	return CameraComponent->GetComponentLocation();
+	// Get the camera rotation yaw from the actor and pitch from the camera parent component
+	const FRotator CameraRotation(CameraParentComponent->GetComponentRotation().Pitch, GetActorRotation().Yaw, 0.0f);
+	const FVector CameraBackVector{ CameraRotation.Vector() };
+	return (GetCameraComponentWorldOrbitPoint() + (CameraBackVector * RelativeXOffset));
 }
 
-void APlayerCamera::SetCameraComponentRelativeXLocation(float RelativeX)
+void APlayerCamera::SetCameraComponentWorldLocation(const FVector& Location)
 {
-	const FVector CurrentRelLocation{ CameraComponent->GetRelativeLocation() };
-	CameraComponent->SetRelativeLocation(FVector(RelativeX, CurrentRelLocation.Y, CurrentRelLocation.Z));
-}
-
-float APlayerCamera::GetCameraComponentRelativeXLocation() const
-{
-	return CameraComponent->GetRelativeLocation().X;
+	CameraComponent->SetWorldLocation(Location);
 }
 
 void APlayerCamera::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	SetCameraComponentRelativeXLocation(RelativeXOffset);
+	CameraComponent->SetRelativeLocation(CalculateCameraComponentRelativeLocation());
 }
 
 void APlayerCamera::ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp, float DeltaTime)
 {
-	SetCameraComponentRelativeXLocation(FMath::FInterpTo(
-		CameraComponent->GetRelativeLocation().X,
+	FVector RelativeLocation{ CameraComponent->GetRelativeLocation() };
+	RelativeLocation.X = FMath::FInterpTo(
+		RelativeLocation.X,
 		FMath::Lerp(RelativeXOffset, Offset, FMath::Abs(CameraForwardDotWorldUp)),
 		DeltaTime,
-		RelativeXOffsetAdjustmentInterpSpeed
-	));
+		RelativeXOffsetAdjustmentInterpSpeed);
+	CameraComponent->SetRelativeLocation(RelativeLocation);
+}
+
+FVector APlayerCamera::CalculateCameraComponentRelativeLocation() const
+{
+	const FVector WorldCameraComponentLocation{ GetActorLocation() + CameraComponentOffset };
+	FVector RelativeCameraComponentLocation{ UKismetMathLibrary::InverseTransformLocation(GetActorTransform(), WorldCameraComponentLocation) };
+	RelativeCameraComponentLocation.X += RelativeXOffset;
+	return RelativeCameraComponentLocation;
 }

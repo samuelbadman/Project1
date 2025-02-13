@@ -206,12 +206,10 @@ void AGamePlayerCameraManager::UpdateCameraLocation(float DeltaTime)
 
 void AGamePlayerCameraManager::UpdateCameraCollision()
 {
-	// Trace from the camera actor location to the relative camera component location
+	// Trace from the camera actor location to the camera component location in world space
 	// If collision found move camera component in front of the collision
-
-	const FVector TraceStart{ PlayerCameraActor->GetActorLocation() };
+	const FVector TraceStart{ PlayerCameraActor->GetCameraComponentWorldOrbitPoint()};
 	const FVector TraceEnd{ PlayerCameraActor->GetCameraComponentWorldLocation() };
-
 	FHitResult ProbeHitResult{};
 	if (World->SweepSingleByChannel(
 		ProbeHitResult,
@@ -228,8 +226,7 @@ void AGamePlayerCameraManager::UpdateCameraCollision()
 		{
 			return;
 		}
-
 		// Probe found a collision. Move camera component in front of collision along probe vector, overriding player camera relative X offset
-		PlayerCameraActor->SetCameraComponentRelativeXLocation(PlayerCameraActor->GetCameraComponentRelativeXLocation() * ProbeHitResult.Time);
+		PlayerCameraActor->SetCameraComponentWorldLocation(ProbeHitResult.Location);
 	}
 }

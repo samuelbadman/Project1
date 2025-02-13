@@ -33,21 +33,25 @@ private:
 	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings")
 	float LocationInterpSpeed{ 3.0f };
 
+	// Offset applied to the camera component in world space. Use this instead of adjust the component's transform
+	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Camera Component Offset"))
+	FVector CameraComponentOffset;
+
 	// The distance the camera component is offset from the actor along the relative X axis when the view look direction is parallel with the ground
 	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Relative X Offset"))
-	float RelativeXOffset{ -300.0f };
+	float RelativeXOffset;
 
 	// The distance the camera component is offset from the actor along the relative X axis when the view is looking up
 	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Relative X Offset Looking Up"))
-	float RelativeXOffsetLookingUp{ -50.0f };
+	float RelativeXOffsetLookingUp;
 
 	// The distance the camera component is offset from the actor along the relative X axis when the view looking down
 	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Relative X Offset Looking Down"))
-	float RelativeXOffsetLookingDown{ -400.0f };
+	float RelativeXOffsetLookingDown;
 
 	// The interp speed used when interpolating changes to the camera component's relative X offset after applying rotation to the camera
 	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Relative X Offset Adjustment Interp Speed"))
-	float RelativeXOffsetAdjustmentInterpSpeed{ 2.0f };
+	float RelativeXOffsetAdjustmentInterpSpeed;
 
 public:
 	APlayerCamera();
@@ -58,12 +62,13 @@ public:
 	FORCEINLINE float GetLocationInterpSpeed() const { return LocationInterpSpeed; }
 
 	void SetRelativeXOffset(float Offset, float OffsetLookingUp, float OffsetLookingDown);
+	FVector GetCameraComponentWorldOrbitPoint() const;
 	FVector GetCameraComponentWorldLocation() const;
-	void SetCameraComponentRelativeXLocation(float RelativeX);
-	float GetCameraComponentRelativeXLocation() const;
+	void SetCameraComponentWorldLocation(const FVector& Location);
 
 private:
 	void OnConstruction(const FTransform& Transform) override;
 
 	void ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp, float DeltaTime);
+	FVector CalculateCameraComponentRelativeLocation() const;
 };
