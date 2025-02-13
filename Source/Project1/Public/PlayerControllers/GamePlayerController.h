@@ -97,6 +97,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Jump")
 	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|OpenGameMenu")
+	TObjectPtr<UInputMappingContext> OpenGameMenuInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|OpenGameMenu")
+	int32 OpenGameMenuInputMappingContextPriority{ 0 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|OpenGameMenu")
+	TObjectPtr<UInputAction> OpenGameMenuInputAction{ nullptr };
+
 	UPROPERTY(EditAnywhere, Category = "Look")
 	FVector2D AbsoluteLookInputSensitivity{ 1.0, 1.0 };
 
@@ -135,4 +144,5 @@ private:
 	void OnResetLookTriggered(const FInputActionValue& Value);
 	void OnMoveTriggered(const FInputActionValue& Value);
 	void OnJumpTriggered(const FInputActionValue& Value);
+	void OnOpenGameMenuTriggered(const FInputActionValue& Value);
 };

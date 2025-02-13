@@ -50,6 +50,7 @@ void AGamePlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(ResetLookInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnResetLookTriggered);
 	EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnMoveTriggered);
 	EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnJumpTriggered);
+	EnhancedInputComponent->BindAction(OpenGameMenuInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnOpenGameMenuTriggered);
 }
 
 void AGamePlayerController::OnPossess(APawn* aPawn)
@@ -84,6 +85,7 @@ void AGamePlayerController::BeginPlay()
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(ResetLookInputMappingContext, ResetLookInputMappingContextPriority);
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MoveInputMappingContext, MoveInputMappingContextPriority);
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(JumpInputMappingContext, JumpInputMappingContextPriority);
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(OpenGameMenuInputMappingContext, OpenGameMenuInputMappingContextPriority);
 }
 
 void AGamePlayerController::OnInteractPromptUIInteractTriggered(const FInputActionValue& Value)
@@ -173,4 +175,9 @@ void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
 void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Jump input triggered")));
+}
+
+void AGamePlayerController::OnOpenGameMenuTriggered(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Open game menu input triggered")));
 }
