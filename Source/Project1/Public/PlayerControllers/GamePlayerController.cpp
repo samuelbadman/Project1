@@ -7,6 +7,7 @@
 #include "PlayerCameraManagers/GamePlayerCameraManager.h"
 #include "Components/ActorComponents/PlayerCharacterControllerComponent.h"
 #include "Components/ActorComponents/PlayerInteractComponent.h"
+#include "HUDs/GameHUD.h"
 
 AGamePlayerController::AGamePlayerController()
 {
@@ -34,6 +35,16 @@ void AGamePlayerController::RemoveDialogueScreenInputMappingContext()
 	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(DialogueScreenInputMappingContext);
 }
 
+void AGamePlayerController::AddGameMenuInputMappingContext()
+{
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(GameMenuScreenInputMappingContext, GameMenuScreenInputPriority);
+}
+
+void AGamePlayerController::RemoveGameMenuInputMappingContext()
+{
+	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(GameMenuScreenInputMappingContext);
+}
+
 void AGamePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -44,6 +55,11 @@ void AGamePlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(InteractPromptSwitchActionInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUISwitchActionTriggered);
 
 	EnhancedInputComponent->BindAction(DialogueScreenConfirmInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnDialogueScreenConfirmTriggered);
+
+	EnhancedInputComponent->BindAction(GameMenuScreenConfirmInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnGameMenuScreenConfirmTriggered);
+	EnhancedInputComponent->BindAction(GameMenuScreenNavigateInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnGameMenuScreenNavigateTriggered);
+	EnhancedInputComponent->BindAction(GameMenuScreenCancelInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnGameMenuScreenCancelTriggered);
+	EnhancedInputComponent->BindAction(GameMenuScreenQuitInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnGameMenuScreenQuitTriggered);
 
 	EnhancedInputComponent->BindAction(LookAbsoluteInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAbsoluteTriggered);
 	EnhancedInputComponent->BindAction(LookAnalogInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAnalogTriggered);
@@ -78,6 +94,9 @@ void AGamePlayerController::BeginPlay()
 	// Get world
 	World = GetWorld();
 
+	// Get HUD
+	GameHUD = CastChecked<AGameHUD>(GetHUD());
+
 	// Add game input mapping contexts
 	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
 
@@ -101,6 +120,26 @@ void AGamePlayerController::OnInteractPromptUISwitchActionTriggered(const FInput
 void AGamePlayerController::OnDialogueScreenConfirmTriggered(const FInputActionValue& Value)
 {
 	DialogueScreenConfirmTriggered.Broadcast(Value);
+}
+
+void AGamePlayerController::OnGameMenuScreenConfirmTriggered(const FInputActionValue& Value)
+{
+	GameMenuScreenConfirmTriggered.Broadcast(Value);
+}
+
+void AGamePlayerController::OnGameMenuScreenNavigateTriggered(const FInputActionValue& Value)
+{
+	GameMenuScreenNavigateTriggered.Broadcast(Value);
+}
+
+void AGamePlayerController::OnGameMenuScreenCancelTriggered(const FInputActionValue& Value)
+{
+	GameMenuScreenCancelTriggered.Broadcast(Value);
+}
+
+void AGamePlayerController::OnGameMenuScreenQuitTriggered(const FInputActionValue& Value)
+{
+	GameMenuScreenQuitTriggered.Broadcast(Value);
 }
 
 void AGamePlayerController::OnLookAbsoluteTriggered(const FInputActionValue& Value)
@@ -180,4 +219,5 @@ void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)
 void AGamePlayerController::OnOpenGameMenuTriggered(const FInputActionValue& Value)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Open game menu input triggered")));
+	GameHUD->OpenGameMenu();
 }

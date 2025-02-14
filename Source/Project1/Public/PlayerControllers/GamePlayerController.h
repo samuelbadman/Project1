@@ -10,11 +10,18 @@
 class AGamePlayerCameraManager;
 class UPlayerCharacterControllerComponent;
 class UPlayerInteractComponent;
+class AGameHUD;
+class UGameMenuScreen;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptInteractTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptSwitchActionTriggeredDelegate, const FInputActionValue& /* Value */);
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnDialogueScreenConfirmTriggered, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDialogueScreenConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameMenuScreenConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameMenuScreenNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameMenuScreenCancelTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameMenuScreenQuitTriggeredDelegate, const FInputActionValue& /* Value */);
 
 /**
  *
@@ -28,7 +35,12 @@ public:
 	FOnInteractPromptInteractTriggeredDelegate InteractPromptInteractTriggered{};
 	FOnInteractPromptSwitchActionTriggeredDelegate InteractPromptSwitchActionTriggered{};
 
-	FOnDialogueScreenConfirmTriggered DialogueScreenConfirmTriggered{};
+	FOnDialogueScreenConfirmTriggeredDelegate DialogueScreenConfirmTriggered{};
+
+	FOnGameMenuScreenConfirmTriggeredDelegate GameMenuScreenConfirmTriggered{};
+	FOnGameMenuScreenNavigateTriggeredDelegate GameMenuScreenNavigateTriggered{};
+	FOnGameMenuScreenCancelTriggeredDelegate GameMenuScreenCancelTriggered{};
+	FOnGameMenuScreenQuitTriggeredDelegate GameMenuScreenQuitTriggered{};
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -57,6 +69,24 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|DialogueScreen")
 	TObjectPtr<UInputAction> DialogueScreenConfirmInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|GameMenuScreen")
+	TObjectPtr<UInputMappingContext> GameMenuScreenInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|GameMenuScreen")
+	int32 GameMenuScreenInputPriority{ 0 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|GameMenuScreen")
+	TObjectPtr<UInputAction> GameMenuScreenConfirmInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|GameMenuScreen")
+	TObjectPtr<UInputAction> GameMenuScreenNavigateInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|GameMenuScreen")
+	TObjectPtr<UInputAction> GameMenuScreenCancelInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|GameMenuScreen")
+	TObjectPtr<UInputAction> GameMenuScreenQuitInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Look")
 	TObjectPtr<UInputMappingContext> LookInputMappingContext{ nullptr };
@@ -117,6 +147,7 @@ private:
 
 	TObjectPtr<UWorld> World{ nullptr };
 	TObjectPtr<AGamePlayerCameraManager> GamePlayerCameraManager{ nullptr };
+	TObjectPtr<AGameHUD> GameHUD{ nullptr };
 
 public:
 	AGamePlayerController();
@@ -126,6 +157,9 @@ public:
 
 	void AddDialogueScreenInputMappingContext();
 	void RemoveDialogueScreenInputMappingContext();
+
+	void AddGameMenuInputMappingContext();
+	void RemoveGameMenuInputMappingContext();
 
 	FORCEINLINE TObjectPtr<UPlayerInteractComponent> GetPlayerInteractComponent() const { return PlayerInteractComponent; }
 
@@ -138,6 +172,11 @@ private:
 	void OnInteractPromptUISwitchActionTriggered(const FInputActionValue& Value);
 
 	void OnDialogueScreenConfirmTriggered(const FInputActionValue& Value);
+
+	void OnGameMenuScreenConfirmTriggered(const FInputActionValue& Value);
+	void OnGameMenuScreenNavigateTriggered(const FInputActionValue& Value);
+	void OnGameMenuScreenCancelTriggered(const FInputActionValue& Value);
+	void OnGameMenuScreenQuitTriggered(const FInputActionValue& Value);
 
 	void OnLookAbsoluteTriggered(const FInputActionValue& Value);
 	void OnLookAnalogTriggered(const FInputActionValue& Value);
