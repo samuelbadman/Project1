@@ -5,14 +5,26 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerControllers/GamePlayerController.h"
 #include "HUDs/GameHUD.h"
+#include "Objects/WidgetComponents/ButtonNavigationComponent.h"
+#include "InputActionValue.h"
+#include "UMG/Components/Buttons/Project1ButtonBase.h"
 
 UGameMenuScreen::UGameMenuScreen()
 {
+	ButtonNavigationComponent = CreateDefaultSubobject<UButtonNavigationComponent>(FName(TEXT("ButtonNavigationComponent")));
 	GamePlayerController = nullptr;
 	GameHUD = nullptr;
 	ConfirmDelegateHandle = {};
 	NavigateDelegateHandle = {};
 	CancelDelegateHandle = {};
+}
+
+void UGameMenuScreen::RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex)
+{
+	if (Buttons.IsValidIndex(DefaultHoveredButtonIndex))
+	{
+		ButtonNavigationComponent->SetCurrentHoveredButton(Buttons[DefaultHoveredButtonIndex]);
+	}
 }
 
 void UGameMenuScreen::NativeOnPushedToLayerStack()
@@ -41,21 +53,25 @@ void UGameMenuScreen::NativeOnPoppedFromLayerStack()
 
 void UGameMenuScreen::OnQuitTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Game menu screen quit")));
 	GameHUD->CloseGameMenu();
 }
 
 void UGameMenuScreen::OnConfirmTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Game menu screen confirm")));
+	ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
 }
 
 void UGameMenuScreen::OnNavigateTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Game menu screen navigate")));
+	const TObjectPtr<UProject1ButtonBase> NavigatedButton{ 
+		ButtonNavigationComponent->NavigateButton((Value.Get<FVector2D>().Y > 0.0f) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down) };
+	if (IsValid(NavigatedButton))
+	{
+		ButtonNavigationComponent->SetCurrentHoveredButton(NavigatedButton);
+	}
 }
 
 void UGameMenuScreen::OnCancelTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Game menu screen cancel")));
+	GameHUD->CloseGameMenu();
 }

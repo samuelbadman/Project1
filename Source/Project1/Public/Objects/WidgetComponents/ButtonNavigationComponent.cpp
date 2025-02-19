@@ -29,7 +29,7 @@ TObjectPtr<UProject1ButtonBase> UButtonNavigationComponent::NavigateButton(EWidg
 		return nullptr;
 	}
 
-	// Get the button to navigate to
+	// Get the button to navigate to. Assumes the navigated widget is a project button
 	return Cast<UProject1ButtonBase>(CurrentHoveredButton->GetNavigatedWidget(Direction).Get());
 }
 

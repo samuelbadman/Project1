@@ -35,6 +35,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UGameHUDScreen* GetGameHUDScreen() const;
 
-	void OpenGameMenu();
+	UFUNCTION(BlueprintCallable)
 	void CloseGameMenu();
+
+	void OpenGameMenu();
 };

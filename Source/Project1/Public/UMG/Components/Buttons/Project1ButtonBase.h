@@ -37,9 +37,9 @@ public:
 	FOnPressedDelegate OnPressed{};
 
 private:
-	// Whether to activate the button automatically during its start
+	// Whether to activate the button mouse inputs automatically during its start
 	UPROPERTY(EditAnywhere)
-	bool bStartActivated{ true };
+	bool bStartWithMouseInputsActivated{ true };
 
 	// Brush applied to the button image when it is in an unhovered state
 	UPROPERTY(EditAnywhere)
@@ -66,7 +66,7 @@ private:
 	FDelegateHandle OnMouseMovedDelegateHandle{};
 	FDelegateHandle OnInputKeyDelegateHandle{};
 
-	bool bActivated{ false };
+	bool bMouseInputsActivated{ false };
 	bool bHovered{ false };
 
 public:
@@ -82,7 +82,7 @@ public:
 
 	void PressButton();
 
-	FORCEINLINE bool IsActivated() const { return bActivated; }
+	FORCEINLINE bool AreMouseInputsActivated() const { return bMouseInputsActivated; }
 	FORCEINLINE bool IsHovered() const { return bHovered; }
 
 private:
@@ -91,9 +91,9 @@ private:
 	void NativeDestruct() override;
 
 	// Activates the button allowing it to handle to mouse cursor events
-	void Activate();
+	void ActivateMouseInputs();
 	// Deactivates the button stopping it from handling mouse cursor events
-	void Deactivate();
+	void DeactivateMouseInputs();
 
 	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
 	void OnInputKey(const FInputKeyEventArgs& EventArgs);

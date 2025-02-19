@@ -27,8 +27,6 @@ private:
 	TObjectPtr<ULayerUserWidgetBase> OwningLayer{ nullptr };
 
 public:
-	UScreenUserWidgetBase() = default;
-
 	void SetOwningLayer(TObjectPtr<ULayerUserWidgetBase> Layer);
 
 	UFUNCTION(BlueprintImplementableEvent)

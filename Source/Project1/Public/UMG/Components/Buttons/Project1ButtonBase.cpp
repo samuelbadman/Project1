@@ -27,15 +27,15 @@ void UProject1ButtonBase::NativeOnInitialized()
 	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
 	Project1GameViewportClient = CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient());
 
-	if (bStartActivated)
+	if (bStartWithMouseInputsActivated)
 	{
-		Activate();
+		ActivateMouseInputs();
 	}
 }
 
 void UProject1ButtonBase::NativeDestruct()
 {
-	if (bActivated)
+	if (bMouseInputsActivated)
 	{
 		Project1GameViewportClient->MouseMoved.Remove(OnMouseMovedDelegateHandle);
 		Project1GameViewportClient->OnInputKey.Remove(OnInputKeyDelegateHandle);
@@ -44,14 +44,14 @@ void UProject1ButtonBase::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void UProject1ButtonBase::Activate()
+void UProject1ButtonBase::ActivateMouseInputs()
 {
 	OnMouseMovedDelegateHandle = Project1GameViewportClient->MouseMoved.AddUObject(this, &UProject1ButtonBase::OnMouseMoved);
 	OnInputKeyDelegateHandle = Project1GameViewportClient->OnInputKey.AddUObject(this, &UProject1ButtonBase::OnInputKey);
-	bActivated = true;
+	bMouseInputsActivated = true;
 }
 
-void UProject1ButtonBase::Deactivate()
+void UProject1ButtonBase::DeactivateMouseInputs()
 {
 	Project1GameViewportClient->MouseMoved.Remove(OnMouseMovedDelegateHandle);
 	OnMouseMovedDelegateHandle.Reset();
@@ -61,7 +61,7 @@ void UProject1ButtonBase::Deactivate()
 
 	GetBorder()->SetBrush(NormalBrush);
 
-	bActivated = false;
+	bMouseInputsActivated = false;
 }
 
 void UProject1ButtonBase::MakeHovered()

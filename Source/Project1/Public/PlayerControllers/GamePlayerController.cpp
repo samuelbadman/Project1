@@ -218,6 +218,5 @@ void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)
 
 void AGamePlayerController::OnOpenGameMenuTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Open game menu input triggered")));
 	GameHUD->OpenGameMenu();
 }

@@ -20,12 +20,10 @@ UGameHUDScreen* AGameHUD::GetGameHUDScreen() const
 
 void AGameHUD::OpenGameMenu()
 {
-    GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Opening game menu")));
     PushContentToPrimaryLayoutWidgetLayer(GameMenuWidgetLayerName, GameMenuScreenClass);
 }
 
 void AGameHUD::CloseGameMenu()
 {
-    GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Closing game menu")));
     PopContentFromPrimaryLayoutWidgetLayer(GameMenuWidgetLayerName);
 }

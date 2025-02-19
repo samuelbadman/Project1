@@ -9,16 +9,22 @@
 class AGamePlayerController;
 class AGameHUD;
 struct FInputActionValue;
+class UProject1ButtonBase;
+class UButtonNavigationComponent;
 
 /**
- * 
+ *
  */
 UCLASS()
 class PROJECT1_API UGameMenuScreen : public UScreenUserWidgetBase
 {
 	GENERATED_BODY()
-	
+
 private:
+	// TODO: Component object pointer is being set to null after constructor. Possibly being overridden by child blueprint construction to default value (nullptr)
+	UPROPERTY()
+	TObjectPtr<UButtonNavigationComponent> ButtonNavigationComponent;
+
 	TObjectPtr<AGamePlayerController> GamePlayerController;
 	TObjectPtr<AGameHUD> GameHUD;
 	FDelegateHandle QuitDelegateHandle;
@@ -26,9 +32,13 @@ private:
 	FDelegateHandle NavigateDelegateHandle;
 	FDelegateHandle CancelDelegateHandle;
 
-private:
+public:
 	UGameMenuScreen();
 
+	UFUNCTION(BlueprintCallable)
+	void RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex = 0);
+
+private:
 	void NativeOnPushedToLayerStack() override;
 	void NativeOnPoppedFromLayerStack() override;
 

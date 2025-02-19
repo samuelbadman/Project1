@@ -34,8 +34,10 @@ void UTitleScreenMainMenuScreen::NativeOnPushedToLayerStack()
 	TitleScreenPlayerController->AddMainMenuScreenInputMappingContext();
 
 	// Register events
-	MainMenuUIConfirmTriggeredDelegateHandle = TitleScreenPlayerController->MainMenuScreenConfirmTriggered.AddUObject(this, &UTitleScreenMainMenuScreen::OnMainMenuScreenConfirmTriggered);
-	MainMenuUINavigateTriggeredDelegateHandle = TitleScreenPlayerController->MainMenuScreenNavigateTriggered.AddUObject(this, &UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered);
+	MainMenuUIConfirmTriggeredDelegateHandle = 
+		TitleScreenPlayerController->MainMenuScreenConfirmTriggered.AddUObject(this, &UTitleScreenMainMenuScreen::OnMainMenuScreenConfirmTriggered);
+	MainMenuUINavigateTriggeredDelegateHandle =
+		TitleScreenPlayerController->MainMenuScreenNavigateTriggered.AddUObject(this, &UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered);
 }
 
 void UTitleScreenMainMenuScreen::NativeOnPoppedFromLayerStack()

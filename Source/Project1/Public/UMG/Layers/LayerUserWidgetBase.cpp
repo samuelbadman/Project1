@@ -149,7 +149,7 @@ void ULayerUserWidgetBase::ActionPushedContent(TObjectPtr<UClass> Class, TObject
 		PushedWidget->ConsumeLoadPayload(LoadPayload);
 	}
 
-	// Show the screen widget without calling the screen's on shown events. This is so that on pushed screen events can behave similarly to a begin play event
+	// Show the screen widget without calling the screen's on shown events. This is so that on pushed to layer screen events can behave similarly to a begin play event
 	const TObjectPtr<UScreenUserWidgetBase> Top{ Peek() };
 	if (IsValid(Top))
 	{
