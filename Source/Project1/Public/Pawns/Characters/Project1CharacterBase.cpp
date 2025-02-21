@@ -35,9 +35,13 @@ AProject1CharacterBase::AProject1CharacterBase(const FObjectInitializer& ObjectI
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
-void AProject1CharacterBase::SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation)
+void AProject1CharacterBase::SetWorldOrientation(const FQuat& TargetOrientation, bool Instant)
 {
 	TargetCapsuleWorldOrientation = TargetOrientation;
+	if (Instant)
+	{
+		SetCharacterRotation(TargetOrientation);
+	}
 }
 
 void AProject1CharacterBase::SetOnlyUpdateCapsuleRotationDuringMove(bool NewValue)
@@ -91,13 +95,11 @@ void AProject1CharacterBase::Tick(float DeltaSeconds)
 
 void AProject1CharacterBase::UpdateCapsuleRotation(float DeltaTime)
 {
-	// Update character capsule rotation
-	const FQuat NewCharacterOrientation{ FMath::QInterpConstantTo(GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CharacterAttributes->CapsuleRotationSpeed) };
-	SetActorRotation(NewCharacterOrientation);
-	// Update player character skeletal mesh rotation. Keep the mesh aligned with the capsule
-	const FRotator TargetCharacterMeshRotation{ TargetCapsuleWorldOrientation };
-	// TODO: This sometimes rotates the mesh in the opposite direction to the capsule. Will this be a problem? Matching mesh rotation to capsule for now
-	//GetMesh()->SetWorldRotation(FMath::QInterpConstantTo(GetMesh()->GetComponentQuat(), TargetCharacterMeshRotation.Quaternion(),
-	//	DeltaTime, CharacterAttributes->MeshRotationSpeed));
-	GetMesh()->SetWorldRotation(NewCharacterOrientation);
+	SetCharacterRotation(FMath::QInterpConstantTo(GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CharacterAttributes->CapsuleRotationSpeed));
+}
+
+void AProject1CharacterBase::SetCharacterRotation(const FQuat& Rotation)
+{
+	SetActorRotation(Rotation);
+	GetMesh()->SetWorldRotation(Rotation);
 }

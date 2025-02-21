@@ -32,7 +32,9 @@ public:
 	// Function called by player input and AI navigation to move the character. Allows sub character classes to implement custom movement logic by overriding this function
 	virtual void Move(const FVector& DesiredDirection);
 
-	void SetTargetCapsuleWorldOrientation(const FQuat& TargetOrientation);
+	// Sets the capsule and mesh component world orientations over time. The character's capsule and mesh component will be rotated towards this orientation each update at the rates
+	// defined in character attributes data asset. If Instant is true the capsule will be rotated on the same frame this function is called instead of over time
+	void SetWorldOrientation(const FQuat& TargetOrientation, bool Instant);
 	void SetOnlyUpdateCapsuleRotationDuringMove(bool NewValue);
 	void SetGroundMovementState(ECharacterGroundMovementState State);
 
@@ -41,4 +43,5 @@ private:
 	void Tick(float DeltaSeconds) override;
 
 	void UpdateCapsuleRotation(float DeltaTime);
+	void SetCharacterRotation(const FQuat& Rotation);
 };

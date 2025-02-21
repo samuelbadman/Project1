@@ -40,7 +40,7 @@ void UPlayerCharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 
 void UPlayerCharacterControllerComponent::OnPlayerMoveInput(const FVector& WorldDirection, float MoveInputMagnitude)
 {
-	Project1Character->SetTargetCapsuleWorldOrientation(WorldDirection.ToOrientationQuat());
+	Project1Character->SetWorldOrientation(WorldDirection.ToOrientationQuat(), false);
 	UpdateGroundMovementState(MoveInputMagnitude);
 	Project1Character->Move(WorldDirection);
 }

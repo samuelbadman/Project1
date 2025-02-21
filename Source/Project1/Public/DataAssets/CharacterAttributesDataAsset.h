@@ -18,9 +18,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	float CapsuleRotationSpeed{ 7.5f };
 
-	//UPROPERTY(EditAnywhere)
-	//float MeshRotationSpeed{ 7.5f };
-
 	UPROPERTY(EditAnywhere)
 	float WalkSpeed{ 300.0f };
 

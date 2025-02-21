@@ -25,5 +25,5 @@ public:
 
 	void SetupNewPawn(TObjectPtr<APawn> Pawn);
 	void SetGroundMovementState(ECharacterGroundMovementState State);
-	void SetControlledCharacterTargetCapsuleWorldOrientation(const FQuat& TargetOrientation);
+	void SetCharacterWorldOrientation(const FQuat& Orientation, bool Instant);
 };

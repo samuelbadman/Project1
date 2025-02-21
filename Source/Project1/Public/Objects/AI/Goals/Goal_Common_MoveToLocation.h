@@ -22,7 +22,6 @@ private:
 	ECharacterGroundMovementState GroundMovementState;
 	float AcceptanceRadius;
 	TObjectPtr<AProject1AIControllerBase> OwningAI;
-	TObjectPtr<AProject1CharacterBase> AIProject1Character;
 
 public:
 	UGoal_Common_MoveToLocation();

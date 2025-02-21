@@ -19,7 +19,5 @@ void UProj1CharacterMovementComponent::BeginPlay()
 
 void UProj1CharacterMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("[%s] RequestDirectMove"), *GetOwner()->GetName()));
-	DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + (MoveVelocity.GetSafeNormal() * 100.0f), 10.0f, FColor::Cyan);
 	Project1Character->Move(MoveVelocity.GetSafeNormal());
 }

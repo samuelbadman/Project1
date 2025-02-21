@@ -10,7 +10,6 @@ UGoal_Common_MoveToLocation::UGoal_Common_MoveToLocation()
 	TargetLocation = FVector::ZeroVector;
 	AcceptanceRadius = -1.0f;
 	OwningAI = nullptr;
-	AIProject1Character = nullptr;
 }
 
 void UGoal_Common_MoveToLocation::Stop(TObjectPtr<AProject1AIControllerBase> AI)
@@ -22,7 +21,6 @@ void UGoal_Common_MoveToLocation::Stop(TObjectPtr<AProject1AIControllerBase> AI)
 void UGoal_Common_MoveToLocation::Start(TObjectPtr<AProject1AIControllerBase> AI)
 {
 	OwningAI = AI;
-	AIProject1Character = CastChecked<AProject1CharacterBase>(AI->GetCharacter());
 	AI->GetAICharacterController()->SetGroundMovementState(GroundMovementState);
 	AI->MoveToLocation(TargetLocation, AcceptanceRadius);
 	AI->ReceiveMoveCompleted.AddDynamic(this, &UGoal_Common_MoveToLocation::OnMoveComplete);
@@ -34,8 +32,7 @@ void UGoal_Common_MoveToLocation::Tick(TObjectPtr<AProject1AIControllerBase> AI,
 	FVector TargetMovementVector{ TargetLocation - (AI->GetPawn()->GetActorLocation()) };
 	// Zero out Z movement component as characters move on the flat XY plane
 	TargetMovementVector.Z = 0.0f;
-	AI->GetAICharacterController()->SetControlledCharacterTargetCapsuleWorldOrientation(TargetMovementVector.ToOrientationQuat());
-	DrawDebugSphere(GetWorld(), TargetLocation, 5.0f, 12, FColor::Green);
+	AI->GetAICharacterController()->SetCharacterWorldOrientation(TargetMovementVector.ToOrientationQuat(), false);
 }
 
 void UGoal_Common_MoveToLocation::Initialize(const FVector& InTargetLocation, ECharacterGroundMovementState InGroundMovementState, float InAcceptanceRadius)
