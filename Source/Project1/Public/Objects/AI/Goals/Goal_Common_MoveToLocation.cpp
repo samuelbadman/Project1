@@ -3,7 +3,6 @@
 
 #include "Goal_Common_MoveToLocation.h"
 #include "Components/ActorComponents/AICharacterControllerComponent.h"
-#include "Pawns/Characters/Project1CharacterBase.h"
 
 UGoal_Common_MoveToLocation::UGoal_Common_MoveToLocation()
 {
@@ -28,11 +27,7 @@ void UGoal_Common_MoveToLocation::Start(TObjectPtr<AProject1AIControllerBase> AI
 
 void UGoal_Common_MoveToLocation::Tick(TObjectPtr<AProject1AIControllerBase> AI, float DeltaSeconds)
 {
-	// Set target capsule orientation
-	FVector TargetMovementVector{ TargetLocation - (AI->GetPawn()->GetActorLocation()) };
-	// Zero out Z movement component as characters move on the flat XY plane
-	TargetMovementVector.Z = 0.0f;
-	AI->GetAICharacterController()->SetCharacterWorldOrientation(TargetMovementVector.ToOrientationQuat(), false);
+	AI->GetAICharacterController()->SetCharacterWorldOrientation(AI->GetPawn()->GetVelocity().ToOrientationQuat(), false);
 }
 
 void UGoal_Common_MoveToLocation::Initialize(const FVector& InTargetLocation, ECharacterGroundMovementState InGroundMovementState, float InAcceptanceRadius)

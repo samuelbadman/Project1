@@ -15,5 +15,12 @@ class PROJECT1_API ATestAICharacter : public AProject1CharacterBase
 	GENERATED_BODY()
 	
 private:
-	void Move(const FVector& DesiredDirection) override;
+	TObjectPtr<UWorld> World;
+
+public:
+	ATestAICharacter(const FObjectInitializer& ObjectInitializer);
+
+private:
+	void BeginPlay() override;
+	FVector GetAIRequestedVelocity(const FVector& AIMoveVelocity) override;
 };

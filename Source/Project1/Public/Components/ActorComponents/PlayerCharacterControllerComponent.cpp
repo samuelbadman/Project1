@@ -11,9 +11,15 @@ UPlayerCharacterControllerComponent::UPlayerCharacterControllerComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 	RunInputMagnitude = 0.45f;
 	Project1Character = nullptr;
+}
+
+void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	Project1Character->UpdateCapsuleRotation(DeltaTime);
 }
 
 void UPlayerCharacterControllerComponent::UpdateGroundMovementState(float MoveInputMagnitude)
@@ -42,5 +48,5 @@ void UPlayerCharacterControllerComponent::OnPlayerMoveInput(const FVector& World
 {
 	Project1Character->SetWorldOrientation(WorldDirection.ToOrientationQuat(), false);
 	UpdateGroundMovementState(MoveInputMagnitude);
-	Project1Character->Move(WorldDirection);
+	Project1Character->AddMovementInput(WorldDirection);
 }

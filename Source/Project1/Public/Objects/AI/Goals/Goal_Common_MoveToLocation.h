@@ -7,7 +7,6 @@
 #include "Goal_Common_MoveToLocation.generated.h"
 
 enum class ECharacterGroundMovementState : uint8;
-class AProject1CharacterBase;
 
 /**
  * 

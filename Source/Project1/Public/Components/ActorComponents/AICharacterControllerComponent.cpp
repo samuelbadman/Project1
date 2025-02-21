@@ -7,7 +7,7 @@
 
 UAICharacterControllerComponent::UAICharacterControllerComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 	Project1Character = nullptr;
 }
 

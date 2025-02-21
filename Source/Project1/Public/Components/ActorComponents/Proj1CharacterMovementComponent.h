@@ -17,6 +17,7 @@ class PROJECT1_API UProj1CharacterMovementComponent : public UCharacterMovementC
 	GENERATED_BODY()
 	
 private:
+	TObjectPtr<UWorld> World;
 	TObjectPtr<AProject1CharacterBase> Project1Character;
 
 public:

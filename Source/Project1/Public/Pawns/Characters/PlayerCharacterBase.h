@@ -25,7 +25,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
 	void SetGlowLightVisibility(const bool NewVisibility);
-
-private:
-	void Move(const FVector& DesiredDirection) override;
 };

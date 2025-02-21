@@ -14,7 +14,6 @@ AProject1CharacterBase::AProject1CharacterBase(const FObjectInitializer& ObjectI
 {
 	// Set class default values
 	CharacterAttributes = nullptr;
-	bOnlyUpdateCapsuleRotationDuringMove = false;
 	World = nullptr;
 	TargetCapsuleWorldOrientation = FQuat::Identity;
 	CurrentGroundMovementState = ECharacterGroundMovementState::Max;
@@ -44,11 +43,6 @@ void AProject1CharacterBase::SetWorldOrientation(const FQuat& TargetOrientation,
 	}
 }
 
-void AProject1CharacterBase::SetOnlyUpdateCapsuleRotationDuringMove(bool NewValue)
-{
-	bOnlyUpdateCapsuleRotationDuringMove = NewValue;
-}
-
 void AProject1CharacterBase::SetGroundMovementState(ECharacterGroundMovementState State)
 {
 	if (CurrentGroundMovementState == State)
@@ -68,12 +62,9 @@ void AProject1CharacterBase::SetGroundMovementState(ECharacterGroundMovementStat
 	Movement->MaxWalkSpeed = Speed;
 }
 
-void AProject1CharacterBase::Move(const FVector& DesiredDirection)
+FVector AProject1CharacterBase::GetAIRequestedVelocity(const FVector& AIMoveVelocity)
 {
-	if (bOnlyUpdateCapsuleRotationDuringMove)
-	{
-		UpdateCapsuleRotation(World->GetDeltaSeconds());
-	}
+	return AIMoveVelocity;
 }
 
 void AProject1CharacterBase::BeginPlay()
@@ -84,22 +75,14 @@ void AProject1CharacterBase::BeginPlay()
 	TargetCapsuleWorldOrientation = GetActorQuat();
 }
 
-void AProject1CharacterBase::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-	if (!bOnlyUpdateCapsuleRotationDuringMove)
-	{
-		UpdateCapsuleRotation(DeltaSeconds);
-	}
-}
-
-void AProject1CharacterBase::UpdateCapsuleRotation(float DeltaTime)
-{
-	SetCharacterRotation(FMath::QInterpConstantTo(GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CharacterAttributes->CapsuleRotationSpeed));
-}
-
 void AProject1CharacterBase::SetCharacterRotation(const FQuat& Rotation)
 {
 	SetActorRotation(Rotation);
 	GetMesh()->SetWorldRotation(Rotation);
+}
+
+void AProject1CharacterBase::UpdateCapsuleRotation(float DeltaTime)
+{
+	const FQuat NewRotation{ FMath::QInterpConstantTo(GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CharacterAttributes->CapsuleRotationSpeed) };
+	SetCharacterRotation(NewRotation);
 }

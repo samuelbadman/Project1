@@ -24,6 +24,7 @@ public:
 	UAICharacterControllerComponent();
 
 	void SetupNewPawn(TObjectPtr<APawn> Pawn);
+
 	void SetGroundMovementState(ECharacterGroundMovementState State);
 	void SetCharacterWorldOrientation(const FQuat& Orientation, bool Instant);
 };

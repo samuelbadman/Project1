@@ -18,9 +18,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCharacterAttributesDataAsset> CharacterAttributes;
 
-	UPROPERTY(EditAnywhere)
-	bool bOnlyUpdateCapsuleRotationDuringMove;
-
 	TObjectPtr<UWorld> World;
 	FQuat TargetCapsuleWorldOrientation;
 	ECharacterGroundMovementState CurrentGroundMovementState;
@@ -29,19 +26,21 @@ public:
 	// Sets default values for this character's properties
 	AProject1CharacterBase(const FObjectInitializer& ObjectInitializer);
 
-	// Function called by player input and AI navigation to move the character. Allows sub character classes to implement custom movement logic by overriding this function
-	virtual void Move(const FVector& DesiredDirection);
+	// Provides the opportunity for characters to provide a different velocity when the AI navigation system requests a velocity. This can be used to implement a turning radius for AI
+	// characters when changing directions
+	virtual FVector GetAIRequestedVelocity(const FVector& AIMoveVelocity);
 
 	// Sets the capsule and mesh component world orientations over time. The character's capsule and mesh component will be rotated towards this orientation each update at the rates
 	// defined in character attributes data asset. If Instant is true the capsule will be rotated on the same frame this function is called instead of over time
 	void SetWorldOrientation(const FQuat& TargetOrientation, bool Instant);
-	void SetOnlyUpdateCapsuleRotationDuringMove(bool NewValue);
+	void UpdateCapsuleRotation(float DeltaTime);
 	void SetGroundMovementState(ECharacterGroundMovementState State);
 
-private:
-	void BeginPlay() override;
-	void Tick(float DeltaSeconds) override;
+	FORCEINLINE TObjectPtr<UCharacterAttributesDataAsset> GetCharacterAttributes() const { return CharacterAttributes; }
 
-	void UpdateCapsuleRotation(float DeltaTime);
+protected:
+	void BeginPlay() override;
+
+private:
 	void SetCharacterRotation(const FQuat& Rotation);
 };
