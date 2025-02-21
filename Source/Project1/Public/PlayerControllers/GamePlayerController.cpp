@@ -208,7 +208,7 @@ void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
 	GamePlayerCameraManager->AddViewYawRotation(MoveRightViewYawRotationRate * (ViewYawOffset * Sign) * World->DeltaTimeSeconds);
 
 	// Add movement input
-	PlayerCharacterControllerComponent->AddMovement(WorldMovementDirection, InputMagnitude);
+	PlayerCharacterControllerComponent->OnPlayerMoveInput(WorldMovementDirection, InputMagnitude);
 }
 
 void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)

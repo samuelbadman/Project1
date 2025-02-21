@@ -4,12 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponents/Project1ActorComponentBase.h"
-#include "Enums/AICharacterGroundMovementState.h"
 #include "AICharacterControllerComponent.generated.h"
 
 class AProject1CharacterBase;
-class UCharacterMovementComponent;
-class UCharacterAttributesDataAsset;
+enum class ECharacterGroundMovementState : uint8;
 
 /**
  *
@@ -21,17 +19,11 @@ class PROJECT1_API UAICharacterControllerComponent : public UProject1ActorCompon
 
 private:
 	TObjectPtr<AProject1CharacterBase> Project1Character;
-	TObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
-	TObjectPtr<USkeletalMeshComponent> CharacterSkeletalMeshComponent;
-	TObjectPtr<UCharacterAttributesDataAsset> CharacterAttributes;
 
 public:
 	UAICharacterControllerComponent();
 
 	void SetupNewPawn(TObjectPtr<APawn> Pawn);
-	void SetGroundMovementState(EAICharacterGroundMovementState State);
+	void SetGroundMovementState(ECharacterGroundMovementState State);
 	void SetControlledCharacterTargetCapsuleWorldOrientation(const FQuat& TargetOrientation);
-
-private:
-	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };
