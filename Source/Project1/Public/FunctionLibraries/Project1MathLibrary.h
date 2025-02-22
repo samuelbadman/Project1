@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Project1BlueprintFunctionLibrary.generated.h"
+#include "Project1MathLibrary.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT1_API UProject1BlueprintFunctionLibrary : public UBlueprintFunctionLibrary
+class PROJECT1_API UProject1MathLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	

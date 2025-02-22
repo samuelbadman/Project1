@@ -7,7 +7,7 @@
 #include "Components/OverlaySlot.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCameraManagers/GamePlayerCameraManager.h"
-#include "FunctionLibraries/Project1BlueprintFunctionLibrary.h"
+#include "FunctionLibraries/Project1MathLibrary.h"
 #include "CompassIconUserWidget.h"
 
 UCompassIconUserWidget* UCompassBarUserWidget::AddCompassIcon(UTexture2D* IconTexture, const FSlateColor& IconTint, const FVector& WorldLocation)
@@ -68,7 +68,7 @@ void UCompassBarUserWidget::NativeDestruct()
 
 void UCompassBarUserWidget::OnPlayerCameraUpdated(float CurrentPitch, float CurrentYaw)
 {
-	const float BackgroundBarScrollUAxisValue{ UProject1BlueprintFunctionLibrary::Normalize360DegreesAngle(UProject1BlueprintFunctionLibrary::ConvertEulerAngleTo360Degrees(CurrentYaw)) };
+	const float BackgroundBarScrollUAxisValue{ UProject1MathLibrary::Normalize360DegreesAngle(UProject1MathLibrary::ConvertEulerAngleTo360Degrees(CurrentYaw)) };
 
 	// Set background bar image material scroll U axis value
 	BackgroundBarDynamicMaterialInstance->SetScalarParameterValue(ScrollUAxisMaterialParameterName, BackgroundBarScrollUAxisValue);

@@ -7,7 +7,7 @@
 #include "Interfaces/Interactable.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Actors/Player/PlayerInteractCollision.h"
-#include "FunctionLibraries/Project1BlueprintFunctionLibrary.h"
+#include "FunctionLibraries/Project1MathLibrary.h"
 
 void UPlayerInteractComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 {
@@ -57,7 +57,7 @@ TObjectPtr<AActor> UPlayerInteractComponent::GetTargetInteractable() const
 
 void UPlayerInteractComponent::IncrementTargetInteractableIndex(int32 Increment)
 {
-	SetTargetOverlappedInteractable(UProject1BlueprintFunctionLibrary::WrapIncrementArrayIndex(
+	SetTargetOverlappedInteractable(UProject1MathLibrary::WrapIncrementArrayIndex(
 		TargetOverlappedInteractableIndex,
 		OverlappedInteractables.Num(),
 		Increment

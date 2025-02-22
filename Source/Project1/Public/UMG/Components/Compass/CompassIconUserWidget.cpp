@@ -5,7 +5,7 @@
 #include "Components/Image.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "FunctionLibraries/Project1BlueprintFunctionLibrary.h"
+#include "FunctionLibraries/Project1MathLibrary.h"
 #include "CompassBarUserWidget.h"
 
 void UCompassIconUserWidget::SetIconTexture(UTexture2D* Texture)
@@ -24,11 +24,11 @@ void UCompassIconUserWidget::UpdateIconScrollUAxisValue()
 	const double TargetYaw = UKismetMathLibrary::FindLookAtRotation(UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorLocation(), TargetWorldLocation).Yaw;
 
 	// Convert target yaw to 0 - 360 degrees range
-	const double TargetYaw360 = UProject1BlueprintFunctionLibrary::ConvertEulerAngleTo360Degrees(TargetYaw);
+	const double TargetYaw360 = UProject1MathLibrary::ConvertEulerAngleTo360Degrees(TargetYaw);
 
 	// Update icon U texture coordinate offset
 	ImageDynamicMaterialInstance->SetScalarParameterValue(ScrollUAxisMaterialParameterName,
-		(static_cast<float>(UProject1BlueprintFunctionLibrary::Normalize360DegreesAngle(TargetYaw360)) * -1.0f) + OwningCompassBar->GetCurrentBackgroundBarScrollUOffset());
+		(static_cast<float>(UProject1MathLibrary::Normalize360DegreesAngle(TargetYaw360)) * -1.0f) + OwningCompassBar->GetCurrentBackgroundBarScrollUOffset());
 }
 
 void UCompassIconUserWidget::SetWorldLocation(const FVector& WorldLocation)
