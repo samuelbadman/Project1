@@ -22,11 +22,6 @@ void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelT
 	Project1Character->UpdateCapsuleRotation(DeltaTime);
 }
 
-void UPlayerCharacterControllerComponent::UpdateGroundMovementState(float MoveInputMagnitude)
-{
-	Project1Character->SetGroundMovementState((MoveInputMagnitude < RunInputMagnitude) ? ECharacterGroundMovementState::Walk : ECharacterGroundMovementState::Run);
-}
-
 void UPlayerCharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 {
 	// Get pawn as character
@@ -46,7 +41,7 @@ void UPlayerCharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 
 void UPlayerCharacterControllerComponent::OnPlayerMoveInput(const FVector& WorldDirection, float MoveInputMagnitude)
 {
-	Project1Character->SetWorldOrientation(WorldDirection.ToOrientationQuat(), false);
-	UpdateGroundMovementState(MoveInputMagnitude);
+	Project1Character->SetTargetWorldOrientation(WorldDirection.ToOrientationQuat(), false);
+	Project1Character->SetGroundMovementState((MoveInputMagnitude < RunInputMagnitude) ? ECharacterGroundMovementState::Walk : ECharacterGroundMovementState::Run);
 	Project1Character->AddMovementInput(WorldDirection);
 }

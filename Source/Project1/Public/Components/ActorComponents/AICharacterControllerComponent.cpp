@@ -35,5 +35,5 @@ void UAICharacterControllerComponent::SetGroundMovementState(ECharacterGroundMov
 
 void UAICharacterControllerComponent::SetCharacterWorldOrientation(const FQuat& Orientation, bool Instant)
 {
-	Project1Character->SetWorldOrientation(Orientation, Instant);
+	Project1Character->SetTargetWorldOrientation(Orientation, Instant);
 }

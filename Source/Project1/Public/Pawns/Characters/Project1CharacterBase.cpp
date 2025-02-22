@@ -18,7 +18,7 @@ AProject1CharacterBase::AProject1CharacterBase(const FObjectInitializer& ObjectI
 	TargetCapsuleWorldOrientation = FQuat::Identity;
 	CurrentGroundMovementState = ECharacterGroundMovementState::Max;
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	// Set colliding character components to overlap camera collision channel
 	static constexpr ECollisionChannel CameraCollisionChannel{ ECC_Camera };
 	static constexpr ECollisionResponse CameraCollisionChannelCharacterResponse{ ECR_Overlap };
@@ -34,7 +34,7 @@ AProject1CharacterBase::AProject1CharacterBase(const FObjectInitializer& ObjectI
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
-void AProject1CharacterBase::SetWorldOrientation(const FQuat& TargetOrientation, bool Instant)
+void AProject1CharacterBase::SetTargetWorldOrientation(const FQuat& TargetOrientation, bool Instant)
 {
 	TargetCapsuleWorldOrientation = TargetOrientation;
 	if (Instant)

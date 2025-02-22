@@ -30,9 +30,9 @@ public:
 	// characters when changing directions
 	virtual FVector GetAIRequestedVelocity(const FVector& AIMoveVelocity);
 
-	// Sets the capsule and mesh component world orientations over time. The character's capsule and mesh component will be rotated towards this orientation each update at the rates
+	// Sets the target capsule and mesh component world orientations. The character's capsule and mesh component will be rotated towards this orientation each update at the rate
 	// defined in character attributes data asset. If Instant is true the capsule will be rotated on the same frame this function is called instead of over time
-	void SetWorldOrientation(const FQuat& TargetOrientation, bool Instant);
+	void SetTargetWorldOrientation(const FQuat& TargetOrientation, bool Instant);
 	void UpdateCapsuleRotation(float DeltaTime);
 	void SetGroundMovementState(ECharacterGroundMovementState State);
 

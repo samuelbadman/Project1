@@ -28,6 +28,4 @@ public:
 
 private:
 	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	void UpdateGroundMovementState(float MoveInputMagnitude);
 };

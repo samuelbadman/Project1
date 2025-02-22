@@ -38,7 +38,7 @@ void UGoal_Test_Idle::MoveToRandomReachablePoint(TObjectPtr<AProject1AIControlle
 	const TObjectPtr<UGoal_Common_MoveToLocation> MoveToLocationGoal{ AI->CreateGoal<UGoal_Common_MoveToLocation>(UGoal_Common_MoveToLocation::StaticClass()) };
 	FNavLocation TargetMoveLocation;
 	FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld())->GetRandomReachablePointInRadius(FVector::ZeroVector, 2048.0f, TargetMoveLocation);
-	MoveToLocationGoal->Initialize(TargetMoveLocation.Location, ECharacterGroundMovementState::Run);
+	MoveToLocationGoal->Initialize(TargetMoveLocation.Location, ECharacterGroundMovementState::Run, 50.0f);
 	AI->AddSubGoal(MoveToLocationGoal);
 	bJustMoved = true;
 }
