@@ -32,6 +32,16 @@ UScreenUserWidgetBase* AProject1HUDBase::PeekPrimaryLayoutWidgetLayer(const FGam
 	return PrimaryLayoutWidget->GetRegisteredLayer(LayerName)->Peek();
 }
 
+void AProject1HUDBase::CollapsePrimaryLayoutWidgetLayerTop(const FGameplayTag& LayerName)
+{
+	PrimaryLayoutWidget->GetRegisteredLayer(LayerName)->CollapseTop();
+}
+
+void AProject1HUDBase::ShowPrimaryLayoutWidgetLayerTop(const FGameplayTag& LayerName)
+{
+	PrimaryLayoutWidget->GetRegisteredLayer(LayerName)->ShowTop();
+}
+
 bool AProject1HUDBase::DoesPrimaryLayoutWidgetLayerBlockContentInput(const int32 ContentLayerPriority) const
 {
 	return PrimaryLayoutWidget->DoesLayerBlockContentInput(ContentLayerPriority);

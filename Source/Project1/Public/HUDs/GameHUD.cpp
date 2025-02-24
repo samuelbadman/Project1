@@ -3,13 +3,13 @@
 
 #include "GameHUD.h"
 #include "UMG/Screens/Game/GameHUDScreen.h"
-#include "UMG/Screens/Game/GameMenuScreen.h"
+#include "UMG/Screens/Game/GamePauseScreen.h"
 
 AGameHUD::AGameHUD()
 {
     GameHUDWidgetLayerName = {};
-    GameMenuScreenClass = nullptr;
-    GameMenuWidgetLayerName = {};
+    GamePauseScreenClass = nullptr;
+    GamePauseWidgetLayerName = {};
 }
 
 UGameHUDScreen* AGameHUD::GetGameHUDScreen() const
@@ -20,10 +20,22 @@ UGameHUDScreen* AGameHUD::GetGameHUDScreen() const
 
 void AGameHUD::OpenGameMenu()
 {
-    PushContentToPrimaryLayoutWidgetLayer(GameMenuWidgetLayerName, GameMenuScreenClass);
+    PushContentToPrimaryLayoutWidgetLayer(GamePauseWidgetLayerName, GamePauseScreenClass);
 }
 
 void AGameHUD::CloseGameMenu()
 {
-    PopContentFromPrimaryLayoutWidgetLayer(GameMenuWidgetLayerName);
+    PopContentFromPrimaryLayoutWidgetLayer(GamePauseWidgetLayerName);
+}
+
+void AGameHUD::SetGameHUDScreenShown(bool Shown)
+{
+    if (Shown)
+    {
+        ShowPrimaryLayoutWidgetLayerTop(GameHUDWidgetLayerName);
+    }
+    else
+    {
+        CollapsePrimaryLayoutWidgetLayerTop(GameHUDWidgetLayerName);
+    }
 }

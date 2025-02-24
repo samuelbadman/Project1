@@ -48,6 +48,12 @@ public:
 	UScreenUserWidgetBase* PeekPrimaryLayoutWidgetLayer(const FGameplayTag& LayerName) const;
 
 	UFUNCTION(BlueprintCallable)
+	void CollapsePrimaryLayoutWidgetLayerTop(const FGameplayTag& LayerName);
+
+	UFUNCTION(BlueprintCallable)
+	void ShowPrimaryLayoutWidgetLayerTop(const FGameplayTag& LayerName);
+
+	UFUNCTION(BlueprintCallable)
 	bool DoesPrimaryLayoutWidgetLayerBlockContentInput(const int32 ContentLayerPriority) const;
 
 	UFUNCTION(BlueprintCallable)

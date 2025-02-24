@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UMG/Screens/ScreenUserWidgetBase.h"
-#include "GameMenuScreen.generated.h"
+#include "GamePauseScreen.generated.h"
 
 class AGamePlayerController;
 class AGameHUD;
@@ -16,7 +16,7 @@ class UButtonNavigationComponent;
  *
  */
 UCLASS()
-class PROJECT1_API UGameMenuScreen : public UScreenUserWidgetBase
+class PROJECT1_API UGamePauseScreen : public UScreenUserWidgetBase
 {
 	GENERATED_BODY()
 
@@ -33,7 +33,7 @@ private:
 	FDelegateHandle CancelDelegateHandle;
 
 public:
-	UGameMenuScreen();
+	UGamePauseScreen();
 
 	UFUNCTION(BlueprintCallable)
 	void RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex = 0);
