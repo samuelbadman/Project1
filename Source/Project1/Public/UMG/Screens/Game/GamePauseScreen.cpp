@@ -31,30 +31,25 @@ void UGamePauseScreen::NativeOnPushedToLayerStack()
 {
 	GamePlayerController = CastChecked<AGamePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	GameHUD = CastChecked<AGameHUD>(GamePlayerController->GetHUD());
-	QuitDelegateHandle = GamePlayerController->GameMenuScreenQuitTriggered.AddUObject(this, &UGamePauseScreen::OnQuitTriggered);
-	ConfirmDelegateHandle = GamePlayerController->GameMenuScreenConfirmTriggered.AddUObject(this, &UGamePauseScreen::OnConfirmTriggered);
-	NavigateDelegateHandle = GamePlayerController->GameMenuScreenNavigateTriggered.AddUObject(this, &UGamePauseScreen::OnNavigateTriggered);
-	CancelDelegateHandle = GamePlayerController->GameMenuScreenCancelTriggered.AddUObject(this, &UGamePauseScreen::OnCancelTriggered);
 
-	GamePlayerController->AddGameMenuInputMappingContext();
-
+	AddScreenInputBindings();
 	GameHUD->SetGameHUDScreenShown(false);
 }
 
 void UGamePauseScreen::NativeOnPoppedFromLayerStack()
 {
-	GamePlayerController->GameMenuScreenQuitTriggered.Remove(QuitDelegateHandle);
-	QuitDelegateHandle.Reset();
-	GamePlayerController->GameMenuScreenConfirmTriggered.Remove(ConfirmDelegateHandle);
-	ConfirmDelegateHandle.Reset();
-	GamePlayerController->GameMenuScreenNavigateTriggered.Remove(NavigateDelegateHandle);
-	NavigateDelegateHandle.Reset();
-	GamePlayerController->GameMenuScreenCancelTriggered.Remove(CancelDelegateHandle);
-	CancelDelegateHandle.Reset();
-
-	GamePlayerController->RemoveGameMenuInputMappingContext();
-
+	RemoveScreenInputBindings();
 	GameHUD->SetGameHUDScreenShown(true);
+}
+
+void UGamePauseScreen::NativeOnShown()
+{
+	AddScreenInputBindings();
+}
+
+void UGamePauseScreen::NativeOnCollapsed()
+{
+	RemoveScreenInputBindings();
 }
 
 void UGamePauseScreen::OnQuitTriggered(const FInputActionValue& Value)
@@ -80,4 +75,28 @@ void UGamePauseScreen::OnNavigateTriggered(const FInputActionValue& Value)
 void UGamePauseScreen::OnCancelTriggered(const FInputActionValue& Value)
 {
 	GameHUD->CloseGameMenu();
+}
+
+void UGamePauseScreen::AddScreenInputBindings()
+{
+	QuitDelegateHandle = GamePlayerController->GameMenuScreenQuitTriggered.AddUObject(this, &UGamePauseScreen::OnQuitTriggered);
+	ConfirmDelegateHandle = GamePlayerController->GameMenuScreenConfirmTriggered.AddUObject(this, &UGamePauseScreen::OnConfirmTriggered);
+	NavigateDelegateHandle = GamePlayerController->GameMenuScreenNavigateTriggered.AddUObject(this, &UGamePauseScreen::OnNavigateTriggered);
+	CancelDelegateHandle = GamePlayerController->GameMenuScreenCancelTriggered.AddUObject(this, &UGamePauseScreen::OnCancelTriggered);
+
+	GamePlayerController->AddGameMenuInputMappingContext();
+}
+
+void UGamePauseScreen::RemoveScreenInputBindings()
+{
+	GamePlayerController->GameMenuScreenQuitTriggered.Remove(QuitDelegateHandle);
+	QuitDelegateHandle.Reset();
+	GamePlayerController->GameMenuScreenConfirmTriggered.Remove(ConfirmDelegateHandle);
+	ConfirmDelegateHandle.Reset();
+	GamePlayerController->GameMenuScreenNavigateTriggered.Remove(NavigateDelegateHandle);
+	NavigateDelegateHandle.Reset();
+	GamePlayerController->GameMenuScreenCancelTriggered.Remove(CancelDelegateHandle);
+	CancelDelegateHandle.Reset();
+
+	GamePlayerController->RemoveGameMenuInputMappingContext();
 }

@@ -41,9 +41,14 @@ public:
 private:
 	void NativeOnPushedToLayerStack() override;
 	void NativeOnPoppedFromLayerStack() override;
+	void NativeOnShown() override;
+	void NativeOnCollapsed() override;
 
 	void OnQuitTriggered(const FInputActionValue& Value);
 	void OnConfirmTriggered(const FInputActionValue& Value);
 	void OnNavigateTriggered(const FInputActionValue& Value);
 	void OnCancelTriggered(const FInputActionValue& Value);
+
+	void AddScreenInputBindings();
+	void RemoveScreenInputBindings();
 };

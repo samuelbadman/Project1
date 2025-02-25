@@ -45,15 +45,15 @@ public:
 	void ConsumeLoadPayload(UScreenWidgetLoadPayloadBase* LoadPayload);
 
 	// Called when the widget is pushed to a widget layer stack
-	virtual void NativeOnPushedToLayerStack() {};
+	virtual void NativeOnPushedToLayerStack();
 	// Called when the widget is manually shown on top of a widget layer stack by calling ShowTop on the layer
-	virtual void NativeOnShown() {};
+	virtual void NativeOnShown();
 	// Called when the widget is manually collapsed on top of a widget layer stack by calling CollapseTop on the layer
-	virtual void NativeOnCollapsed() {};
+	virtual void NativeOnCollapsed();
 	// Called when widget is popped from a widget layer stack
-	virtual void NativeOnPoppedFromLayerStack() {};
+	virtual void NativeOnPoppedFromLayerStack();
 	// Called when the widget has finished loading if a valid load payload object was provided when pushing the screen widget to a widget layer
-	virtual void NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload) {};
+	virtual void NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload);
 
 	const FGameplayTag& GetOwningLayerName() const;
 	bool CanReceiveInput() const;

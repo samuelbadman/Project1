@@ -39,3 +39,28 @@ void UScreenUserWidgetBase::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	Project1HUD = CastChecked<AProject1HUDBase>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
 }
+
+void UScreenUserWidgetBase::NativeOnPushedToLayerStack()
+{
+	// Base class implementation is empty
+}
+
+void UScreenUserWidgetBase::NativeOnShown()
+{
+	// Base class implementation is empty
+}
+
+void UScreenUserWidgetBase::NativeOnCollapsed()
+{
+	// Base class implementation is empty
+}
+
+void UScreenUserWidgetBase::NativeOnPoppedFromLayerStack()
+{
+	// Base class implementation is empty
+}
+
+void UScreenUserWidgetBase::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload)
+{
+	// Base class implementation is empty
+}

@@ -66,6 +66,9 @@ void ULayerUserWidgetBase::PopContent()
 	{
 		PanelWidget->AddChild(Top);
 		Top->SetVisibility(ScreenShownSlateVisibility);
+
+		Top->NativeOnShown();
+		Top->OnShown();
 	}
 }
 
