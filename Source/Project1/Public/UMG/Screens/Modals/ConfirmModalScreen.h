@@ -8,8 +8,8 @@
 #include "ConfirmModalScreen.generated.h"
 
 class AProject1PlayerControllerBase;
-class UProject1ButtonBase;
 struct FInputActionValue;
+class UButtonMenuComponent;
 
 /**
  * 
@@ -20,6 +20,9 @@ class PROJECT1_API UConfirmModalScreen : public UModalScreenBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY()
+	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
+
 	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
 
 	FDelegateHandle ConfirmInputTriggeredDelegateHandle{};
@@ -53,9 +56,6 @@ private:
 
 	void OnConfirmInputTriggered(const FInputActionValue& Value);
 	void OnNavigateInputTriggered(const FInputActionValue& Value);
-
-	UFUNCTION()
-	void OnOptionButtonHovered(UProject1ButtonBase* ButtonHovered);
 
 	UFUNCTION()
 	void OnOption1Selected(UProject1ButtonBase* ButtonSelected);

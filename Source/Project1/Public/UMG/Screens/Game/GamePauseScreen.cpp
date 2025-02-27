@@ -52,16 +52,27 @@ void UGamePauseScreen::NativeOnCollapsed()
 
 void UGamePauseScreen::OnQuitTriggered(const FInputActionValue& Value)
 {
-	GameHUD->CloseGameMenu();
+	if (CanReceiveInput())
+	{
+		GameHUD->CloseGameMenu();
+	}
 }
 
 void UGamePauseScreen::OnConfirmTriggered(const FInputActionValue& Value)
 {
+	if (CanReceiveInput())
+	{
+
+	}
 	//ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
 }
 
 void UGamePauseScreen::OnNavigateTriggered(const FInputActionValue& Value)
 {
+	if (CanReceiveInput())
+	{
+
+	}
 	//const TObjectPtr<UProject1ButtonBase> NavigatedButton{ 
 	//	ButtonNavigationComponent->NavigateButton((Value.Get<FVector2D>().Y > 0.0f) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down) };
 	//if (IsValid(NavigatedButton))
@@ -72,7 +83,10 @@ void UGamePauseScreen::OnNavigateTriggered(const FInputActionValue& Value)
 
 void UGamePauseScreen::OnCancelTriggered(const FInputActionValue& Value)
 {
-	GameHUD->CloseGameMenu();
+	if (CanReceiveInput())
+	{
+		GameHUD->CloseGameMenu();
+	}
 }
 
 void UGamePauseScreen::AddScreenInputBindings()

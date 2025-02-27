@@ -6,20 +6,19 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerControllers/Project1PlayerControllerBase.h"
 #include "InputActionValue.h"
+#include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
 
 UConfirmModalScreen::UConfirmModalScreen()
 {
+	ButtonMenuComponent = CreateDefaultSubobject<UButtonMenuComponent>(FName(TEXT("ButtonMenuComponent")));
 }
 
 void UConfirmModalScreen::NativeOnPushedToLayerStack()
 {
 	// Setup option buttons
 	const TArray<UProject1ButtonBase*> OptionButtons(std::initializer_list<UProject1ButtonBase*>{GetOption1Button(), GetOption2Button()});
-	for (UProject1ButtonBase* Button : OptionButtons)
-	{
-		Button->OnHovered.AddDynamic(this, &UConfirmModalScreen::OnOptionButtonHovered);
-		//Button->SetCanMouseUnhoverButton(false); Probable want to use on mouse entered above?
-	}
+	ButtonMenuComponent->RegisterMenuButtons(OptionButtons, false);
+	ButtonMenuComponent->SetUnfocusButtonOnMouseLeave(false);
 
 	// Register button pressed/clicked events
 	OptionButtons[0]->OnPressed.AddDynamic(this, &UConfirmModalScreen::OnOption1Selected);
@@ -29,7 +28,7 @@ void UConfirmModalScreen::NativeOnPushedToLayerStack()
 	OptionButtons[1]->OnClicked.AddDynamic(this, &UConfirmModalScreen::OnOption2Selected);
 
 	// Hover option 1 by default
-	//ButtonNavigationComponent->SetCurrentHoveredButton(OptionButtons[0]);
+	ButtonMenuComponent->FocusButton(OptionButtons[0]);
 
 	// Get player controller
 	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
@@ -63,7 +62,7 @@ void UConfirmModalScreen::NativeOnPoppedFromLayerStack()
 	Project1PlayerController->ConfirmModalConfirmTriggered.Remove(ConfirmInputTriggeredDelegateHandle);
 	ConfirmInputTriggeredDelegateHandle.Reset();
 
-	Project1PlayerController->ConfirmModalConfirmTriggered.Remove(NavigateInputTriggeredDelegateHandle);
+	Project1PlayerController->ConfirmModalNavigateTriggered.Remove(NavigateInputTriggeredDelegateHandle);
 	NavigateInputTriggeredDelegateHandle.Reset();
 
 	// Remove confirm modal inputs
@@ -74,7 +73,7 @@ void UConfirmModalScreen::OnConfirmInputTriggered(const FInputActionValue& Value
 {
 	if (CanReceiveInput())
 	{
-		//ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
+		ButtonMenuComponent->PressFocusedButton();
 	}
 }
 
@@ -91,18 +90,8 @@ void UConfirmModalScreen::OnNavigateInputTriggered(const FInputActionValue& Valu
 		}
 
 		const EWidgetNavigationDirection NavDirection{ (HorizontalInput > 0) ? EWidgetNavigationDirection::Right : EWidgetNavigationDirection::Left };
-
-		//const TObjectPtr<UProject1ButtonBase> NavButton{ ButtonNavigationComponent->NavigateButton(NavDirection) };
-		//if (IsValid(NavButton))
-		//{
-		//	ButtonNavigationComponent->SetCurrentHoveredButton(NavButton);
-		//}
+		ButtonMenuComponent->OnNavigationInput((HorizontalInput > 0) ? EWidgetNavigationDirection::Right : EWidgetNavigationDirection::Left);
 	}
-}
-
-void UConfirmModalScreen::OnOptionButtonHovered(UProject1ButtonBase* ButtonHovered)
-{
-	//ButtonNavigationComponent->SetCurrentHoveredButton(ButtonHovered, false);
 }
 
 void UConfirmModalScreen::OnOption1Selected(UProject1ButtonBase* ButtonSelected)

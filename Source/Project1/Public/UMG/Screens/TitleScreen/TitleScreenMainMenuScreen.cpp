@@ -39,19 +39,25 @@ void UTitleScreenMainMenuScreen::NativeOnPoppedFromLayerStack()
 
 void UTitleScreenMainMenuScreen::OnMainMenuScreenConfirmTriggered(const FInputActionValue& Value)
 {
-	ButtonMenuComponent->PressFocusedButton();
+	if (CanReceiveInput())
+	{
+		ButtonMenuComponent->PressFocusedButton();
+	}
 }
 
 void UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered(const FInputActionValue& Value)
 {
-	// Only care about vertical navigation as the main menu is a vertical list of buttons
-	const float VerticalInput{ StaticCast<float>(Value.Get<FVector2D>().Y) };
-
-	if (VerticalInput == 0.0f)
+	if (CanReceiveInput())
 	{
-		return;
-	}
+		// Only care about vertical navigation as the main menu is a vertical list of buttons
+		const float VerticalInput{ StaticCast<float>(Value.Get<FVector2D>().Y) };
 
-	const EWidgetNavigationDirection NavDirection{ (VerticalInput > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down };
-	GetScrollBox()->ScrollWidgetIntoView(StaticCast<UWidget*>(ButtonMenuComponent->OnNavigationInput(NavDirection)));
+		if (VerticalInput == 0.0f)
+		{
+			return;
+		}
+
+		const EWidgetNavigationDirection NavDirection{ (VerticalInput > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down };
+		GetScrollBox()->ScrollWidgetIntoView(StaticCast<UWidget*>(ButtonMenuComponent->OnNavigationInput(NavDirection)));
+	}
 }
