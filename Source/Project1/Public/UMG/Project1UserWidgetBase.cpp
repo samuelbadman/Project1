@@ -42,7 +42,23 @@ void UProject1UserWidgetBase::SetNavigationWidget(EWidgetNavigationDirection Dir
 void UProject1UserWidgetBase::NavigateFromWidgetInDirection(EWidgetNavigationDirection Direction)
 {
 	OnNavigatedFrom();
-	GetNavigationWidget(Direction)->OnNavigatedTo();
+	GetNavigationWidget(Direction).Get()->OnNavigatedTo();
+}
+
+void UProject1UserWidgetBase::NavigateFromWidgetInDirectionSafe(EWidgetNavigationDirection Direction)
+{
+	const TObjectPtr<UProject1UserWidgetBase> TargetWidget{ GetNavigationWidget(Direction).Get() };
+	if (IsValid(TargetWidget))
+	{
+		OnNavigatedFrom();
+		TargetWidget->OnNavigatedTo();
+	}
+}
+
+void UProject1UserWidgetBase::NavigateFromWidget(TObjectPtr<UProject1UserWidgetBase> ToWidget)
+{
+	OnNavigatedFrom();
+	ToWidget->OnNavigatedTo();
 }
 
 void UProject1UserWidgetBase::OnNavigatedTo()

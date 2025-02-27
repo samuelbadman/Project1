@@ -41,6 +41,8 @@ public:
 	TWeakObjectPtr<UProject1UserWidgetBase> GetNavigationWidget(EWidgetNavigationDirection Direction) const;
 	void SetNavigationWidget(EWidgetNavigationDirection Direction, TObjectPtr<UProject1UserWidgetBase> Widget);
 	void NavigateFromWidgetInDirection(EWidgetNavigationDirection Direction);
+	void NavigateFromWidgetInDirectionSafe(EWidgetNavigationDirection Direction);
+	void NavigateFromWidget(TObjectPtr<UProject1UserWidgetBase> ToWidget);
 
 protected:
 	virtual void OnNavigatedTo();

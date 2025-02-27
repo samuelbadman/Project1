@@ -15,7 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHoveredDelegate, UProject1ButtonB
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUnhoveredDelegate, UProject1ButtonBase*, ButtonUnhovered);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickedDelegate, UProject1ButtonBase*, ButtonClicked);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPressedDelegate, UProject1ButtonBase*, ButtonPressed);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseCursorEnteredDelegate, UProject1ButtonBase*, ButtonEntered);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseCursorOverDelegate, UProject1ButtonBase*, ButtonOver);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseCursorLeftDelegate, UProject1ButtonBase*, ButtonLeft);
 
 /**
@@ -39,17 +39,13 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnPressedDelegate OnPressed{};
 
-	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "OnMouseCursorEntered"))
-	FOnMouseCursorEnteredDelegate MouseCursorEntered{};
+	UPROPERTY(BlueprintAssignable)
+	FOnMouseCursorOverDelegate OnMouseCursorOver{};
 
-	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "OnMouseCursorLeft"))
-	FOnMouseCursorLeftDelegate MouseCursorLeft{};
+	UPROPERTY(BlueprintAssignable)
+	FOnMouseCursorLeftDelegate OnMouseCursorLeft{};
 
 private:
-	// Whether to activate the button mouse inputs automatically during its start
-	UPROPERTY(EditAnywhere)
-	bool bStartWithMouseInputsActivated{ true };
-
 	// Brush applied to the button image when it is in an unhovered state
 	UPROPERTY(EditAnywhere)
 	FSlateBrush NormalBrush{};
@@ -79,6 +75,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	UBorder* GetBorder();
 
+	// Activates the button allowing it to handle mouse cursor events
+	void ActivateMouseInput();
+	// Deactivates the button stopping it from handling mouse cursor events
+	void DeactivateMouseInput();
+
 	// Puts the button into a hovered state
 	void MakeHovered();
 	// Puts the button into an unhovered state
@@ -94,15 +95,10 @@ private:
 	void NativeOnInitialized() override;
 	void NativeDestruct() override;
 
-	// Activates the button allowing it to handle mouse cursor events
-	void ActivateMouseInputs();
-	// Deactivates the button stopping it from handling mouse cursor events
-	void DeactivateMouseInputs();
-
 	void OnMouseCursorVisibilityChanged(EMouseCursorVisibility NewVisibility, const FVector2D& MousePosition);
 	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
 	void OnInputKey(const FInputKeyEventArgs& EventArgs);
 
-	void OnMouseCursorEntered();
-	void OnMouseCursorLeft();
+	void OnMouseCursorOverWidget();
+	void OnMouseCursorLeftWidget();
 };

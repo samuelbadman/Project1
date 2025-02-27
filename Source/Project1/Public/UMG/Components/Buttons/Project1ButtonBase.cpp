@@ -26,24 +26,19 @@ void UProject1ButtonBase::NativeOnInitialized()
 
 	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
 	Project1GameViewportClient = CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient());
-
-	if (bStartWithMouseInputsActivated)
-	{
-		ActivateMouseInputs();
-	}
 }
 
 void UProject1ButtonBase::NativeDestruct()
 {
 	if (bMouseInputsActivated)
 	{
-		DeactivateMouseInputs();
+		DeactivateMouseInput();
 	}
 
 	Super::NativeDestruct();
 }
 
-void UProject1ButtonBase::ActivateMouseInputs()
+void UProject1ButtonBase::ActivateMouseInput()
 {
 	OnMouseCursorVisibilityChangedDelegateHandle = Project1PlayerController->MouseCursorVisibilityChanged.AddUObject(this, &UProject1ButtonBase::OnMouseCursorVisibilityChanged);
 	OnMouseMovedDelegateHandle = Project1GameViewportClient->MouseMoved.AddUObject(this, &UProject1ButtonBase::OnMouseMoved);
@@ -51,7 +46,7 @@ void UProject1ButtonBase::ActivateMouseInputs()
 	bMouseInputsActivated = true;
 }
 
-void UProject1ButtonBase::DeactivateMouseInputs()
+void UProject1ButtonBase::DeactivateMouseInput()
 {
 	Project1PlayerController->MouseCursorVisibilityChanged.Remove(OnMouseCursorVisibilityChangedDelegateHandle);
 	OnMouseCursorVisibilityChangedDelegateHandle.Reset();
@@ -104,12 +99,12 @@ void UProject1ButtonBase::OnMouseCursorVisibilityChanged(EMouseCursorVisibility 
 	if ((NewVisibility == EMouseCursorVisibility::Visible) &&
 		(bNewCursorOver))
 	{
-		OnMouseCursorEntered();
+		OnMouseCursorOverWidget();
 	}
 	else if ((NewVisibility == EMouseCursorVisibility::Hidden) &&
 		(bNewCursorOver))
 	{
-		OnMouseCursorLeft();
+		OnMouseCursorLeftWidget();
 	}
 }
 
@@ -125,14 +120,14 @@ void UProject1ButtonBase::OnMouseMoved(const FVector2D& NewMousePosition, const 
 	{
 		if (!bCursorOver)
 		{
-			OnMouseCursorEntered();
+			OnMouseCursorOverWidget();
 		}
 	}
 	else
 	{
 		if (bCursorOver)
 		{
-			OnMouseCursorLeft();
+			OnMouseCursorLeftWidget();
 		}
 	}
 }
@@ -160,14 +155,14 @@ void UProject1ButtonBase::OnInputKey(const FInputKeyEventArgs& EventArgs)
 	}
 }
 
-void UProject1ButtonBase::OnMouseCursorEntered()
+void UProject1ButtonBase::OnMouseCursorOverWidget()
 {
 	bCursorOver = true;
-	MouseCursorEntered.Broadcast(this);
+	OnMouseCursorOver.Broadcast(this);
 }
 
-void UProject1ButtonBase::OnMouseCursorLeft()
+void UProject1ButtonBase::OnMouseCursorLeftWidget()
 {
 	bCursorOver = false;
-	MouseCursorLeft.Broadcast(this);
+	OnMouseCursorLeft.Broadcast(this);
 }

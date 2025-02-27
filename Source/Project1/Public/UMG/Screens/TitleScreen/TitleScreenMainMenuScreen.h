@@ -8,8 +8,8 @@
 
 class ATitleScreenPlayerController;
 struct FInputActionValue;
-class UProject1ButtonBase;
 class UScrollBox;
+class UButtonMenuComponent;
 
 /**
  *
@@ -20,6 +20,9 @@ class UTitleScreenMainMenuScreen : public UMenuScreenBase
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
+
 	TObjectPtr<ATitleScreenPlayerController> TitleScreenPlayerController{ nullptr };
 
 	FDelegateHandle MainMenuUIConfirmTriggeredDelegateHandle{};
@@ -27,9 +30,6 @@ private:
 
 public:
 	UTitleScreenMainMenuScreen();
-
-	UFUNCTION(BlueprintCallable)
-	void RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex = 0);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	UScrollBox* GetScrollBox();
@@ -40,10 +40,4 @@ private:
 
 	void OnMainMenuScreenConfirmTriggered(const FInputActionValue& Value);
 	void OnMainMenuScreenNavigateTriggered(const FInputActionValue& Value);
-
-	UFUNCTION()
-	void OnRegisteredMenuButtonHovered(UProject1ButtonBase* ButtonHovered);
-
-	// Call to hover the button from the main menu screen
-	void HoverButton(TObjectPtr<UProject1ButtonBase> Button);
 };
