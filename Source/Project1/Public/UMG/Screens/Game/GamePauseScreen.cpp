@@ -5,13 +5,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerControllers/GamePlayerController.h"
 #include "HUDs/GameHUD.h"
-#include "Objects/WidgetComponents/ButtonNavigationComponent.h"
 #include "InputActionValue.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 
 UGamePauseScreen::UGamePauseScreen()
 {
-	ButtonNavigationComponent = CreateDefaultSubobject<UButtonNavigationComponent>(FName(TEXT("ButtonNavigationComponent")));
 	GamePlayerController = nullptr;
 	GameHUD = nullptr;
 	ConfirmDelegateHandle = {};
@@ -21,10 +19,10 @@ UGamePauseScreen::UGamePauseScreen()
 
 void UGamePauseScreen::RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex)
 {
-	if (Buttons.IsValidIndex(DefaultHoveredButtonIndex))
-	{
-		ButtonNavigationComponent->SetCurrentHoveredButton(Buttons[DefaultHoveredButtonIndex]);
-	}
+	//if (Buttons.IsValidIndex(DefaultHoveredButtonIndex))
+	//{
+	//	ButtonNavigationComponent->SetCurrentHoveredButton(Buttons[DefaultHoveredButtonIndex]);
+	//}
 }
 
 void UGamePauseScreen::NativeOnPushedToLayerStack()
@@ -59,17 +57,17 @@ void UGamePauseScreen::OnQuitTriggered(const FInputActionValue& Value)
 
 void UGamePauseScreen::OnConfirmTriggered(const FInputActionValue& Value)
 {
-	ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
+	//ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
 }
 
 void UGamePauseScreen::OnNavigateTriggered(const FInputActionValue& Value)
 {
-	const TObjectPtr<UProject1ButtonBase> NavigatedButton{ 
-		ButtonNavigationComponent->NavigateButton((Value.Get<FVector2D>().Y > 0.0f) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down) };
-	if (IsValid(NavigatedButton))
-	{
-		ButtonNavigationComponent->SetCurrentHoveredButton(NavigatedButton);
-	}
+	//const TObjectPtr<UProject1ButtonBase> NavigatedButton{ 
+	//	ButtonNavigationComponent->NavigateButton((Value.Get<FVector2D>().Y > 0.0f) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down) };
+	//if (IsValid(NavigatedButton))
+	//{
+	//	ButtonNavigationComponent->SetCurrentHoveredButton(NavigatedButton);
+	//}
 }
 
 void UGamePauseScreen::OnCancelTriggered(const FInputActionValue& Value)

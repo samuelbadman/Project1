@@ -8,7 +8,6 @@
 
 class UVerticalBox;
 class UDynamicModalOptionUserWidget;
-class UButtonNavigationComponent;
 class AProject1PlayerControllerBase;
 struct FInputActionValue;
 class UProject1ButtonBase;
@@ -23,9 +22,6 @@ class PROJECT1_API UDynamicModalScreen : public UModalScreenBase
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY()
-	TObjectPtr<UButtonNavigationComponent> ButtonNavigationComponent{ nullptr };
-
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<UDynamicModalOptionUserWidget> DynamicModalOptionWidgetClass{ nullptr };
 

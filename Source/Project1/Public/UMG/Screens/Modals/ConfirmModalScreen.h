@@ -10,7 +10,6 @@
 class AProject1PlayerControllerBase;
 class UProject1ButtonBase;
 struct FInputActionValue;
-class UButtonNavigationComponent;
 
 /**
  * 
@@ -21,9 +20,6 @@ class PROJECT1_API UConfirmModalScreen : public UModalScreenBase
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY()
-	TObjectPtr<UButtonNavigationComponent> ButtonNavigationComponent{ nullptr };
-
 	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
 
 	FDelegateHandle ConfirmInputTriggeredDelegateHandle{};

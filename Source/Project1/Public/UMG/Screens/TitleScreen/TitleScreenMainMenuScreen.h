@@ -3,27 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UMG/Screens/ScreenUserWidgetBase.h"
+#include "UMG/Screens/Menus/MenuScreenBase.h"
 #include "TitleScreenMainMenuScreen.generated.h"
 
 class ATitleScreenPlayerController;
 struct FInputActionValue;
 class UProject1ButtonBase;
 class UScrollBox;
-class UButtonNavigationComponent;
 
 /**
  *
  */
 UCLASS()
-class UTitleScreenMainMenuScreen : public UScreenUserWidgetBase
+class UTitleScreenMainMenuScreen : public UMenuScreenBase
 {
 	GENERATED_BODY()
 
 private:
-	UPROPERTY()
-	TObjectPtr<UButtonNavigationComponent> ButtonNavigationComponent{ nullptr };
-
 	TObjectPtr<ATitleScreenPlayerController> TitleScreenPlayerController{ nullptr };
 
 	FDelegateHandle MainMenuUIConfirmTriggeredDelegateHandle{};

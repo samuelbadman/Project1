@@ -9,11 +9,14 @@
 class UBorder;
 class AProject1PlayerControllerBase;
 class UProject1GameViewportClientBase;
+enum class EMouseCursorVisibility : uint8;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHoveredDelegate, UProject1ButtonBase*, ButtonHovered);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUnhoveredDelegate, UProject1ButtonBase*, ButtonUnhovered);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickedDelegate, UProject1ButtonBase*, ButtonClicked);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPressedDelegate, UProject1ButtonBase*, ButtonPressed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseCursorEnteredDelegate, UProject1ButtonBase*, ButtonEntered);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseCursorLeftDelegate, UProject1ButtonBase*, ButtonLeft);
 
 /**
  * 
@@ -36,6 +39,12 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnPressedDelegate OnPressed{};
 
+	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "OnMouseCursorEntered"))
+	FOnMouseCursorEnteredDelegate MouseCursorEntered{};
+
+	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "OnMouseCursorLeft"))
+	FOnMouseCursorLeftDelegate MouseCursorLeft{};
+
 private:
 	// Whether to activate the button mouse inputs automatically during its start
 	UPROPERTY(EditAnywhere)
@@ -53,27 +62,22 @@ private:
 	UPROPERTY(EditAnywhere)
 	FKey ClickKey{ EKeys::LeftMouseButton };
 
-	// Controls whether an unhover event will be generated when the mouse cursor leaves the button widget's geometry. Can be useful when it is desired for a screen 
-	// to manage button hover state
-	UPROPERTY(EditAnywhere)
-	bool bCanMouseUnhoverButton{ true };
-
 	UPROPERTY(EditAnywhere)
 	FMargin ContentPadding{};
 
 	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
 	TObjectPtr<UProject1GameViewportClientBase> Project1GameViewportClient{ nullptr };
+	FDelegateHandle OnMouseCursorVisibilityChangedDelegateHandle{};
 	FDelegateHandle OnMouseMovedDelegateHandle{};
 	FDelegateHandle OnInputKeyDelegateHandle{};
 
 	bool bMouseInputsActivated{ false };
 	bool bHovered{ false };
+	bool bCursorOver{ false };
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	UBorder* GetBorder();
-
-	void SetCanMouseUnhoverButton(bool CanMouseUnhoverButton) { bCanMouseUnhoverButton = CanMouseUnhoverButton; }
 
 	// Puts the button into a hovered state
 	void MakeHovered();
@@ -90,11 +94,15 @@ private:
 	void NativeOnInitialized() override;
 	void NativeDestruct() override;
 
-	// Activates the button allowing it to handle to mouse cursor events
+	// Activates the button allowing it to handle mouse cursor events
 	void ActivateMouseInputs();
 	// Deactivates the button stopping it from handling mouse cursor events
 	void DeactivateMouseInputs();
 
+	void OnMouseCursorVisibilityChanged(EMouseCursorVisibility NewVisibility, const FVector2D& MousePosition);
 	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
 	void OnInputKey(const FInputKeyEventArgs& EventArgs);
+
+	void OnMouseCursorEntered();
+	void OnMouseCursorLeft();
 };

@@ -41,6 +41,18 @@ void AProject1PlayerControllerBase::SetMouseCursorVisibility(EMouseCursorVisibil
 	OnMouseCursorVisibilityChanged(NewVisibility);
 }
 
+EMouseCursorVisibility AProject1PlayerControllerBase::GetMouseCursorVisibility() const
+{
+	return (IsMouseCursorVisible()) ? EMouseCursorVisibility::Visible : EMouseCursorVisibility::Hidden;
+}
+
+FVector2D AProject1PlayerControllerBase::GetMouseCursorPosition() const
+{
+	FVector2D MousePosition;
+	GetMousePosition(MousePosition.X, MousePosition.Y);
+	return MousePosition;
+}
+
 void AProject1PlayerControllerBase::AddConfirmModalInputMappingContext()
 {
 	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(ConfirmModalInputMappingContext, ConfirmModalInputPriority);
@@ -67,6 +79,11 @@ void AProject1PlayerControllerBase::BeginPlay()
 
 	// Set default mouse cursor visibility
 	SetMouseCursorVisibility(DefaultMouseCursorVisibility, DefaultLockMouseCursorToViewportWhenVisible, DefaultCenterCursorInViewportOnBecomeVisible);
+}
+
+void AProject1PlayerControllerBase::OnMouseCursorVisibilityChanged(EMouseCursorVisibility NewVisibility)
+{
+	MouseCursorVisibilityChanged.Broadcast(NewVisibility, GetMouseCursorPosition());
 }
 
 TObjectPtr<UEnhancedInputLocalPlayerSubsystem> AProject1PlayerControllerBase::GetEnhancedInputLocalPlayerSubsystem() const

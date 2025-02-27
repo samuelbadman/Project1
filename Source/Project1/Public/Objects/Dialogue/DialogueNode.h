@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "Objects/Project1ObjectBase.h"
 #include "DialogueNode.generated.h"
 
 class UDialogueComponent;
@@ -25,7 +25,7 @@ struct FDialogueOption
  * 
  */
 UCLASS(Blueprintable, BlueprintType, EditInlineNew, DefaultToInstanced)
-class PROJECT1_API UDialogueNode : public UObject
+class PROJECT1_API UDialogueNode : public UProject1ObjectBase
 {
 	GENERATED_BODY()
 	

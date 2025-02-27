@@ -9,13 +9,11 @@
 #include "UMG/Components/DynamicModal/DynamicModalOptionUserWidget.h"
 #include "Blueprint/WidgetTree.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
-#include "Objects/WidgetComponents/ButtonNavigationComponent.h"
 #include "PlayerControllers/Project1PlayerControllerBase.h"
 #include "InputActionValue.h"
 
 UDynamicModalScreen::UDynamicModalScreen()
 {
-	ButtonNavigationComponent = CreateDefaultSubobject<UButtonNavigationComponent>(FName(TEXT("ButtonNavigationComponent")));
 }
 
 void UDynamicModalScreen::NativeOnPushedToLayerStack()
@@ -77,7 +75,7 @@ void UDynamicModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadP
 				// Setup option button
 				const TObjectPtr<UProject1ButtonBase> OptionButton{ OptionWidget->GetButton() };
 				OptionButton->OnHovered.AddDynamic(this, &UDynamicModalScreen::OnOptionButtonHovered);
-				OptionButton->SetCanMouseUnhoverButton(false);
+				//OptionButton->SetCanMouseUnhoverButton(false); Probably want to use on mouse entered above?
 
 				// Register button pressed/clicked events
 				OptionButton->OnPressed.AddDynamic(this, &UDynamicModalScreen::OnOptionButtonSelected);
@@ -121,7 +119,7 @@ void UDynamicModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadP
 		}
 
 		// Hover first option by default
-		ButtonNavigationComponent->SetCurrentHoveredButton(ModalOptions[0].Key->GetButton());
+		//ButtonNavigationComponent->SetCurrentHoveredButton(ModalOptions[0].Key->GetButton());
 	}
 }
 
@@ -129,7 +127,7 @@ void UDynamicModalScreen::OnConfirmTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
-		ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
+		//ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
 	}
 }
 
@@ -147,17 +145,17 @@ void UDynamicModalScreen::OnNavigateTriggered(const FInputActionValue& Value)
 
 		const EWidgetNavigationDirection NavDirection{ (VerticalInput > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down };
 
-		const TObjectPtr<UProject1ButtonBase> NavButton{ ButtonNavigationComponent->NavigateButton(NavDirection) };
-		if (IsValid(NavButton))
-		{
-			ButtonNavigationComponent->SetCurrentHoveredButton(NavButton);
-		}
+		//const TObjectPtr<UProject1ButtonBase> NavButton{ ButtonNavigationComponent->NavigateButton(NavDirection) };
+		//if (IsValid(NavButton))
+		//{
+		//	ButtonNavigationComponent->SetCurrentHoveredButton(NavButton);
+		//}
 	}
 }
 
 void UDynamicModalScreen::OnOptionButtonHovered(UProject1ButtonBase* ButtonHovered)
 {
-	ButtonNavigationComponent->SetCurrentHoveredButton(ButtonHovered, false);
+	//ButtonNavigationComponent->SetCurrentHoveredButton(ButtonHovered, false);
 }
 
 void UDynamicModalScreen::OnOptionButtonSelected(UProject1ButtonBase* ButtonSelected)

@@ -10,7 +10,6 @@ class AGamePlayerController;
 class AGameHUD;
 struct FInputActionValue;
 class UProject1ButtonBase;
-class UButtonNavigationComponent;
 
 /**
  *
@@ -21,10 +20,6 @@ class PROJECT1_API UGamePauseScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 
 private:
-	// TODO: Component object pointer is being set to null after constructor. Possibly being overridden by child blueprint construction to default value (nullptr)
-	UPROPERTY()
-	TObjectPtr<UButtonNavigationComponent> ButtonNavigationComponent;
-
 	TObjectPtr<AGamePlayerController> GamePlayerController;
 	TObjectPtr<AGameHUD> GameHUD;
 	FDelegateHandle QuitDelegateHandle;

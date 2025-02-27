@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "Objects/Project1ObjectBase.h"
 #include "ScreenWidgetLoadPayloadBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT1_API UScreenWidgetLoadPayloadBase : public UObject
+class PROJECT1_API UScreenWidgetLoadPayloadBase : public UProject1ObjectBase
 {
 	GENERATED_BODY()
 

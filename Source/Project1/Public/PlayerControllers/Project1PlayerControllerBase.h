@@ -11,6 +11,8 @@ class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnMouseCursorVisibilityChangedDelegate, EMouseCursorVisibility /* NewVisibility */, const FVector2D& /* MousePosition */);
+
 // Inputs that are used by multiple player controllers need to be set up in the project's base player controller class
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnConfirmModalConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
@@ -35,6 +37,8 @@ class PROJECT1_API AProject1PlayerControllerBase : public APlayerController
 	GENERATED_BODY()
 	
 public:
+	FOnMouseCursorVisibilityChangedDelegate MouseCursorVisibilityChanged{};
+
 	FOnConfirmModalConfirmTriggeredDelegate ConfirmModalConfirmTriggered{};
 	FOnConfirmModalNavigateTriggeredDelegate ConfirmModalNavigateTriggered{};
 
@@ -76,8 +80,14 @@ private:
 	TObjectPtr<UInputAction> DynamicModalNavigateInputAction{ nullptr };
 
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Project1PlayerController")
 	void SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible);
+
+	UFUNCTION(BlueprintCallable, Category = "Project1PlayerController")
+	EMouseCursorVisibility GetMouseCursorVisibility() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Project1PlayerController")
+	FVector2D GetMouseCursorPosition() const;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsMouseCursorVisible() const { return bShowMouseCursor; }
@@ -92,7 +102,7 @@ protected:
 	void SetupInputComponent() override;
 	void BeginPlay() override;
 
-	virtual void OnMouseCursorVisibilityChanged(EMouseCursorVisibility NewVisibility) {};
+	virtual void OnMouseCursorVisibilityChanged(EMouseCursorVisibility NewVisibility);
 
 	// Returns the enhanced input local player subsystem for the local player. Can return null if the local player for this controller does not exist
 	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> GetEnhancedInputLocalPlayerSubsystem() const;

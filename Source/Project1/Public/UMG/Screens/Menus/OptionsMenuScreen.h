@@ -6,6 +6,8 @@
 #include "UMG/Screens/Menus/MenuScreenBase.h"
 #include "OptionsMenuScreen.generated.h"
 
+class UProject1ButtonBase;
+
 /**
  * 
  */
@@ -14,4 +16,12 @@ class PROJECT1_API UOptionsMenuScreen : public UMenuScreenBase
 {
 	GENERATED_BODY()
 	
+private:
+
+
+public:
+	UOptionsMenuScreen();
+
+	UFUNCTION(BlueprintCallable)
+	void RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex = 0);
 };

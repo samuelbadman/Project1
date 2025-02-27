@@ -6,11 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerControllers/Project1PlayerControllerBase.h"
 #include "InputActionValue.h"
-#include "Objects/WidgetComponents/ButtonNavigationComponent.h"
 
 UConfirmModalScreen::UConfirmModalScreen()
 {
-	ButtonNavigationComponent = CreateDefaultSubobject<UButtonNavigationComponent>(FName(TEXT("ButtonNavigationComponent")));
 }
 
 void UConfirmModalScreen::NativeOnPushedToLayerStack()
@@ -20,7 +18,7 @@ void UConfirmModalScreen::NativeOnPushedToLayerStack()
 	for (UProject1ButtonBase* Button : OptionButtons)
 	{
 		Button->OnHovered.AddDynamic(this, &UConfirmModalScreen::OnOptionButtonHovered);
-		Button->SetCanMouseUnhoverButton(false);
+		//Button->SetCanMouseUnhoverButton(false); Probable want to use on mouse entered above?
 	}
 
 	// Register button pressed/clicked events
@@ -31,7 +29,7 @@ void UConfirmModalScreen::NativeOnPushedToLayerStack()
 	OptionButtons[1]->OnClicked.AddDynamic(this, &UConfirmModalScreen::OnOption2Selected);
 
 	// Hover option 1 by default
-	ButtonNavigationComponent->SetCurrentHoveredButton(OptionButtons[0]);
+	//ButtonNavigationComponent->SetCurrentHoveredButton(OptionButtons[0]);
 
 	// Get player controller
 	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
@@ -76,7 +74,7 @@ void UConfirmModalScreen::OnConfirmInputTriggered(const FInputActionValue& Value
 {
 	if (CanReceiveInput())
 	{
-		ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
+		//ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
 	}
 }
 
@@ -94,17 +92,17 @@ void UConfirmModalScreen::OnNavigateInputTriggered(const FInputActionValue& Valu
 
 		const EWidgetNavigationDirection NavDirection{ (HorizontalInput > 0) ? EWidgetNavigationDirection::Right : EWidgetNavigationDirection::Left };
 
-		const TObjectPtr<UProject1ButtonBase> NavButton{ ButtonNavigationComponent->NavigateButton(NavDirection) };
-		if (IsValid(NavButton))
-		{
-			ButtonNavigationComponent->SetCurrentHoveredButton(NavButton);
-		}
+		//const TObjectPtr<UProject1ButtonBase> NavButton{ ButtonNavigationComponent->NavigateButton(NavDirection) };
+		//if (IsValid(NavButton))
+		//{
+		//	ButtonNavigationComponent->SetCurrentHoveredButton(NavButton);
+		//}
 	}
 }
 
 void UConfirmModalScreen::OnOptionButtonHovered(UProject1ButtonBase* ButtonHovered)
 {
-	ButtonNavigationComponent->SetCurrentHoveredButton(ButtonHovered, false);
+	//ButtonNavigationComponent->SetCurrentHoveredButton(ButtonHovered, false);
 }
 
 void UConfirmModalScreen::OnOption1Selected(UProject1ButtonBase* ButtonSelected)

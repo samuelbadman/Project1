@@ -24,20 +24,25 @@ class PROJECT1_API UProject1UserWidgetBase : public UUserWidget
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Project 1 Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
-	TObjectPtr<UWidget> NavigateUpWidget{ nullptr };
+	TObjectPtr<UProject1UserWidgetBase> NavigateUpWidget{ nullptr };
 
 	UPROPERTY(EditAnywhere, Category = "Project 1 Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
-	TObjectPtr<UWidget> NavigateDownWidget{ nullptr };
+	TObjectPtr<UProject1UserWidgetBase> NavigateDownWidget{ nullptr };
 
 	UPROPERTY(EditAnywhere, Category = "Project 1 Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
-	TObjectPtr<UWidget> NavigateLeftWidget{ nullptr };
+	TObjectPtr<UProject1UserWidgetBase> NavigateLeftWidget{ nullptr };
 
 	UPROPERTY(EditAnywhere, Category = "Project 1 Widget Navigation", meta = (DisplayThumbnail = "false", ShowOnlyInnerProperties))
-	TObjectPtr<UWidget> NavigateRightWidget{ nullptr };
+	TObjectPtr<UProject1UserWidgetBase> NavigateRightWidget{ nullptr };
 
 public:
-	bool IsCursorInsideWidgetGeometry(const FVector2D& MousePosition) const;
+	bool IsMouseCursorOverWidgetGeometry(const FVector2D& MousePosition) const;
 
-	TWeakObjectPtr<UWidget> GetNavigatedWidget(EWidgetNavigationDirection Direction) const;
-	void SetNavigationWidget(EWidgetNavigationDirection Direction, TObjectPtr<UWidget> Widget);
+	TWeakObjectPtr<UProject1UserWidgetBase> GetNavigationWidget(EWidgetNavigationDirection Direction) const;
+	void SetNavigationWidget(EWidgetNavigationDirection Direction, TObjectPtr<UProject1UserWidgetBase> Widget);
+	void NavigateFromWidgetInDirection(EWidgetNavigationDirection Direction);
+
+protected:
+	virtual void OnNavigatedTo();
+	virtual void OnNavigatedFrom();
 };

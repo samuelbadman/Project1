@@ -4,7 +4,7 @@
 #include "Project1UserWidgetBase.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 
-bool UProject1UserWidgetBase::IsCursorInsideWidgetGeometry(const FVector2D& MousePosition) const
+bool UProject1UserWidgetBase::IsMouseCursorOverWidgetGeometry(const FVector2D& MousePosition) const
 {
 	const FGeometry& Geometry = GetCachedGeometry();
 	const FVector2D Size{ Geometry.GetAbsoluteSize() };
@@ -16,7 +16,7 @@ bool UProject1UserWidgetBase::IsCursorInsideWidgetGeometry(const FVector2D& Mous
 		MousePosition.Y > TopLeftPixel.Y && MousePosition.Y < BottomRightPixel.Y);
 }
 
-TWeakObjectPtr<UWidget> UProject1UserWidgetBase::GetNavigatedWidget(EWidgetNavigationDirection Direction) const
+TWeakObjectPtr<UProject1UserWidgetBase> UProject1UserWidgetBase::GetNavigationWidget(EWidgetNavigationDirection Direction) const
 {
 	switch (Direction)
 	{
@@ -28,7 +28,7 @@ TWeakObjectPtr<UWidget> UProject1UserWidgetBase::GetNavigatedWidget(EWidgetNavig
 	return nullptr;
 }
 
-void UProject1UserWidgetBase::SetNavigationWidget(EWidgetNavigationDirection Direction, TObjectPtr<UWidget> Widget)
+void UProject1UserWidgetBase::SetNavigationWidget(EWidgetNavigationDirection Direction, TObjectPtr<UProject1UserWidgetBase> Widget)
 {
 	switch (Direction)
 	{
@@ -37,4 +37,20 @@ void UProject1UserWidgetBase::SetNavigationWidget(EWidgetNavigationDirection Dir
 	case EWidgetNavigationDirection::Left: NavigateLeftWidget = Widget; break;
 	case EWidgetNavigationDirection::Right: NavigateRightWidget = Widget; break;
 	}
+}
+
+void UProject1UserWidgetBase::NavigateFromWidgetInDirection(EWidgetNavigationDirection Direction)
+{
+	OnNavigatedFrom();
+	GetNavigationWidget(Direction)->OnNavigatedTo();
+}
+
+void UProject1UserWidgetBase::OnNavigatedTo()
+{
+	// Base class implementation is empty
+}
+
+void UProject1UserWidgetBase::OnNavigatedFrom()
+{
+	// Base class implementation is empty
 }

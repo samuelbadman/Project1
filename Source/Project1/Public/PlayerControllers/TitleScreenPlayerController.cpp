@@ -52,7 +52,12 @@ void ATitleScreenPlayerController::BeginPlay()
 	// Bind to on input device changed events
 	OnMouseMovedDelegateHandle = Project1GameViewportClient->MouseMoved.AddWeakLambda(this,
 		[this](const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta) {
-			SetMouseCursorVisibility(EMouseCursorVisibility::Visible, bLockMouseToViewportWhenShown, bCenterMouseInViewportWhenShown);
+			const EMouseCursorVisibility NewCursorVisibility{ EMouseCursorVisibility::Visible };
+
+			if (GetMouseCursorVisibility() != NewCursorVisibility)
+			{
+				SetMouseCursorVisibility(NewCursorVisibility, bLockMouseToViewportWhenShown, bCenterMouseInViewportWhenShown);
+			}
 		});
 
 	OnInputKeyDelegateHandle = Project1GameViewportClient->OnInputKey.AddWeakLambda(this,
@@ -63,7 +68,10 @@ void ATitleScreenPlayerController::BeginPlay()
 				(EventArgs.Key == EKeys::MouseScrollUp) ||
 				(EventArgs.Key == EKeys::MouseScrollDown)) ? EMouseCursorVisibility::Visible : EMouseCursorVisibility::Hidden };
 
-			SetMouseCursorVisibility(NewCursorVisibility, bLockMouseToViewportWhenShown, bCenterMouseInViewportWhenShown);
+			if (GetMouseCursorVisibility() != NewCursorVisibility)
+			{
+				SetMouseCursorVisibility(NewCursorVisibility, bLockMouseToViewportWhenShown, bCenterMouseInViewportWhenShown);
+			}
 		});
 }
 

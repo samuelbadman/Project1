@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "Objects/Project1ObjectBase.h"
 #include "GameplayTagContainer.h"
 #include "DialogueManagerBase.generated.h"
 
@@ -19,7 +19,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayedDialogueNodeDelegate, TObjectPtr<UD
  *
  */
 UCLASS(Blueprintable, BlueprintType)
-class PROJECT1_API UDialogueManagerBase : public UObject
+class PROJECT1_API UDialogueManagerBase : public UProject1ObjectBase
 {
 	GENERATED_BODY()
 

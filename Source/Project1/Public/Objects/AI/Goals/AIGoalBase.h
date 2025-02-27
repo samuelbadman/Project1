@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "Objects/Project1ObjectBase.h"
 #include "AIControllers/Project1AIControllerBase.h"
 #include "AIGoalBase.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS(NotBlueprintable, BlueprintType, EditInlineNew, DefaultToInstanced)
-class PROJECT1_API UAIGoalBase : public UObject
+class PROJECT1_API UAIGoalBase : public UProject1ObjectBase
 {
 	GENERATED_BODY()
 
