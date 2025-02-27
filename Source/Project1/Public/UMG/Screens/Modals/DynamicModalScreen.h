@@ -12,6 +12,7 @@ class AProject1PlayerControllerBase;
 struct FInputActionValue;
 class UProject1ButtonBase;
 class FDynamicModalOptionSelectedDelegate;
+class UButtonMenuComponent;
 
 /**
  * 
@@ -22,6 +23,9 @@ class PROJECT1_API UDynamicModalScreen : public UModalScreenBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY()
+	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<UDynamicModalOptionUserWidget> DynamicModalOptionWidgetClass{ nullptr };
 
@@ -49,9 +53,6 @@ private:
 
 	void OnConfirmTriggered(const FInputActionValue& Value);
 	void OnNavigateTriggered(const FInputActionValue& Value);
-
-	UFUNCTION()
-	void OnOptionButtonHovered(UProject1ButtonBase* ButtonHovered);
 
 	UFUNCTION()
 	void OnOptionButtonSelected(UProject1ButtonBase* ButtonSelected);

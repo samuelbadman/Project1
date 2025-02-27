@@ -11,9 +11,11 @@
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 #include "PlayerControllers/Project1PlayerControllerBase.h"
 #include "InputActionValue.h"
+#include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
 
 UDynamicModalScreen::UDynamicModalScreen()
 {
+	ButtonMenuComponent = CreateDefaultSubobject<UButtonMenuComponent>(FName(TEXT("ButtonMenuComponent")));
 }
 
 void UDynamicModalScreen::NativeOnPushedToLayerStack()
@@ -62,6 +64,9 @@ void UDynamicModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadP
 		const int32 NumOptions{ Payload->Options.Num() };
 		ModalOptions.Reserve(NumOptions);
 		{
+			TArray<TObjectPtr<UProject1ButtonBase>> OptionButtons{};
+			OptionButtons.Reserve(Payload->Options.Num());
+
 			int32 OptionIndex{ 0 };
 			for (const FDynamicModalOptionData& OptionData : Payload->Options)
 			{
@@ -74,8 +79,7 @@ void UDynamicModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadP
 
 				// Setup option button
 				const TObjectPtr<UProject1ButtonBase> OptionButton{ OptionWidget->GetButton() };
-				OptionButton->OnHovered.AddDynamic(this, &UDynamicModalScreen::OnOptionButtonHovered);
-				//OptionButton->SetCanMouseUnhoverButton(false); Probably want to use on mouse entered above?
+				OptionButtons.Add(OptionButton);
 
 				// Register button pressed/clicked events
 				OptionButton->OnPressed.AddDynamic(this, &UDynamicModalScreen::OnOptionButtonSelected);
@@ -97,6 +101,12 @@ void UDynamicModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadP
 
 				++OptionIndex;
 			}
+
+			ButtonMenuComponent->RegisterMenuButtons(OptionButtons, false);
+			ButtonMenuComponent->SetUnfocusButtonOnMouseLeave(false);
+
+			// Hover first option by default
+			ButtonMenuComponent->FocusButton(OptionButtons[0]);
 		}
 
 		// Setup button navigation
@@ -117,9 +127,6 @@ void UDynamicModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadP
 				nullptr : ModalOptions[i + 1].Key->GetButton()
 			);
 		}
-
-		// Hover first option by default
-		//ButtonNavigationComponent->SetCurrentHoveredButton(ModalOptions[0].Key->GetButton());
 	}
 }
 
@@ -127,7 +134,7 @@ void UDynamicModalScreen::OnConfirmTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
-		//ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
+		ButtonMenuComponent->PressFocusedButton();
 	}
 }
 
@@ -143,19 +150,8 @@ void UDynamicModalScreen::OnNavigateTriggered(const FInputActionValue& Value)
 			return;
 		}
 
-		const EWidgetNavigationDirection NavDirection{ (VerticalInput > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down };
-
-		//const TObjectPtr<UProject1ButtonBase> NavButton{ ButtonNavigationComponent->NavigateButton(NavDirection) };
-		//if (IsValid(NavButton))
-		//{
-		//	ButtonNavigationComponent->SetCurrentHoveredButton(NavButton);
-		//}
+		ButtonMenuComponent->OnNavigationInput((VerticalInput > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down);
 	}
-}
-
-void UDynamicModalScreen::OnOptionButtonHovered(UProject1ButtonBase* ButtonHovered)
-{
-	//ButtonNavigationComponent->SetCurrentHoveredButton(ButtonHovered, false);
 }
 
 void UDynamicModalScreen::OnOptionButtonSelected(UProject1ButtonBase* ButtonSelected)
