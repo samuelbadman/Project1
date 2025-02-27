@@ -10,6 +10,7 @@ class AGamePlayerController;
 class AGameHUD;
 struct FInputActionValue;
 class UProject1ButtonBase;
+class UButtonMenuComponent;
 
 /**
  *
@@ -20,6 +21,9 @@ class PROJECT1_API UGamePauseScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
+
 	TObjectPtr<AGamePlayerController> GamePlayerController;
 	TObjectPtr<AGameHUD> GameHUD;
 	FDelegateHandle QuitDelegateHandle;
@@ -29,9 +33,6 @@ private:
 
 public:
 	UGamePauseScreen();
-
-	UFUNCTION(BlueprintCallable)
-	void RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex = 0);
 
 private:
 	void NativeOnPushedToLayerStack() override;

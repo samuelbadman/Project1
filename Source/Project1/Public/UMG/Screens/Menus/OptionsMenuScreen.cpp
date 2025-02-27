@@ -5,9 +5,5 @@
 
 UOptionsMenuScreen::UOptionsMenuScreen()
 {
-}
-
-void UOptionsMenuScreen::RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex)
-{
 
 }

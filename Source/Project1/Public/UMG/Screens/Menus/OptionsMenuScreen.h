@@ -22,6 +22,4 @@ private:
 public:
 	UOptionsMenuScreen();
 
-	UFUNCTION(BlueprintCallable)
-	void RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex = 0);
 };

@@ -5,7 +5,7 @@
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 
 UButtonMenuComponent::UButtonMenuComponent()
-	: bUnfocusButtonOnMouseLeave(true),
+	: bUnfocusButtonOnMouseCursorLeave(true),
 	RegisteredButtons({}),
 	FocusedButton(nullptr)
 {
@@ -82,7 +82,7 @@ void UButtonMenuComponent::OnMouseCursorOverMenuButton(UProject1ButtonBase* Butt
 
 void UButtonMenuComponent::OnMouseCursorLeftMenuButton(UProject1ButtonBase* Button)
 {
-	if (bUnfocusButtonOnMouseLeave)
+	if (bUnfocusButtonOnMouseCursorLeave)
 	{
 		FocusButton(nullptr);
 	}

@@ -7,22 +7,16 @@
 #include "HUDs/GameHUD.h"
 #include "InputActionValue.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
+#include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
 
 UGamePauseScreen::UGamePauseScreen()
+	: GamePlayerController(nullptr),
+	GameHUD(nullptr),
+	ConfirmDelegateHandle({}),
+	NavigateDelegateHandle({}),
+	CancelDelegateHandle({})
 {
-	GamePlayerController = nullptr;
-	GameHUD = nullptr;
-	ConfirmDelegateHandle = {};
-	NavigateDelegateHandle = {};
-	CancelDelegateHandle = {};
-}
-
-void UGamePauseScreen::RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, int32 DefaultHoveredButtonIndex)
-{
-	//if (Buttons.IsValidIndex(DefaultHoveredButtonIndex))
-	//{
-	//	ButtonNavigationComponent->SetCurrentHoveredButton(Buttons[DefaultHoveredButtonIndex]);
-	//}
+	ButtonMenuComponent = CreateDefaultSubobject<UButtonMenuComponent>(FName(TEXT("ButtonMenuComponent")));
 }
 
 void UGamePauseScreen::NativeOnPushedToLayerStack()
@@ -62,23 +56,16 @@ void UGamePauseScreen::OnConfirmTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
-
+		ButtonMenuComponent->PressFocusedButton();
 	}
-	//ButtonNavigationComponent->GetCurrentHoveredButton()->PressButton();
 }
 
 void UGamePauseScreen::OnNavigateTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
-
+		ButtonMenuComponent->OnNavigationInput((Value.Get<FVector2D>().Y > 0.0f) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down);
 	}
-	//const TObjectPtr<UProject1ButtonBase> NavigatedButton{ 
-	//	ButtonNavigationComponent->NavigateButton((Value.Get<FVector2D>().Y > 0.0f) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down) };
-	//if (IsValid(NavigatedButton))
-	//{
-	//	ButtonNavigationComponent->SetCurrentHoveredButton(NavigatedButton);
-	//}
 }
 
 void UGamePauseScreen::OnCancelTriggered(const FInputActionValue& Value)

@@ -18,7 +18,7 @@ void UConfirmModalScreen::NativeOnPushedToLayerStack()
 	// Setup option buttons
 	const TArray<UProject1ButtonBase*> OptionButtons(std::initializer_list<UProject1ButtonBase*>{GetOption1Button(), GetOption2Button()});
 	ButtonMenuComponent->RegisterMenuButtons(OptionButtons, false);
-	ButtonMenuComponent->SetUnfocusButtonOnMouseLeave(false);
+	ButtonMenuComponent->SetUnfocusButtonOnMouseCursorLeave(false);
 
 	// Register button pressed/clicked events
 	OptionButtons[0]->OnPressed.AddDynamic(this, &UConfirmModalScreen::OnOption1Selected);

@@ -19,7 +19,7 @@ class PROJECT1_API UButtonMenuComponent : public UUserWidgetComponent
 
 private:
 	UPROPERTY(EditAnywhere)
-	bool bUnfocusButtonOnMouseLeave;
+	bool bUnfocusButtonOnMouseCursorLeave;
 
 	TArray<TObjectPtr<UProject1ButtonBase>> RegisteredButtons;
 	TObjectPtr<UProject1ButtonBase> FocusedButton;
@@ -35,7 +35,7 @@ public:
 	void FocusButton(UProject1ButtonBase* Button);
 
 	UFUNCTION(BlueprintCallable, Category = "ButtonMenuComponent")
-	FORCEINLINE void SetUnfocusButtonOnMouseLeave(bool Unfocus) { bUnfocusButtonOnMouseLeave = Unfocus; }
+	FORCEINLINE void SetUnfocusButtonOnMouseCursorLeave(bool Unfocus) { bUnfocusButtonOnMouseCursorLeave = Unfocus; }
 
 	// Returns the widget navigated to if there is one otherwise, returns null. Null is a valid return value as this means that there was no navigation
 	TObjectPtr<UProject1ButtonBase> OnNavigationInput(const EWidgetNavigationDirection Direction);

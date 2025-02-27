@@ -103,7 +103,7 @@ void UDynamicModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadP
 			}
 
 			ButtonMenuComponent->RegisterMenuButtons(OptionButtons, false);
-			ButtonMenuComponent->SetUnfocusButtonOnMouseLeave(false);
+			ButtonMenuComponent->SetUnfocusButtonOnMouseCursorLeave(false);
 
 			// Hover first option by default
 			ButtonMenuComponent->FocusButton(OptionButtons[0]);
