@@ -8,7 +8,7 @@
 #include "GameHUD.generated.h"
 
 class UGameHUDScreen;
-class UGamePauseScreen;
+class UGameMenuScreen;
 
 /**
  * 
@@ -23,10 +23,10 @@ private:
 	FGameplayTag GameHUDWidgetLayerName;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSoftClassPtr<UGamePauseScreen> GamePauseScreenClass;
+	TSoftClassPtr<UGameMenuScreen> GameMenuScreenClass;
 
 	UPROPERTY(EditDefaultsOnly)
-	FGameplayTag GamePauseWidgetLayerName;
+	FGameplayTag GameMenuWidgetLayerName;
 
 public:
 	AGameHUD();

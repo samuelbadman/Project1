@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GamePauseScreen.h"
+#include "GameMenuScreen.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerControllers/GamePlayerController.h"
 #include "HUDs/GameHUD.h"
@@ -9,7 +9,7 @@
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
 
-UGamePauseScreen::UGamePauseScreen()
+UGameMenuScreen::UGameMenuScreen()
 	: GamePlayerController(nullptr),
 	GameHUD(nullptr),
 	ConfirmDelegateHandle({}),
@@ -19,7 +19,7 @@ UGamePauseScreen::UGamePauseScreen()
 	ButtonMenuComponent = CreateDefaultSubobject<UButtonMenuComponent>(FName(TEXT("ButtonMenuComponent")));
 }
 
-void UGamePauseScreen::NativeOnPushedToLayerStack()
+void UGameMenuScreen::NativeOnPushedToLayerStack()
 {
 	GamePlayerController = CastChecked<AGamePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	GameHUD = CastChecked<AGameHUD>(GamePlayerController->GetHUD());
@@ -28,23 +28,23 @@ void UGamePauseScreen::NativeOnPushedToLayerStack()
 	GameHUD->SetGameHUDScreenShown(false);
 }
 
-void UGamePauseScreen::NativeOnPoppedFromLayerStack()
+void UGameMenuScreen::NativeOnPoppedFromLayerStack()
 {
 	RemoveScreenInputBindings();
 	GameHUD->SetGameHUDScreenShown(true);
 }
 
-void UGamePauseScreen::NativeOnShown()
+void UGameMenuScreen::NativeOnShown()
 {
 	AddScreenInputBindings();
 }
 
-void UGamePauseScreen::NativeOnCollapsed()
+void UGameMenuScreen::NativeOnCollapsed()
 {
 	RemoveScreenInputBindings();
 }
 
-void UGamePauseScreen::OnQuitTriggered(const FInputActionValue& Value)
+void UGameMenuScreen::OnQuitTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
@@ -52,7 +52,7 @@ void UGamePauseScreen::OnQuitTriggered(const FInputActionValue& Value)
 	}
 }
 
-void UGamePauseScreen::OnConfirmTriggered(const FInputActionValue& Value)
+void UGameMenuScreen::OnConfirmTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
@@ -60,7 +60,7 @@ void UGamePauseScreen::OnConfirmTriggered(const FInputActionValue& Value)
 	}
 }
 
-void UGamePauseScreen::OnNavigateTriggered(const FInputActionValue& Value)
+void UGameMenuScreen::OnNavigateTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
@@ -68,7 +68,7 @@ void UGamePauseScreen::OnNavigateTriggered(const FInputActionValue& Value)
 	}
 }
 
-void UGamePauseScreen::OnCancelTriggered(const FInputActionValue& Value)
+void UGameMenuScreen::OnCancelTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
@@ -76,17 +76,17 @@ void UGamePauseScreen::OnCancelTriggered(const FInputActionValue& Value)
 	}
 }
 
-void UGamePauseScreen::AddScreenInputBindings()
+void UGameMenuScreen::AddScreenInputBindings()
 {
-	QuitDelegateHandle = GamePlayerController->GameMenuScreenQuitTriggered.AddUObject(this, &UGamePauseScreen::OnQuitTriggered);
-	ConfirmDelegateHandle = GamePlayerController->GameMenuScreenConfirmTriggered.AddUObject(this, &UGamePauseScreen::OnConfirmTriggered);
-	NavigateDelegateHandle = GamePlayerController->GameMenuScreenNavigateTriggered.AddUObject(this, &UGamePauseScreen::OnNavigateTriggered);
-	CancelDelegateHandle = GamePlayerController->GameMenuScreenCancelTriggered.AddUObject(this, &UGamePauseScreen::OnCancelTriggered);
+	QuitDelegateHandle = GamePlayerController->GameMenuScreenQuitTriggered.AddUObject(this, &UGameMenuScreen::OnQuitTriggered);
+	ConfirmDelegateHandle = GamePlayerController->GameMenuScreenConfirmTriggered.AddUObject(this, &UGameMenuScreen::OnConfirmTriggered);
+	NavigateDelegateHandle = GamePlayerController->GameMenuScreenNavigateTriggered.AddUObject(this, &UGameMenuScreen::OnNavigateTriggered);
+	CancelDelegateHandle = GamePlayerController->GameMenuScreenCancelTriggered.AddUObject(this, &UGameMenuScreen::OnCancelTriggered);
 
 	GamePlayerController->AddGameMenuInputMappingContext();
 }
 
-void UGamePauseScreen::RemoveScreenInputBindings()
+void UGameMenuScreen::RemoveScreenInputBindings()
 {
 	GamePlayerController->GameMenuScreenQuitTriggered.Remove(QuitDelegateHandle);
 	QuitDelegateHandle.Reset();

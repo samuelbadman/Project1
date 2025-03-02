@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UMG/Screens/Menus/MenuScreenBase.h"
+#include "UMG/Screens/ScreenUserWidgetBase.h"
 #include "TitleScreenMainMenuScreen.generated.h"
 
 class ATitleScreenPlayerController;
@@ -15,7 +15,7 @@ class UButtonMenuComponent;
  *
  */
 UCLASS()
-class UTitleScreenMainMenuScreen : public UMenuScreenBase
+class UTitleScreenMainMenuScreen : public UScreenUserWidgetBase
 {
 	GENERATED_BODY()
 

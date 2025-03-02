@@ -11,7 +11,7 @@ class AGamePlayerCameraManager;
 class UPlayerCharacterControllerComponent;
 class UPlayerInteractComponent;
 class AGameHUD;
-class UGamePauseScreen;
+class UGameMenuScreen;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptInteractTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptSwitchActionTriggeredDelegate, const FInputActionValue& /* Value */);

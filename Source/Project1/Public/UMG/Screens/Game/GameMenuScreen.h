@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UMG/Screens/ScreenUserWidgetBase.h"
-#include "GamePauseScreen.generated.h"
+#include "GameMenuScreen.generated.h"
 
 class AGamePlayerController;
 class AGameHUD;
@@ -16,7 +16,7 @@ class UButtonMenuComponent;
  *
  */
 UCLASS()
-class PROJECT1_API UGamePauseScreen : public UScreenUserWidgetBase
+class PROJECT1_API UGameMenuScreen : public UScreenUserWidgetBase
 {
 	GENERATED_BODY()
 
@@ -32,7 +32,7 @@ private:
 	FDelegateHandle CancelDelegateHandle;
 
 public:
-	UGamePauseScreen();
+	UGameMenuScreen();
 
 private:
 	void NativeOnPushedToLayerStack() override;
