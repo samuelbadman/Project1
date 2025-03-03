@@ -21,6 +21,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnConfirmModalNavigateTriggeredDelegate, co
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDynamicModalConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDynamicModalNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsScreenCancelTriggeredDelegate, const FInputActionValue& /* Value */);
+
 UENUM()
 enum class EMouseCursorVisibility : uint8
 {
@@ -44,6 +46,8 @@ public:
 
 	FOnDynamicModalConfirmTriggeredDelegate DynamicModalConfirmTriggered{};
 	FOnDynamicModalNavigateTriggeredDelegate DynamicModalNavigateTriggered{};
+
+	FOnSettingsScreenCancelTriggeredDelegate SettingsScreenCancelTriggeredDelegate{};
 
 private:
 	UPROPERTY(EditDefaultsOnly)
@@ -79,6 +83,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
 	TObjectPtr<UInputAction> DynamicModalNavigateInputAction{ nullptr };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	TObjectPtr<UInputMappingContext> SettingsScreenInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	int32 SettingsScreenInputPriority{ 10 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	TObjectPtr<UInputAction> SettingsScreenCancelInputAction{ nullptr };
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "Project1PlayerController")
 	void SetMouseCursorVisibility(EMouseCursorVisibility NewVisibility, bool LockMouseCursorToViewportWhenVisible, bool CenterCursorInViewportOnBecomeVisible);
@@ -98,6 +111,9 @@ public:
 	void AddDynamicModalInputMappingContext();
 	void RemoveDynamicModalInputMappingContext();
 
+	void AddSettingsScreenInputMappingContext();
+	void RemoveSettingsScreenInputMappingContext();
+
 protected:
 	void SetupInputComponent() override;
 	void BeginPlay() override;
@@ -115,4 +131,6 @@ private:
 	
 	void OnDynamicModalConfirmTriggered(const FInputActionValue& Value);
 	void OnDynamicModalNavigateTriggered(const FInputActionValue& Value);
+
+	void OnSettingsScreenCancelTriggered(const FInputActionValue& Value);
 };

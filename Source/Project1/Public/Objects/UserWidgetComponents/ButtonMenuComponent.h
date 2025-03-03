@@ -41,7 +41,10 @@ public:
 	TObjectPtr<UProject1ButtonBase> OnNavigationInput(const EWidgetNavigationDirection Direction);
 	void PressFocusedButton();
 
-	//FORCEINLINE TObjectPtr<UProject1ButtonBase> GetFocusedButton() const { return FocusedButton; }
+	UFUNCTION(BlueprintCallable, Category = "ButtonMenuComponent")
+	FORCEINLINE UProject1ButtonBase* GetFocusedButton() const { return FocusedButton; }
+	UFUNCTION(BlueprintCallable, Category = "ButtonMenuComponent")
+	int32 GetNumRegisteredButtons() const { return RegisteredButtons.Num(); }
 
 private:
 	UFUNCTION()

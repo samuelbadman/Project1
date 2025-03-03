@@ -14,9 +14,14 @@ void UProject1ButtonBase::NativePreConstruct()
 
 	if (const TObjectPtr<UBorder> Border = GetBorder())
 	{
-		Border->SetBrush(NormalBrush);
+		Border->SetBrush((IsHovered()) ? HoveredBrush : NormalBrush);
 
 		CastChecked<UBorderSlot>(Border->GetSlots()[0])->SetPadding(ContentPadding);
+
+		if (bLastMouseInputsActivated)
+		{
+			ActivateMouseInput();
+		}
 	}
 }
 
@@ -30,6 +35,8 @@ void UProject1ButtonBase::NativeOnInitialized()
 
 void UProject1ButtonBase::NativeDestruct()
 {
+	bLastMouseInputsActivated = bMouseInputsActivated;
+
 	if (bMouseInputsActivated)
 	{
 		DeactivateMouseInput();

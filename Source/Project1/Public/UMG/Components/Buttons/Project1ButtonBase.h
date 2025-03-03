@@ -68,6 +68,7 @@ private:
 	FDelegateHandle OnInputKeyDelegateHandle{};
 
 	bool bMouseInputsActivated{ false };
+	bool bLastMouseInputsActivated{ false }; // Used to determine whether mouse inputs were activated when NativeDestruct was last called on the button
 	bool bHovered{ false };
 	bool bCursorOver{ false };
 

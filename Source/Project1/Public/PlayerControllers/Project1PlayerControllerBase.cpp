@@ -73,6 +73,16 @@ void AProject1PlayerControllerBase::RemoveDynamicModalInputMappingContext()
 	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(DynamicModalInputMappingContext);
 }
 
+void AProject1PlayerControllerBase::AddSettingsScreenInputMappingContext()
+{
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(SettingsScreenInputMappingContext, SettingsScreenInputPriority);
+}
+
+void AProject1PlayerControllerBase::RemoveSettingsScreenInputMappingContext()
+{
+	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(SettingsScreenInputMappingContext);
+}
+
 void AProject1PlayerControllerBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -106,6 +116,8 @@ void AProject1PlayerControllerBase::SetupInputComponent()
 
 	EnhancedInputComponent->BindAction(DynamicModalConfirmInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnDynamicModalConfirmTriggered);
 	EnhancedInputComponent->BindAction(DynamicModalNavigateInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnDynamicModalNavigateTriggered);
+
+	EnhancedInputComponent->BindAction(SettingsScreenCancelInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnSettingsScreenCancelTriggered);
 }
 
 void AProject1PlayerControllerBase::CenterMouseCursorInViewport()
@@ -133,4 +145,9 @@ void AProject1PlayerControllerBase::OnDynamicModalConfirmTriggered(const FInputA
 void AProject1PlayerControllerBase::OnDynamicModalNavigateTriggered(const FInputActionValue& Value)
 {
 	DynamicModalNavigateTriggered.Broadcast(Value);
+}
+
+void AProject1PlayerControllerBase::OnSettingsScreenCancelTriggered(const FInputActionValue& Value)
+{
+	SettingsScreenCancelTriggeredDelegate.Broadcast(Value);
 }

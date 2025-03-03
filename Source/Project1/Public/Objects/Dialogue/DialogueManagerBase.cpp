@@ -9,7 +9,7 @@
 #include "Objects/ScreenLoadPayloads/DialogueScreenLoadPayload.h"
 #include "Objects/ScreenLoadPayloads/DynamicModalScreenLoadPayload.h"
 #include "Components/ActorComponents/DialogueComponent.h"
-#include "UMG/Screens/Modals/DynamicModalScreen.h"
+#include "UMG/Screens/Shared/Modals/DynamicModalScreen.h"
 
 void UDialogueManagerBase::BeginPlay()
 {
