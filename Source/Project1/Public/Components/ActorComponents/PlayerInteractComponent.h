@@ -40,7 +40,7 @@ private:
 	int32 TargetOverlappedInteractableIndex{ INDEX_NONE };
 
 public:
-	void SetupNewPawn(TObjectPtr<APawn> Pawn);
+	void OnPossessPawn(TObjectPtr<APawn> Pawn);
 	TObjectPtr<AActor> GetTargetInteractable() const;
 	void IncrementTargetInteractableIndex(int32 Increment);
 	int32 GetNumOverlappedInteractables() const;

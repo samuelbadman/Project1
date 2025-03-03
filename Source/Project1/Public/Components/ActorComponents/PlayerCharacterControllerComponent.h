@@ -23,8 +23,8 @@ public:
 	// Sets default values for this component's properties
 	UPlayerCharacterControllerComponent();
 
-	void SetupNewPawn(TObjectPtr<APawn> Pawn);
-	void OnPlayerMoveInput(const FVector& WorldDirection, float MoveInputMagnitude);
+	void OnPossessPawn(TObjectPtr<APawn> Pawn);
+	void OnMoveInput(const FVector& WorldDirection, float MoveInputMagnitude);
 
 private:
 	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

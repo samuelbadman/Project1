@@ -9,7 +9,7 @@
 #include "Actors/Player/PlayerInteractCollision.h"
 #include "FunctionLibraries/Project1MathLibrary.h"
 
-void UPlayerInteractComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
+void UPlayerInteractComponent::OnPossessPawn(TObjectPtr<APawn> Pawn)
 {
 	// Cache actor that will be interacting with the world
 	InteractingPawn = Pawn;

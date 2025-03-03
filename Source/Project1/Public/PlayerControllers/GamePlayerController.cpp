@@ -83,8 +83,8 @@ void AGamePlayerController::OnPossess(APawn* aPawn)
 	GamePlayerCameraManager->SetTargetFollowActor(aPawn);
 
 	// Setup new possessed pawn
-	PlayerCharacterControllerComponent->SetupNewPawn(aPawn);
-	PlayerInteractComponent->SetupNewPawn(aPawn);
+	PlayerCharacterControllerComponent->OnPossessPawn(aPawn);
+	PlayerInteractComponent->OnPossessPawn(aPawn);
 }
 
 void AGamePlayerController::BeginPlay()
@@ -208,7 +208,7 @@ void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
 	GamePlayerCameraManager->AddViewYawRotation(MoveRightViewYawRotationRate * (ViewYawOffset * Sign) * World->DeltaTimeSeconds);
 
 	// Add movement input
-	PlayerCharacterControllerComponent->OnPlayerMoveInput(WorldMovementDirection, InputMagnitude);
+	PlayerCharacterControllerComponent->OnMoveInput(WorldMovementDirection, InputMagnitude);
 }
 
 void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)

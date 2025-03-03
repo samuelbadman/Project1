@@ -77,7 +77,7 @@ void AProject1AIControllerBase::ClearSubGoals()
 void AProject1AIControllerBase::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	AICharacterControllerComponent->SetupNewPawn(InPawn);
+	AICharacterControllerComponent->OnPossessPawn(InPawn);
 }
 
 void AProject1AIControllerBase::BeginPlay()

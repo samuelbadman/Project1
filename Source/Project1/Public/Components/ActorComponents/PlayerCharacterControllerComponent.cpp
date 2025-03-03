@@ -22,7 +22,7 @@ void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelT
 	Project1Character->UpdateCapsuleRotation(DeltaTime);
 }
 
-void UPlayerCharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
+void UPlayerCharacterControllerComponent::OnPossessPawn(TObjectPtr<APawn> Pawn)
 {
 	// Get pawn as character
 	Project1Character = CastChecked<AProject1CharacterBase>(Pawn);
@@ -39,7 +39,7 @@ void UPlayerCharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
 	Project1Character->GetMesh()->SetAbsolute(false, true, false);
 }
 
-void UPlayerCharacterControllerComponent::OnPlayerMoveInput(const FVector& WorldDirection, float MoveInputMagnitude)
+void UPlayerCharacterControllerComponent::OnMoveInput(const FVector& WorldDirection, float MoveInputMagnitude)
 {
 	Project1Character->SetTargetWorldOrientation(WorldDirection.ToOrientationQuat(), false);
 	Project1Character->SetGroundMovementState((MoveInputMagnitude < RunInputMagnitude) ? ECharacterGroundMovementState::Walk : ECharacterGroundMovementState::Run);

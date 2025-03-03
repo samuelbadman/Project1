@@ -11,7 +11,7 @@ UAICharacterControllerComponent::UAICharacterControllerComponent()
 	Project1Character = nullptr;
 }
 
-void UAICharacterControllerComponent::SetupNewPawn(TObjectPtr<APawn> Pawn)
+void UAICharacterControllerComponent::OnPossessPawn(TObjectPtr<APawn> Pawn)
 {
 	// Get pawn as character
 	Project1Character = CastChecked<AProject1CharacterBase>(Pawn);
