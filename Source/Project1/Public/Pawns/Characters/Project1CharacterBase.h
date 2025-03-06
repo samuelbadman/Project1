@@ -16,6 +16,9 @@ class PROJECT1_API AProject1CharacterBase : public ACharacter
 
 private:
 	UPROPERTY(EditAnywhere)
+	FRotator MeshRotationOffset;
+
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCharacterAttributesDataAsset> CharacterAttributes;
 
 	TObjectPtr<UWorld> World;
@@ -42,5 +45,5 @@ protected:
 	void BeginPlay() override;
 
 private:
-	void SetCharacterRotation(const FQuat& Rotation);
+	void SetCharacterRotation(const FQuat& Rotation, const FQuat& MeshRotation);
 };

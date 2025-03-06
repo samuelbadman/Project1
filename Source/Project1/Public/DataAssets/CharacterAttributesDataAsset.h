@@ -19,8 +19,14 @@ public:
 	float CapsuleRotationSpeed{ 7.5f };
 
 	UPROPERTY(EditAnywhere)
+	float MeshRotationSpeed{ 7.5f };
+
+	UPROPERTY(EditAnywhere)
 	float WalkSpeed{ 300.0f };
 
 	UPROPERTY(EditAnywhere)
 	float RunSpeed{ 600.0f };
+
+public:
+	UCharacterAttributesDataAsset();
 };

@@ -10,7 +10,8 @@
 
 // Sets default values
 AProject1CharacterBase::AProject1CharacterBase(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer.SetDefaultSubobjectClass<UProj1CharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UProj1CharacterMovementComponent>(ACharacter::CharacterMovementComponentName)),
+	MeshRotationOffset(FRotator::ZeroRotator)
 {
 	// Set class default values
 	CharacterAttributes = nullptr;
@@ -39,7 +40,7 @@ void AProject1CharacterBase::SetTargetWorldOrientation(const FQuat& TargetOrient
 	TargetCapsuleWorldOrientation = TargetOrientation;
 	if (Instant)
 	{
-		SetCharacterRotation(TargetOrientation);
+		SetCharacterRotation(TargetOrientation, TargetOrientation);
 	}
 }
 
@@ -75,14 +76,19 @@ void AProject1CharacterBase::BeginPlay()
 	TargetCapsuleWorldOrientation = GetActorQuat();
 }
 
-void AProject1CharacterBase::SetCharacterRotation(const FQuat& Rotation)
+void AProject1CharacterBase::SetCharacterRotation(const FQuat& Rotation, const FQuat& MeshRotation)
 {
 	SetActorRotation(Rotation);
-	GetMesh()->SetWorldRotation(Rotation);
+	GetMesh()->SetWorldRotation(MeshRotation);
 }
 
 void AProject1CharacterBase::UpdateCapsuleRotation(float DeltaTime)
 {
 	const FQuat NewRotation{ FMath::QInterpConstantTo(GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CharacterAttributes->CapsuleRotationSpeed) };
-	SetCharacterRotation(NewRotation);
+
+	FRotator MeshRotation(TargetCapsuleWorldOrientation);
+	MeshRotation += MeshRotationOffset;
+	const FQuat NewMeshRotation{ FMath::QInterpConstantTo(GetMesh()->GetComponentQuat(), FQuat(MeshRotation), DeltaTime, CharacterAttributes->MeshRotationSpeed) };
+
+	SetCharacterRotation(NewRotation, NewMeshRotation);
 }
