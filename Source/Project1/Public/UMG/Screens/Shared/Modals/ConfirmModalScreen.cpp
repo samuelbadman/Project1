@@ -90,7 +90,7 @@ void UConfirmModalScreen::OnNavigateInputTriggered(const FInputActionValue& Valu
 		}
 
 		const EWidgetNavigationDirection NavDirection{ (HorizontalInput > 0) ? EWidgetNavigationDirection::Right : EWidgetNavigationDirection::Left };
-		ButtonMenuComponent->OnNavigationInput((HorizontalInput > 0) ? EWidgetNavigationDirection::Right : EWidgetNavigationDirection::Left);
+		ButtonMenuComponent->NavigateMenu((HorizontalInput > 0) ? EWidgetNavigationDirection::Right : EWidgetNavigationDirection::Left);
 	}
 }
 

@@ -21,6 +21,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnConfirmModalNavigateTriggeredDelegate, co
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDynamicModalConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDynamicModalNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsScreenTabTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsScreenCancelTriggeredDelegate, const FInputActionValue& /* Value */);
 
 UENUM()
@@ -47,6 +48,7 @@ public:
 	FOnDynamicModalConfirmTriggeredDelegate DynamicModalConfirmTriggered{};
 	FOnDynamicModalNavigateTriggeredDelegate DynamicModalNavigateTriggered{};
 
+	FOnSettingsScreenCancelTriggeredDelegate SettingsScreenTabTriggeredDelegate{};
 	FOnSettingsScreenCancelTriggeredDelegate SettingsScreenCancelTriggeredDelegate{};
 
 private:
@@ -88,6 +90,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
 	int32 SettingsScreenInputPriority{ 10 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	TObjectPtr<UInputAction> SettingsScreenTabInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
 	TObjectPtr<UInputAction> SettingsScreenCancelInputAction{ nullptr };
@@ -132,5 +137,6 @@ private:
 	void OnDynamicModalConfirmTriggered(const FInputActionValue& Value);
 	void OnDynamicModalNavigateTriggered(const FInputActionValue& Value);
 
+	void OnSettingsScreenTabTriggered(const FInputActionValue& Value);
 	void OnSettingsScreenCancelTriggered(const FInputActionValue& Value);
 };

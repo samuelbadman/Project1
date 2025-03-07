@@ -8,6 +8,7 @@
 
 class AProject1PlayerControllerBase;
 struct FInputActionValue;
+class UButtonMenuComponent;
 
 /**
  * 
@@ -18,7 +19,11 @@ class PROJECT1_API USettingsScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UButtonMenuComponent> TabButtonMenuComponent;
+
 	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController;
+	FDelegateHandle TabInputDelegateHandle;
 	FDelegateHandle CancelInputDelegateHandle;
 
 public:
@@ -28,5 +33,6 @@ private:
 	void NativeOnPushedToLayerStack() override;
 	void NativeOnPoppedFromLayerStack() override;
 
+	void OnTabInput(const FInputActionValue& Value);
 	void OnCancelInput(const FInputActionValue& Value);
 };

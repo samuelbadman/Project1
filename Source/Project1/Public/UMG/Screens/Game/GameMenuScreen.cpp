@@ -64,7 +64,7 @@ void UGameMenuScreen::OnNavigateTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
-		ButtonMenuComponent->OnNavigationInput((Value.Get<FVector2D>().Y > 0.0f) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down);
+		ButtonMenuComponent->NavigateMenu((Value.Get<FVector2D>().Y > 0.0f) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down);
 	}
 }
 

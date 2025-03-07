@@ -117,6 +117,7 @@ void AProject1PlayerControllerBase::SetupInputComponent()
 	EnhancedInputComponent->BindAction(DynamicModalConfirmInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnDynamicModalConfirmTriggered);
 	EnhancedInputComponent->BindAction(DynamicModalNavigateInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnDynamicModalNavigateTriggered);
 
+	EnhancedInputComponent->BindAction(SettingsScreenTabInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnSettingsScreenTabTriggered);
 	EnhancedInputComponent->BindAction(SettingsScreenCancelInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnSettingsScreenCancelTriggered);
 }
 
@@ -145,6 +146,11 @@ void AProject1PlayerControllerBase::OnDynamicModalConfirmTriggered(const FInputA
 void AProject1PlayerControllerBase::OnDynamicModalNavigateTriggered(const FInputActionValue& Value)
 {
 	DynamicModalNavigateTriggered.Broadcast(Value);
+}
+
+void AProject1PlayerControllerBase::OnSettingsScreenTabTriggered(const FInputActionValue& Value)
+{
+	SettingsScreenTabTriggeredDelegate.Broadcast(Value);
 }
 
 void AProject1PlayerControllerBase::OnSettingsScreenCancelTriggered(const FInputActionValue& Value)

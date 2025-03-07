@@ -150,7 +150,7 @@ void UDynamicModalScreen::OnNavigateTriggered(const FInputActionValue& Value)
 			return;
 		}
 
-		ButtonMenuComponent->OnNavigationInput((VerticalInput > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down);
+		ButtonMenuComponent->NavigateMenu((VerticalInput > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down);
 	}
 }
 

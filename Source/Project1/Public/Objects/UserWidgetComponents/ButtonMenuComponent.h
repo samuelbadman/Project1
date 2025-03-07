@@ -19,6 +19,9 @@ class PROJECT1_API UButtonMenuComponent : public UUserWidgetComponent
 
 private:
 	UPROPERTY(EditAnywhere)
+	bool bFocusButtonOnMouseCursorEnter;
+
+	UPROPERTY(EditAnywhere)
 	bool bUnfocusButtonOnMouseCursorLeave;
 
 	TArray<TObjectPtr<UProject1ButtonBase>> RegisteredButtons;
@@ -35,10 +38,13 @@ public:
 	void FocusButton(UProject1ButtonBase* Button);
 
 	UFUNCTION(BlueprintCallable, Category = "ButtonMenuComponent")
+	FORCEINLINE void SetFocusButtonOnMouseCursorEnter(bool Focus) { bFocusButtonOnMouseCursorEnter = Focus; }
+
+	UFUNCTION(BlueprintCallable, Category = "ButtonMenuComponent")
 	FORCEINLINE void SetUnfocusButtonOnMouseCursorLeave(bool Unfocus) { bUnfocusButtonOnMouseCursorLeave = Unfocus; }
 
 	// Returns the widget navigated to if there is one otherwise, returns null. Null is a valid return value as this means that there was no navigation
-	TObjectPtr<UProject1ButtonBase> OnNavigationInput(const EWidgetNavigationDirection Direction);
+	TObjectPtr<UProject1ButtonBase> NavigateMenu(const EWidgetNavigationDirection Direction);
 	void PressFocusedButton();
 
 	UFUNCTION(BlueprintCallable, Category = "ButtonMenuComponent")

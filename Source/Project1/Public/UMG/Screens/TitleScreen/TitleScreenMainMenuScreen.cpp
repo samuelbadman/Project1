@@ -58,6 +58,6 @@ void UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered(const FInputA
 		}
 
 		const EWidgetNavigationDirection NavDirection{ (VerticalInput > 0) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down };
-		GetScrollBox()->ScrollWidgetIntoView(StaticCast<UWidget*>(ButtonMenuComponent->OnNavigationInput(NavDirection)));
+		GetScrollBox()->ScrollWidgetIntoView(StaticCast<UWidget*>(ButtonMenuComponent->NavigateMenu(NavDirection)));
 	}
 }

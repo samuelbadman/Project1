@@ -5,7 +5,8 @@
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 
 UButtonMenuComponent::UButtonMenuComponent()
-	: bUnfocusButtonOnMouseCursorLeave(true),
+	: bFocusButtonOnMouseCursorEnter(true),
+	bUnfocusButtonOnMouseCursorLeave(true),
 	RegisteredButtons({}),
 	FocusedButton(nullptr)
 {
@@ -43,7 +44,7 @@ void UButtonMenuComponent::FocusButton(UProject1ButtonBase* Button)
 	Button->MakeHovered();
 }
 
-TObjectPtr<UProject1ButtonBase> UButtonMenuComponent::OnNavigationInput(const EWidgetNavigationDirection Direction)
+TObjectPtr<UProject1ButtonBase> UButtonMenuComponent::NavigateMenu(const EWidgetNavigationDirection Direction)
 {
 	// Cannot navigate if the menu does not have a focused button
 	if (!IsValid(FocusedButton))
@@ -77,7 +78,10 @@ void UButtonMenuComponent::PressFocusedButton()
 
 void UButtonMenuComponent::OnMouseCursorOverMenuButton(UProject1ButtonBase* Button)
 {
-	FocusButton(Button);
+	if (bFocusButtonOnMouseCursorEnter)
+	{
+		FocusButton(Button);
+	}
 }
 
 void UButtonMenuComponent::OnMouseCursorLeftMenuButton(UProject1ButtonBase* Button)
