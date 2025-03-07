@@ -86,7 +86,7 @@ void AProject1CharacterBase::UpdateCapsuleRotation(float DeltaTime)
 {
 	const FQuat NewRotation{ FMath::QInterpConstantTo(GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CharacterAttributes->CapsuleRotationSpeed) };
 
-	FRotator MeshRotation(TargetCapsuleWorldOrientation);
+	FRotator MeshRotation(NewRotation);
 	MeshRotation += MeshRotationOffset;
 	const FQuat NewMeshRotation{ FMath::QInterpConstantTo(GetMesh()->GetComponentQuat(), FQuat(MeshRotation), DeltaTime, CharacterAttributes->MeshRotationSpeed) };
 
