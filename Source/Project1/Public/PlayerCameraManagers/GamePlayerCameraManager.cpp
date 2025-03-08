@@ -210,6 +210,13 @@ void AGamePlayerCameraManager::UpdateCameraCollision()
 	// If collision found move camera component in front of the collision
 	const FVector TraceStart{ PlayerCameraActor->GetCameraComponentWorldOrbitPoint()};
 	const FVector TraceEnd{ PlayerCameraActor->GetCameraComponentWorldLocation() };
+
+	// Debug
+	//DrawDebugSphere(GetWorld(), TraceStart, 5.0f, 16, FColor::White);
+	//DrawDebugSphere(GetWorld(), TraceEnd, 5.0f, 16, FColor::Red);
+	//DrawDebugCylinder(GetWorld(), TraceStart, TraceEnd, CameraProbeShape.GetSphereRadius(), 16, FColor::Yellow);
+	//DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red);
+
 	FHitResult ProbeHitResult{};
 	if (World->SweepSingleByChannel(
 		ProbeHitResult,
@@ -228,5 +235,11 @@ void AGamePlayerCameraManager::UpdateCameraCollision()
 		}
 		// Probe found a collision. Move camera component in front of collision along probe vector, overriding player camera relative X offset
 		PlayerCameraActor->SetCameraComponentWorldLocation(ProbeHitResult.Location);
+
+		// Debug
+		//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, FString::Printf(TEXT("Camera collision.")));
+		//return;
 	}
+	// Debug
+	//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Red, FString::Printf(TEXT("No camera collision.")));
 }

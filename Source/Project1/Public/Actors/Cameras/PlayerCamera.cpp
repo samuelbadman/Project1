@@ -24,9 +24,9 @@ APlayerCamera::APlayerCamera()
 
 	// Set default values
 	CameraComponentOffset = FVector::ZeroVector;
-	RelativeXOffset = -300.0f;
-	RelativeXOffsetLookingUp = -50.0f;
-	RelativeXOffsetLookingDown = -400.0f;
+	TargetRelativeXOffsetHorizontal = -300.0f;
+	TargetRelativeXOffsetUp = -50.0f;
+	TargetRelativeXOffsetDown = -400.0f;
 	RelativeXOffsetAdjustmentInterpSpeed = 2.0f;
 }
 
@@ -38,14 +38,14 @@ void APlayerCamera::SetRotation(float Pitch, float Yaw)
 
 	// Update player camera relative X offset for pitch angle
 	const double CameraForwardDotWorldUp{ -FVector::DotProduct(CameraParentComponent->GetRelativeRotation().Vector(), FVector::UpVector) };
-	ApplyRelativeXOffsetFromRotation((CameraForwardDotWorldUp < 0.0) ? RelativeXOffsetLookingUp : RelativeXOffsetLookingDown, CameraForwardDotWorldUp, GetWorld()->GetDeltaSeconds());
+	ApplyRelativeXOffsetFromRotation((CameraForwardDotWorldUp < 0.0) ? TargetRelativeXOffsetUp : TargetRelativeXOffsetDown, CameraForwardDotWorldUp, GetWorld()->GetDeltaSeconds());
 }
 
-void APlayerCamera::SetRelativeXOffset(float Offset, float OffsetLookingUp, float OffsetLookingDown)
+void APlayerCamera::SetTargetRelativeXOffset(float NewOffsetHorizontal, float NewOffsetUp, float NewOffsetDown)
 {
-	RelativeXOffset = Offset;
-	RelativeXOffsetLookingUp = OffsetLookingUp;
-	RelativeXOffsetLookingDown = OffsetLookingDown;
+	TargetRelativeXOffsetHorizontal = NewOffsetHorizontal;
+	TargetRelativeXOffsetUp = NewOffsetUp;
+	TargetRelativeXOffsetDown = NewOffsetDown;
 }
 
 FVector APlayerCamera::GetCameraComponentWorldOrbitPoint() const
@@ -55,10 +55,7 @@ FVector APlayerCamera::GetCameraComponentWorldOrbitPoint() const
 
 FVector APlayerCamera::GetCameraComponentWorldLocation() const
 {
-	// Get the camera rotation yaw from the actor and pitch from the camera parent component
-	const FRotator CameraRotation(CameraParentComponent->GetComponentRotation().Pitch, GetActorRotation().Yaw, 0.0f);
-	const FVector CameraBackVector{ CameraRotation.Vector() };
-	return (GetCameraComponentWorldOrbitPoint() + (CameraBackVector * RelativeXOffset));
+	return CameraComponent->GetComponentLocation();
 }
 
 void APlayerCamera::SetCameraComponentWorldLocation(const FVector& Location)
@@ -72,12 +69,12 @@ void APlayerCamera::OnConstruction(const FTransform& Transform)
 	CameraComponent->SetRelativeLocation(CalculateCameraComponentRelativeLocation());
 }
 
-void APlayerCamera::ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp, float DeltaTime)
+void APlayerCamera::ApplyRelativeXOffsetFromRotation(float TargetOffset, float CameraForwardDotWorldUp, float DeltaTime)
 {
 	FVector RelativeLocation{ CameraComponent->GetRelativeLocation() };
 	RelativeLocation.X = FMath::FInterpTo(
 		RelativeLocation.X,
-		FMath::Lerp(RelativeXOffset, Offset, FMath::Abs(CameraForwardDotWorldUp)),
+		CalculateCameraRelativeXOffset(TargetOffset, CameraForwardDotWorldUp),
 		DeltaTime,
 		RelativeXOffsetAdjustmentInterpSpeed);
 	CameraComponent->SetRelativeLocation(RelativeLocation);
@@ -87,6 +84,21 @@ FVector APlayerCamera::CalculateCameraComponentRelativeLocation() const
 {
 	const FVector WorldCameraComponentLocation{ GetActorLocation() + CameraComponentOffset };
 	FVector RelativeCameraComponentLocation{ UKismetMathLibrary::InverseTransformLocation(GetActorTransform(), WorldCameraComponentLocation) };
-	RelativeCameraComponentLocation.X += RelativeXOffset;
+	RelativeCameraComponentLocation.X += TargetRelativeXOffsetHorizontal;
 	return RelativeCameraComponentLocation;
+}
+
+float APlayerCamera::CalculateCameraRelativeXOffset(float TargetRelativeXOffset, float CameraForwardDotWorldUp) const
+{
+	return FMath::Lerp(TargetRelativeXOffsetHorizontal, TargetRelativeXOffset, FMath::Abs(CameraForwardDotWorldUp));
+}
+
+float APlayerCamera::GetTargetRelativeXOffset(float CameraForwardDotWorldUp) const
+{
+	return (CameraForwardDotWorldUp < 0.0) ? TargetRelativeXOffsetUp : TargetRelativeXOffsetDown;
+}
+
+float APlayerCamera::GetCameraForwardDotWorldUp() const
+{
+	return -FVector::DotProduct(CameraParentComponent->GetRelativeRotation().Vector(), FVector::UpVector);
 }

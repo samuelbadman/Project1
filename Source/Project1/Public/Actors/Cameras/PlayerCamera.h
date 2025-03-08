@@ -6,7 +6,6 @@
 #include "Actors/Project1ActorBase.h"
 #include "PlayerCamera.generated.h"
 
-class USpringArmComponent;
 class UCameraComponent;
 
 /**
@@ -39,15 +38,15 @@ private:
 
 	// The distance the camera component is offset from the actor along the relative X axis when the view look direction is parallel with the ground
 	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Relative X Offset"))
-	float RelativeXOffset;
+	float TargetRelativeXOffsetHorizontal;
 
-	// The distance the camera component is offset from the actor along the relative X axis when the view is looking up
+	// The distance the camera component is offset from the actor along the relative X axis when the view is looking perfectly up the world up vector
 	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Relative X Offset Looking Up"))
-	float RelativeXOffsetLookingUp;
+	float TargetRelativeXOffsetUp;
 
-	// The distance the camera component is offset from the actor along the relative X axis when the view looking down
+	// The distance the camera component is offset from the actor along the relative X axis when the view is looking perfectly down the world down vector
 	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Relative X Offset Looking Down"))
-	float RelativeXOffsetLookingDown;
+	float TargetRelativeXOffsetDown;
 
 	// The interp speed used when interpolating changes to the camera component's relative X offset after applying rotation to the camera
 	UPROPERTY(EditAnywhere, Category = "PlayerCameraSettings", meta = (DisplayName = "Relative X Offset Adjustment Interp Speed"))
@@ -61,7 +60,7 @@ public:
 	FORCEINLINE float GetRotateInterpSpeed() const { return RotateInterpSpeed; }
 	FORCEINLINE float GetLocationInterpSpeed() const { return LocationInterpSpeed; }
 
-	void SetRelativeXOffset(float Offset, float OffsetLookingUp, float OffsetLookingDown);
+	void SetTargetRelativeXOffset(float NewOffsetHorizontal, float NewOffsetUp, float NewOffsetDown);
 	FVector GetCameraComponentWorldOrbitPoint() const;
 	FVector GetCameraComponentWorldLocation() const;
 	void SetCameraComponentWorldLocation(const FVector& Location);
@@ -69,6 +68,10 @@ public:
 private:
 	void OnConstruction(const FTransform& Transform) override;
 
-	void ApplyRelativeXOffsetFromRotation(float Offset, float CameraForwardDotWorldUp, float DeltaTime);
+	void ApplyRelativeXOffsetFromRotation(float TargetOffset, float CameraForwardDotWorldUp, float DeltaTime);
 	FVector CalculateCameraComponentRelativeLocation() const;
+	float CalculateCameraRelativeXOffset(float TargetRelativeXOffset, float CameraForwardDotWorldUp) const;
+	// Returns the target relative X offset value to use for the camera's current orientation
+	float GetTargetRelativeXOffset(float CameraForwardDotWorldUp) const;
+	float GetCameraForwardDotWorldUp() const;
 };
