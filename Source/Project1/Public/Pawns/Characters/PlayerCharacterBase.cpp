@@ -13,7 +13,7 @@ APlayerCharacterBase::APlayerCharacterBase(const FObjectInitializer& ObjectIniti
 	GlowPointLight = CreateDefaultSubobject<UPointLightComponent>(FName(TEXT("GlowPointLightComponent")));
 	GlowPointLight->SetupAttachment(RootComponent);
 	GlowPointLight->SetCastShadows(false);
-	GlowPointLightIntensity = 150.0f;
+	GlowPointLightIntensity = 15000000.0f;
 	GlowPointLight->SetIntensity(GlowPointLightIntensity);
 	GlowPointLight->SetVisibility(false);
 	// Player is only affected by lights in lighting channel 1
