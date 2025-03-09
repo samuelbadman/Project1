@@ -24,5 +24,5 @@ private:
 	void Start(TObjectPtr<AProject1AIControllerBase> AI) override;
 	void ReevaluateSubGoal(TObjectPtr<AProject1AIControllerBase> AI) override;
 
-	void MoveToRandomReachablePoint(TObjectPtr<AProject1AIControllerBase> AI);
+	void AddMoveToRandomReachablePointSubGoal(TObjectPtr<AProject1AIControllerBase> AI);
 };

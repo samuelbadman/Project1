@@ -9,13 +9,13 @@
 #include "Enums/CharacterGroundMovementState.h"
 
 UGoal_Test_Idle::UGoal_Test_Idle()
+	: bJustMoved(false)
 {
-	bJustMoved = false;
 }
 
 void UGoal_Test_Idle::Start(TObjectPtr<AProject1AIControllerBase> AI)
 {
-	MoveToRandomReachablePoint(AI);
+	AddMoveToRandomReachablePointSubGoal(AI);
 }
 
 void UGoal_Test_Idle::ReevaluateSubGoal(TObjectPtr<AProject1AIControllerBase> AI)
@@ -29,11 +29,11 @@ void UGoal_Test_Idle::ReevaluateSubGoal(TObjectPtr<AProject1AIControllerBase> AI
 	}
 	else
 	{
-		MoveToRandomReachablePoint(AI);
+		AddMoveToRandomReachablePointSubGoal(AI);
 	}
 }
 
-void UGoal_Test_Idle::MoveToRandomReachablePoint(TObjectPtr<AProject1AIControllerBase> AI)
+void UGoal_Test_Idle::AddMoveToRandomReachablePointSubGoal(TObjectPtr<AProject1AIControllerBase> AI)
 {
 	const TObjectPtr<UGoal_Common_MoveToLocation> MoveToLocationGoal{ AI->CreateGoal<UGoal_Common_MoveToLocation>(UGoal_Common_MoveToLocation::StaticClass()) };
 	FNavLocation TargetMoveLocation;
