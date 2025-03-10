@@ -8,12 +8,18 @@
 
 // Sets default values for this component's properties
 UPlayerCharacterControllerComponent::UPlayerCharacterControllerComponent()
+	: bConstrainPlayerToWalk(false),
+	RunInputMagnitude(0.45f),
+	Project1Character(nullptr)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	RunInputMagnitude = 0.45f;
-	Project1Character = nullptr;
+}
+
+void UPlayerCharacterControllerComponent::SetConstrainPlayerToWalk(bool Constrain)
+{
+	bConstrainPlayerToWalk = Constrain;
 }
 
 void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -42,6 +48,7 @@ void UPlayerCharacterControllerComponent::OnPossessPawn(TObjectPtr<APawn> Pawn)
 void UPlayerCharacterControllerComponent::OnMoveInput(const FVector& WorldDirection, float MoveInputMagnitude)
 {
 	Project1Character->SetTargetWorldOrientation(WorldDirection.ToOrientationQuat(), false);
-	Project1Character->SetGroundMovementState((MoveInputMagnitude < RunInputMagnitude) ? ECharacterGroundMovementState::Walk : ECharacterGroundMovementState::Run);
+	Project1Character->SetGroundMovementState(((MoveInputMagnitude < RunInputMagnitude) || (bConstrainPlayerToWalk)) ? 
+		ECharacterGroundMovementState::Walk : ECharacterGroundMovementState::Run);
 	Project1Character->AddMovementInput(WorldDirection);
 }
