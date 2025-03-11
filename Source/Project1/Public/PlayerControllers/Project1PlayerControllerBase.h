@@ -23,6 +23,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnDynamicModalNavigateTriggeredDelegate, co
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsScreenTabTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsScreenCancelTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsScreenNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
 
 UENUM()
 enum class EMouseCursorVisibility : uint8
@@ -50,6 +51,7 @@ public:
 
 	FOnSettingsScreenCancelTriggeredDelegate SettingsScreenTabTriggeredDelegate{};
 	FOnSettingsScreenCancelTriggeredDelegate SettingsScreenCancelTriggeredDelegate{};
+	FOnSettingsScreenNavigateTriggeredDelegate SettingsScreenNavigateTriggeredDelegate{};
 
 private:
 	UPROPERTY(EditDefaultsOnly)
@@ -60,6 +62,21 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	bool DefaultCenterCursorInViewportOnBecomeVisible{ true };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	TObjectPtr<UInputMappingContext> SettingsScreenInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	int32 SettingsScreenInputPriority{ 10 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	TObjectPtr<UInputAction> SettingsScreenTabInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	TObjectPtr<UInputAction> SettingsScreenCancelInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	TObjectPtr<UInputAction> SettingsScreenNavigateInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
 	TObjectPtr<UInputMappingContext> ConfirmModalInputMappingContext{ nullptr };
@@ -84,18 +101,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
 	TObjectPtr<UInputAction> DynamicModalNavigateInputAction{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
-	TObjectPtr<UInputMappingContext> SettingsScreenInputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
-	int32 SettingsScreenInputPriority{ 10 };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
-	TObjectPtr<UInputAction> SettingsScreenTabInputAction{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
-	TObjectPtr<UInputAction> SettingsScreenCancelInputAction{ nullptr };
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Project1PlayerController")
@@ -139,4 +144,5 @@ private:
 
 	void OnSettingsScreenTabTriggered(const FInputActionValue& Value);
 	void OnSettingsScreenCancelTriggered(const FInputActionValue& Value);
+	void OnSettingsScreenNavigateTriggered(const FInputActionValue& Value);
 };

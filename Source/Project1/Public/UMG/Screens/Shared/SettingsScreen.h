@@ -25,6 +25,7 @@ private:
 	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController;
 	FDelegateHandle TabInputDelegateHandle;
 	FDelegateHandle CancelInputDelegateHandle;
+	FDelegateHandle NavigateInputDelegateHandle;
 
 public:
 	USettingsScreen();
@@ -35,4 +36,5 @@ private:
 
 	void OnTabInput(const FInputActionValue& Value);
 	void OnCancelInput(const FInputActionValue& Value);
+	void OnNavigateInput(const FInputActionValue& Value);
 };

@@ -119,6 +119,7 @@ void AProject1PlayerControllerBase::SetupInputComponent()
 
 	EnhancedInputComponent->BindAction(SettingsScreenTabInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnSettingsScreenTabTriggered);
 	EnhancedInputComponent->BindAction(SettingsScreenCancelInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnSettingsScreenCancelTriggered);
+	EnhancedInputComponent->BindAction(SettingsScreenNavigateInputAction, ETriggerEvent::Triggered, this, &AProject1PlayerControllerBase::OnSettingsScreenNavigateTriggered);
 }
 
 void AProject1PlayerControllerBase::CenterMouseCursorInViewport()
@@ -156,4 +157,9 @@ void AProject1PlayerControllerBase::OnSettingsScreenTabTriggered(const FInputAct
 void AProject1PlayerControllerBase::OnSettingsScreenCancelTriggered(const FInputActionValue& Value)
 {
 	SettingsScreenCancelTriggeredDelegate.Broadcast(Value);
+}
+
+void AProject1PlayerControllerBase::OnSettingsScreenNavigateTriggered(const FInputActionValue& Value)
+{
+	SettingsScreenNavigateTriggeredDelegate.Broadcast(Value);
 }
