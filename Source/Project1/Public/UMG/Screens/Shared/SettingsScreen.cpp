@@ -7,12 +7,27 @@
 #include "HUDs/Project1HUDBase.h"
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
 #include "InputActionValue.h"
+#include "UMG/Components/Settings/SettingsPageWidget.h"
 
 USettingsScreen::USettingsScreen()
 	: Project1PlayerController(nullptr),
-	CancelInputDelegateHandle({})
+	TabInputDelegateHandle({}),
+	CancelInputDelegateHandle({}),
+	NavigateInputDelegateHandle({}),
+	CurrentSettingsPage(nullptr)
 {
 	TabButtonMenuComponent = CreateDefaultSubobject<UButtonMenuComponent>(FName(TEXT("ButtonMenuComponent")));
+}
+
+void USettingsScreen::ChangeSettingsPage(USettingsPageWidget* NewPage)
+{
+	if (IsValid(CurrentSettingsPage))
+	{
+		CurrentSettingsPage->Collapse();
+	}
+
+	CurrentSettingsPage = NewPage;
+	NewPage->Show();
 }
 
 void USettingsScreen::NativeOnPushedToLayerStack()

@@ -8,8 +8,8 @@
 
 // Sets default values for this component's properties
 UPlayerCharacterControllerComponent::UPlayerCharacterControllerComponent()
-	: bConstrainPlayerToWalk(false),
-	RunInputMagnitude(0.45f),
+	: RunInputMagnitude(0.45f),
+	bConstrainPlayerToWalk(false),
 	Project1Character(nullptr)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features

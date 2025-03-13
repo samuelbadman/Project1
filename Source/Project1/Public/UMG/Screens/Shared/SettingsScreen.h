@@ -9,6 +9,7 @@
 class AProject1PlayerControllerBase;
 struct FInputActionValue;
 class UButtonMenuComponent;
+class USettingsPageWidget;
 
 /**
  * 
@@ -26,9 +27,13 @@ private:
 	FDelegateHandle TabInputDelegateHandle;
 	FDelegateHandle CancelInputDelegateHandle;
 	FDelegateHandle NavigateInputDelegateHandle;
+	TObjectPtr<USettingsPageWidget> CurrentSettingsPage;
 
 public:
 	USettingsScreen();
+
+	UFUNCTION(BlueprintCallable, Category = "SettingsScreen")
+	void ChangeSettingsPage(USettingsPageWidget* NewPage);
 
 private:
 	void NativeOnPushedToLayerStack() override;
