@@ -11,7 +11,7 @@
 // Sets default values
 AProject1CharacterBase::AProject1CharacterBase(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<UProj1CharacterMovementComponent>(ACharacter::CharacterMovementComponentName)),
-	MeshRotationOffset(FRotator::ZeroRotator)
+	DefaultMeshLocalRotation(FRotator::ZeroRotator)
 {
 	// Set class default values
 	CharacterAttributes = nullptr;
@@ -72,6 +72,8 @@ void AProject1CharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	World = GetWorld();
+	// Save local mesh rotation
+	DefaultMeshLocalRotation = GetMesh()->GetRelativeRotation();
 	// Set default target player character capsule rotation
 	TargetCapsuleWorldOrientation = GetActorQuat();
 }
@@ -87,7 +89,7 @@ void AProject1CharacterBase::UpdateCapsuleRotation(float DeltaTime)
 	const FQuat NewRotation{ FMath::QInterpConstantTo(GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CharacterAttributes->CapsuleRotationSpeed) };
 
 	FRotator MeshRotation(NewRotation);
-	MeshRotation += MeshRotationOffset;
+	MeshRotation += DefaultMeshLocalRotation;
 	const FQuat NewMeshRotation{ FMath::QInterpConstantTo(GetMesh()->GetComponentQuat(), FQuat(MeshRotation), DeltaTime, CharacterAttributes->MeshRotationSpeed) };
 
 	SetCharacterRotation(NewRotation, NewMeshRotation);

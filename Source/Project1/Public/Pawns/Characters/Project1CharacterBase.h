@@ -16,14 +16,12 @@ class PROJECT1_API AProject1CharacterBase : public ACharacter
 
 private:
 	UPROPERTY(EditAnywhere)
-	FRotator MeshRotationOffset;
-
-	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCharacterAttributesDataAsset> CharacterAttributes;
 
 	TObjectPtr<UWorld> World;
 	FQuat TargetCapsuleWorldOrientation;
 	ECharacterGroundMovementState CurrentGroundMovementState;
+	FRotator DefaultMeshLocalRotation;
 
 public:
 	// Sets default values for this character's properties
