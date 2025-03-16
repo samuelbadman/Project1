@@ -24,6 +24,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnDynamicModalNavigateTriggeredDelegate, co
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsScreenTabTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsScreenCancelTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsScreenNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsScreenConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
 
 UENUM()
 enum class EMouseCursorVisibility : uint8
@@ -52,6 +53,7 @@ public:
 	FOnSettingsScreenCancelTriggeredDelegate SettingsScreenTabTriggeredDelegate{};
 	FOnSettingsScreenCancelTriggeredDelegate SettingsScreenCancelTriggeredDelegate{};
 	FOnSettingsScreenNavigateTriggeredDelegate SettingsScreenNavigateTriggeredDelegate{};
+	FOnSettingsScreenConfirmTriggeredDelegate SettingsScreenConfirmTriggeredDelegate{};
 
 private:
 	UPROPERTY(EditDefaultsOnly)
@@ -77,6 +79,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
 	TObjectPtr<UInputAction> SettingsScreenNavigateInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	TObjectPtr<UInputAction> SettingsScreenConfirmInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
 	TObjectPtr<UInputMappingContext> ConfirmModalInputMappingContext{ nullptr };
@@ -145,4 +150,5 @@ private:
 	void OnSettingsScreenTabTriggered(const FInputActionValue& Value);
 	void OnSettingsScreenCancelTriggered(const FInputActionValue& Value);
 	void OnSettingsScreenNavigateTriggered(const FInputActionValue& Value);
+	void OnSettingsScreenConfirmTriggered(const FInputActionValue& Value);
 };

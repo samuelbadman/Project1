@@ -37,6 +37,7 @@ void USettingsScreen::NativeOnPushedToLayerStack()
 	TabInputDelegateHandle = Project1PlayerController->SettingsScreenTabTriggeredDelegate.AddUObject(this, &USettingsScreen::OnTabInput);
 	CancelInputDelegateHandle = Project1PlayerController->SettingsScreenCancelTriggeredDelegate.AddUObject(this, &USettingsScreen::OnCancelInput);
 	NavigateInputDelegateHandle = Project1PlayerController->SettingsScreenNavigateTriggeredDelegate.AddUObject(this, &USettingsScreen::OnNavigateInput);
+	ConfirmInputDelegateHandle = Project1PlayerController->SettingsScreenConfirmTriggeredDelegate.AddUObject(this, &USettingsScreen::OnConfirmInput);
 
 	Project1PlayerController->AddSettingsScreenInputMappingContext();
 }
@@ -51,6 +52,9 @@ void USettingsScreen::NativeOnPoppedFromLayerStack()
 
 	Project1PlayerController->SettingsScreenNavigateTriggeredDelegate.Remove(NavigateInputDelegateHandle);
 	NavigateInputDelegateHandle.Reset();
+
+	Project1PlayerController->SettingsScreenConfirmTriggeredDelegate.Remove(ConfirmInputDelegateHandle);
+	ConfirmInputDelegateHandle.Reset();
 
 	Project1PlayerController->RemoveSettingsScreenInputMappingContext();
 }
@@ -76,5 +80,13 @@ void USettingsScreen::OnNavigateInput(const FInputActionValue& Value)
 	if (CanReceiveInput())
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Settings screen navigate input: %s"), *Value.Get<FVector2D>().ToString()));
+	}
+}
+
+void USettingsScreen::OnConfirmInput(const FInputActionValue& Value)
+{
+	if (CanReceiveInput())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Settings screen confirm input")));
 	}
 }
