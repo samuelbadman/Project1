@@ -43,6 +43,12 @@ public:
 	void NavigateFromWidgetInDirection(EWidgetNavigationDirection Direction);
 	void NavigateFromWidgetInDirectionSafe(EWidgetNavigationDirection Direction);
 	void NavigateFromWidget(TObjectPtr<UProject1UserWidgetBase> ToWidget);
+	// Navigate from this widget without moving to another widget
+	void NavigateFromWidget();
+
+	// Used to manually navigate to this widget. If navigating from a widget, this must also be manually handled in client code
+	UFUNCTION(BlueprintCallable, Category = "Project 1 Widget Navigation")
+	void NavigateToWidget();
 
 protected:
 	virtual void OnNavigatedTo();

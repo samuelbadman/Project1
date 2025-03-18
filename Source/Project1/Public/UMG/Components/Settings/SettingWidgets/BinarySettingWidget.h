@@ -14,4 +14,6 @@ class PROJECT1_API UBinarySettingWidget : public USettingUserWidgetBase
 {
 	GENERATED_BODY()
 	
+private:
+	ESettingInputResult ProcessConfirmInput() override;
 };

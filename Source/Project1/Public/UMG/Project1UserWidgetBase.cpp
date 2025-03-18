@@ -61,6 +61,16 @@ void UProject1UserWidgetBase::NavigateFromWidget(TObjectPtr<UProject1UserWidgetB
 	ToWidget->OnNavigatedTo();
 }
 
+void UProject1UserWidgetBase::NavigateFromWidget()
+{
+	OnNavigatedFrom();
+}
+
+void UProject1UserWidgetBase::NavigateToWidget()
+{
+	OnNavigatedTo();
+}
+
 void UProject1UserWidgetBase::OnNavigatedTo()
 {
 	// Base class implementation is empty

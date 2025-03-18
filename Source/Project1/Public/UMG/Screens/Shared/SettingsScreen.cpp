@@ -80,6 +80,10 @@ void USettingsScreen::OnNavigateInput(const FInputActionValue& Value)
 	if (CanReceiveInput())
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Settings screen navigate input: %s"), *Value.Get<FVector2D>().ToString()));
+		if (IsValid(CurrentSettingsPage))
+		{
+			CurrentSettingsPage->OnNavigationInput(Value.Get<FVector2D>());
+		}
 	}
 }
 
@@ -88,5 +92,9 @@ void USettingsScreen::OnConfirmInput(const FInputActionValue& Value)
 	if (CanReceiveInput())
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Settings screen confirm input")));
+		if (IsValid(CurrentSettingsPage))
+		{
+			CurrentSettingsPage->OnConfirmInput();
+		}
 	}
 }

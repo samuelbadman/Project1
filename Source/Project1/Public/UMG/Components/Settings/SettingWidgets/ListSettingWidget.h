@@ -14,4 +14,6 @@ class PROJECT1_API UListSettingWidget : public USettingUserWidgetBase
 {
 	GENERATED_BODY()
 
+private:
+	ESettingInputResult ProcessNavigationInput(const FVector2D& NavigationInput) override;
 };
