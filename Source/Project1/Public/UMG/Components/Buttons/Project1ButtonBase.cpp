@@ -47,6 +47,11 @@ void UProject1ButtonBase::NativeDestruct()
 
 void UProject1ButtonBase::ActivateMouseInput()
 {
+	if (bMouseInputsActivated)
+	{
+		return;
+	}
+
 	OnMouseCursorVisibilityChangedDelegateHandle = Project1PlayerController->MouseCursorVisibilityChanged.AddUObject(this, &UProject1ButtonBase::OnMouseCursorVisibilityChanged);
 	OnMouseMovedDelegateHandle = Project1GameViewportClient->MouseMoved.AddUObject(this, &UProject1ButtonBase::OnMouseMoved);
 	OnInputKeyDelegateHandle = Project1GameViewportClient->OnInputKey.AddUObject(this, &UProject1ButtonBase::OnInputKey);
@@ -55,6 +60,11 @@ void UProject1ButtonBase::ActivateMouseInput()
 
 void UProject1ButtonBase::DeactivateMouseInput()
 {
+	if (!bMouseInputsActivated)
+	{
+		return;
+	}
+
 	Project1PlayerController->MouseCursorVisibilityChanged.Remove(OnMouseCursorVisibilityChangedDelegateHandle);
 	OnMouseCursorVisibilityChangedDelegateHandle.Reset();
 

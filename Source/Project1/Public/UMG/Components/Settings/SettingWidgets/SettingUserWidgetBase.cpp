@@ -3,6 +3,11 @@
 
 #include "SettingUserWidgetBase.h"
 
+USettingUserWidgetBase::USettingUserWidgetBase()
+	: OwningSettingsPage(nullptr)
+{
+}
+
 void USettingUserWidgetBase::FocusSetting()
 {
 	OnSettingFocused();
@@ -23,4 +28,9 @@ ESettingInputResult USettingUserWidgetBase::ProcessNavigationInput(const FVector
 {
 	// Base class implementation is empty and does not handle the input
 	return ESettingInputResult::Unhandled;
+}
+
+void USettingUserWidgetBase::SetOwningSettingsPage(TObjectPtr<USettingsPageWidget> Page)
+{
+	OwningSettingsPage = Page;
 }

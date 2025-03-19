@@ -77,8 +77,10 @@ public:
 	UBorder* GetBorder();
 
 	// Activates the button allowing it to handle mouse cursor events
+	UFUNCTION(BlueprintCallable, Category = "Project1ButtonBase")
 	void ActivateMouseInput();
 	// Deactivates the button stopping it from handling mouse cursor events
+	UFUNCTION(BlueprintCallable, Category = "Project1ButtonBase")
 	void DeactivateMouseInput();
 
 	// Puts the button into a hovered state

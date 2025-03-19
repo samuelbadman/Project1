@@ -36,6 +36,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SettingsPageWidget")
 	void Collapse();
 
+	UFUNCTION(BlueprintCallable, Category = "SettingsPageWidget")
+	void FocusSettingWidget(USettingUserWidgetBase* Setting);
+
 	void OnConfirmInput();
 	void OnNavigationInput(const FVector2D& NavigationInput);
 

@@ -19,6 +19,11 @@ void USettingsPageWidget::Show()
 
 	// Focus first setting widget
 	FocusSetting(0);
+
+	for (USettingUserWidgetBase* Setting : PageSettingWidgets)
+	{
+		Setting->OnSettingShown();
+	}
 }
 
 void USettingsPageWidget::Collapse()
@@ -27,6 +32,16 @@ void USettingsPageWidget::Collapse()
 	SetVisibility(ESlateVisibility::Collapsed);
 
 	ClearSettingFocus();
+
+	for (USettingUserWidgetBase* Setting : PageSettingWidgets)
+	{
+		Setting->OnSettingCollapsed();
+	}
+}
+
+void USettingsPageWidget::FocusSettingWidget(USettingUserWidgetBase* Setting)
+{
+	FocusSetting(PageSettingWidgets.Find(Setting));
 }
 
 void USettingsPageWidget::OnConfirmInput()
@@ -50,6 +65,7 @@ void USettingsPageWidget::OnNavigationInput(const FVector2D& NavigationInput)
 		// If the setting did not handle the input, handle it in the page widget
 		if (FocusedSetting->ProcessNavigationInput(NavigationInput) == ESettingInputResult::Unhandled)
 		{
+			// Assumes settings are layed out in a vertical list
 			if (NavigationInput.Y == 0.0f)
 			{
 				return;
@@ -80,6 +96,7 @@ void USettingsPageWidget::BuildPageSettingWidgetsArray()
 			if (USettingUserWidgetBase* Setting = Cast<USettingUserWidgetBase>(Child))
 			{
 				PageSettingWidgets.Add(Setting);
+				Setting->SetOwningSettingsPage(this);
 			}
 		}
 
