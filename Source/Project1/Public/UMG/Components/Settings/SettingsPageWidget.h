@@ -7,7 +7,7 @@
 #include "SettingsPageWidget.generated.h"
 
 class USettingUserWidgetBase;
-class UScrollBox;
+class UPanelWidget;
 
 /**
  *
@@ -18,18 +18,17 @@ class PROJECT1_API USettingsPageWidget : public UProject1UserWidgetBase
 	GENERATED_BODY()
 
 private:
-	TObjectPtr<USettingUserWidgetBase> FocusedSetting;
+	TArray<TObjectPtr<USettingUserWidgetBase>> PageSettingWidgets;
+	int32 FocusedPageSettingIndex;
 
 public:
 	USettingsPageWidget();
 
-	// All settings pages contain a scroll box that contains the list of setting widgets for the page
 	UFUNCTION(BlueprintImplementableEvent, Category = "SettingsPageWidget")
-	UScrollBox* GetScrollBox();
+	UPanelWidget* GetSettingWidgetsContainer();
 
-	// Returns the setting widget that should be focused by default when the page is opened
 	UFUNCTION(BlueprintImplementableEvent, Category = "SettingsPageWidget")
-	USettingUserWidgetBase* GetDefaultFocusedSetting();
+	void OnSettingFocused(USettingUserWidgetBase* FocusedSetting);
 
 	UFUNCTION(BlueprintCallable, Category = "SettingsPageWidget")
 	void Show();
@@ -41,5 +40,10 @@ public:
 	void OnNavigationInput(const FVector2D& NavigationInput);
 
 private:
-	void FocusSetting(TObjectPtr<USettingUserWidgetBase> SettingToFocus);
+	void NativeOnInitialized() override;
+
+	void BuildPageSettingWidgetsArray();
+	void FocusSetting(int32 SettingIndex);
+	TObjectPtr<USettingUserWidgetBase> GetFocusedSetting() const;
+	void ClearSettingFocus();
 };

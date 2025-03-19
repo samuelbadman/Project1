@@ -3,10 +3,12 @@
 
 #include "SettingsPageWidget.h"
 #include "UMG/Components/Settings/SettingWidgets/SettingUserWidgetBase.h"
-#include "Components/ScrollBox.h"
+#include "Components/PanelWidget.h"
+#include "FunctionLibraries/Project1MathLibrary.h"
 
 USettingsPageWidget::USettingsPageWidget()
-	: FocusedSetting(nullptr)
+	: PageSettingWidgets({}),
+	FocusedPageSettingIndex(INDEX_NONE)
 {
 }
 
@@ -15,23 +17,22 @@ void USettingsPageWidget::Show()
 	// Show the page widget
 	SetVisibility(ESlateVisibility::HitTestInvisible);
 
-	// Get the page's default setting to focus and focus it if it is valid
-	if (USettingUserWidgetBase* DefaultFocusedSetting = GetDefaultFocusedSetting())
-	{
-		FocusSetting(DefaultFocusedSetting);
-	}
+	// Focus first setting widget
+	FocusSetting(0);
 }
 
 void USettingsPageWidget::Collapse()
 {
 	// Collapse the page widget
 	SetVisibility(ESlateVisibility::Collapsed);
+
+	ClearSettingFocus();
 }
 
 void USettingsPageWidget::OnConfirmInput()
 {
 	// Pass the confirm input to the focused setting
-	if (IsValid(FocusedSetting))
+	if (USettingUserWidgetBase* FocusedSetting = GetFocusedSetting())
 	{
 		// If the setting did not handle the input, handle it in the page widget
 		if (FocusedSetting->ProcessConfirmInput() == ESettingInputResult::Unhandled)
@@ -44,9 +45,9 @@ void USettingsPageWidget::OnConfirmInput()
 void USettingsPageWidget::OnNavigationInput(const FVector2D& NavigationInput)
 {
 	// Pass the navigation input to the focused setting
-	if (IsValid(FocusedSetting))
+	if (USettingUserWidgetBase* FocusedSetting = GetFocusedSetting())
 	{
-		// If the setting did not handle the input, handle it in the page widget by navigating through the setting widgets
+		// If the setting did not handle the input, handle it in the page widget
 		if (FocusedSetting->ProcessNavigationInput(NavigationInput) == ESettingInputResult::Unhandled)
 		{
 			if (NavigationInput.Y == 0.0f)
@@ -54,29 +55,77 @@ void USettingsPageWidget::OnNavigationInput(const FVector2D& NavigationInput)
 				return;
 			}
 
-			const EWidgetNavigationDirection NavDirection{ (NavigationInput.Y > 0.0f) ? EWidgetNavigationDirection::Up : EWidgetNavigationDirection::Down };
-			// Assume a setting widget is set as the setting's navigation widget
-			const TObjectPtr<USettingUserWidgetBase> NavSetting{ CastChecked<USettingUserWidgetBase>(FocusedSetting->GetNavigationWidget(NavDirection).Get()) };
-			FocusSetting(NavSetting);
+			FocusSetting(UProject1MathLibrary::WrapIncrementArrayIndex(FocusedPageSettingIndex, PageSettingWidgets.Num(), -StaticCast<int32>(NavigationInput.Y)));
 		}
 	}
 }
 
-void USettingsPageWidget::FocusSetting(TObjectPtr<USettingUserWidgetBase> SettingToFocus)
+void USettingsPageWidget::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+
+	BuildPageSettingWidgetsArray();
+}
+
+void USettingsPageWidget::BuildPageSettingWidgetsArray()
+{
+	if (UPanelWidget* SettingWidgetsContainer = GetSettingWidgetsContainer())
+	{
+		const TArray<UWidget*> SettingWidgetsContainerChildren{ SettingWidgetsContainer->GetAllChildren() };
+
+		PageSettingWidgets.Reserve(SettingWidgetsContainerChildren.Num());
+
+		for (UWidget* Child : SettingWidgetsContainerChildren)
+		{
+			if (USettingUserWidgetBase* Setting = Cast<USettingUserWidgetBase>(Child))
+			{
+				PageSettingWidgets.Add(Setting);
+			}
+		}
+
+		PageSettingWidgets.Shrink();
+	}
+#if WITH_EDITOR
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("[%s] FAILED TO BUILD PAGE SETTING WIDGETS ARRAY."), *GetName()));
+	}
+#endif
+}
+
+void USettingsPageWidget::FocusSetting(int32 SettingIndex)
+{
+	// Cannot focus setting with invalid index
+	if (!PageSettingWidgets.IsValidIndex(SettingIndex))
+	{
+		return;
+	}
+
 	// If there is currently a focused setting, unfocus it first
-	if (IsValid(FocusedSetting))
+	if (PageSettingWidgets.IsValidIndex(FocusedPageSettingIndex))
+	{
+		PageSettingWidgets[FocusedPageSettingIndex]->UnfocusSetting();
+	}
+
+	// Focus the new setting
+	PageSettingWidgets[SettingIndex]->FocusSetting();
+	FocusedPageSettingIndex = SettingIndex;
+
+	// Notify blueprint a new setting has been focused so that it can handle the event
+	OnSettingFocused(PageSettingWidgets[SettingIndex]);
+}
+
+TObjectPtr<USettingUserWidgetBase> USettingsPageWidget::GetFocusedSetting() const
+{
+	return (PageSettingWidgets.IsValidIndex(FocusedPageSettingIndex)) ? PageSettingWidgets[FocusedPageSettingIndex] : nullptr;
+}
+
+void USettingsPageWidget::ClearSettingFocus()
+{
+	if (USettingUserWidgetBase* FocusedSetting = GetFocusedSetting())
 	{
 		FocusedSetting->UnfocusSetting();
 	}
 
-	// Focus the new setting
-	SettingToFocus->FocusSetting();
-	FocusedSetting = SettingToFocus;
-
-	// Scroll the focused setting into view if there is a valid scroll box
-	if (UScrollBox* ScrollBox = GetScrollBox())
-	{
-		ScrollBox->ScrollWidgetIntoView(SettingToFocus);
-	}
+	FocusedPageSettingIndex = INDEX_NONE;
 }
