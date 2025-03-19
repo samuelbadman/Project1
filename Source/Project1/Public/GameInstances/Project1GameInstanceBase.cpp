@@ -7,6 +7,7 @@
 void UProject1GameInstanceBase::Init()
 {
 	Super::Init();
+
 	const TObjectPtr<UGameUserSettings> Settings{ UGameUserSettings::GetGameUserSettings() };
 	Settings->SetVSyncEnabled(true);
 	Settings->ApplySettings(true);

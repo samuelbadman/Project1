@@ -2,9 +2,12 @@
 
 
 #include "SettingUserWidgetBase.h"
+#include "Components/TextBlock.h"
 
 USettingUserWidgetBase::USettingUserWidgetBase()
-	: OwningSettingsPage(nullptr)
+	: SettingLabel(TEXT("Default Label")),
+	OnGetSettingValueDelegate({}),
+	OwningSettingsPage(nullptr)
 {
 }
 
@@ -30,7 +33,21 @@ ESettingInputResult USettingUserWidgetBase::ProcessNavigationInput(const FVector
 	return ESettingInputResult::Unhandled;
 }
 
-void USettingUserWidgetBase::SetOwningSettingsPage(TObjectPtr<USettingsPageWidget> Page)
+void USettingUserWidgetBase::InitializeSetting(TObjectPtr<USettingsPageWidget> OwningPage)
 {
-	OwningSettingsPage = Page;
+	// Set owning setting page
+	OwningSettingsPage = OwningPage;
+
+	// Notify blueprint to get current value of setting and update widget with value
+	OnGetSettingValueDelegate.Broadcast();
+}
+
+void USettingUserWidgetBase::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	if (UTextBlock* SettingLabelTextBlock = GetSettingLabelTextBlock())
+	{
+		SettingLabelTextBlock->SetText(FText::FromString(SettingLabel + TEXT(":")));
+	}
 }

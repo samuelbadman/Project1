@@ -15,6 +15,14 @@ class PROJECT1_API UProject1GameInstanceBase : public UGameInstance
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(BlueprintReadWrite)
+	bool TestSetting1Value = true;
+	UPROPERTY(BlueprintReadWrite)
+	bool TestSetting2Value = false;
+	UPROPERTY(BlueprintReadWrite)
+	bool TestSetting3Value = false;
+
 private:
 	FStreamableManager StreamableManager{};
 

@@ -95,8 +95,8 @@ void USettingsPageWidget::BuildPageSettingWidgetsArray()
 		{
 			if (USettingUserWidgetBase* Setting = Cast<USettingUserWidgetBase>(Child))
 			{
+				Setting->InitializeSetting(this);
 				PageSettingWidgets.Add(Setting);
-				Setting->SetOwningSettingsPage(this);
 			}
 		}
 

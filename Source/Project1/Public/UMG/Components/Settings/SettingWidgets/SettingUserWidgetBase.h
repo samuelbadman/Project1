@@ -7,12 +7,15 @@
 #include "SettingUserWidgetBase.generated.h"
 
 class USettingsPageWidget;
+class UTextBlock;
 
 enum class ESettingInputResult : uint8
 {
 	Handled,
 	Unhandled
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGetSettingValueDelegate);
 
 /**
  * 
@@ -23,6 +26,12 @@ class PROJECT1_API USettingUserWidgetBase : public UProject1UserWidgetBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditAnywhere)
+	FString SettingLabel;
+
+	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Get Setting Value"))
+	FOnGetSettingValueDelegate OnGetSettingValueDelegate;
+
 	// The settings page widget that owns this setting
 	TObjectPtr<USettingsPageWidget> OwningSettingsPage;
 
@@ -43,6 +52,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "SettingUserWidgetBase")
 	void OnSettingCollapsed();
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "SettingUserWidgetBase")
+	UTextBlock* GetSettingLabelTextBlock();
+
 	UFUNCTION(BlueprintCallable, Category = "SettingUserWidgetBase")
 	USettingsPageWidget* GetOwningSettingsPage() const { return OwningSettingsPage; }
 
@@ -51,5 +63,8 @@ public:
 	virtual ESettingInputResult ProcessConfirmInput();
 	virtual ESettingInputResult ProcessNavigationInput(const FVector2D& NavigationInput);
 
-	void SetOwningSettingsPage(TObjectPtr<USettingsPageWidget> Page);
+	void InitializeSetting(TObjectPtr<USettingsPageWidget> OwningPage);
+
+protected:
+	void NativePreConstruct() override;
 };

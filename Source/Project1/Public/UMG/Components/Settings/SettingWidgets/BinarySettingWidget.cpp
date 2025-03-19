@@ -2,9 +2,60 @@
 
 
 #include "BinarySettingWidget.h"
+#include "Components/TextBlock.h"
+
+UBinarySettingWidget::UBinarySettingWidget()
+	: SettingValue1Label(TEXT("Default Value 1 Label")),
+	SettingValue2Label(TEXT("Default Value 2 Label")),
+	OnSettingValueChangedDelegate({}),
+	SettingValue(true)
+{
+}
+
+void UBinarySettingWidget::FlipSettingValue()
+{
+	SetSettingValue(!SettingValue);
+}
+
+void UBinarySettingWidget::SetDefaultSettingValue(bool NewValue)
+{
+	UpdateSettingValue(NewValue);
+}
+
+void UBinarySettingWidget::SetSettingValue(bool NewValue)
+{
+	UpdateSettingValue(NewValue);
+	OnSettingValueChangedDelegate.Broadcast(NewValue);
+}
+
+void UBinarySettingWidget::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	UpdateSettingValueLabel();
+}
 
 ESettingInputResult UBinarySettingWidget::ProcessConfirmInput()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, FString::Printf(TEXT("%s handled confirm input"), *GetName()));
+	FlipSettingValue();
 	return ESettingInputResult::Handled;
+}
+
+void UBinarySettingWidget::UpdateSettingValue(bool NewValue)
+{
+	if (SettingValue == NewValue)
+	{
+		return;
+	}
+
+	SettingValue = NewValue;
+	UpdateSettingValueLabel();
+}
+
+void UBinarySettingWidget::UpdateSettingValueLabel()
+{
+	if (UTextBlock* SettingValueLabelTextBlock = GetSettingValueLabelTextBlock())
+	{
+		SettingValueLabelTextBlock->SetText(FText::FromString(((SettingValue) ? SettingValue1Label : SettingValue2Label)));
+	}
 }
