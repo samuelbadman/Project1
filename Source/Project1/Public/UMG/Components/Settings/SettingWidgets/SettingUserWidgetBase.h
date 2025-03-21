@@ -18,16 +18,16 @@ enum class ESettingInputResult : uint8
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGetSettingValueDelegate);
 
 /**
- * 
+ *
  */
 UCLASS()
 class PROJECT1_API USettingUserWidgetBase : public UProject1UserWidgetBase
 {
 	GENERATED_BODY()
-	
+
 private:
-	UPROPERTY(EditAnywhere)
-	FString SettingLabel;
+	UPROPERTY(EditAnywhere, meta = (MultiLine = "true"))
+	FText SettingDescriptionText;
 
 	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Get Setting Value"))
 	FOnGetSettingValueDelegate OnGetSettingValueDelegate;
@@ -52,11 +52,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "SettingUserWidgetBase")
 	void OnSettingCollapsed();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "SettingUserWidgetBase")
-	UTextBlock* GetSettingLabelTextBlock();
-
 	UFUNCTION(BlueprintCallable, Category = "SettingUserWidgetBase")
 	USettingsPageWidget* GetOwningSettingsPage() const { return OwningSettingsPage; }
+
+	UFUNCTION(BlueprintCallable, Category = "SettingUserWidgetBase")
+	const FText& GetSettingDescription() const { return SettingDescriptionText; }
 
 	virtual void FocusSetting();
 	virtual void UnfocusSetting();
@@ -64,7 +64,4 @@ public:
 	virtual ESettingInputResult ProcessNavigationInput(const FVector2D& NavigationInput);
 
 	void InitializeSetting(TObjectPtr<USettingsPageWidget> OwningPage);
-
-protected:
-	void NativePreConstruct() override;
 };

@@ -17,6 +17,9 @@ class PROJECT1_API UBinarySettingWidget : public USettingUserWidgetBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditAnywhere)
+	FString SettingLabel;
+
 	UPROPERTY(EditAnywhere, meta = (DisplayName = "Setting Value 1 Label"))
 	FString SettingValue1Label;
 
@@ -30,6 +33,9 @@ private:
 
 public:
 	UBinarySettingWidget();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "BinarySettingWidget")
+	UTextBlock* GetSettingLabelTextBlock();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "BinarySettingWidget")
 	UTextBlock* GetSettingValueLabelTextBlock();

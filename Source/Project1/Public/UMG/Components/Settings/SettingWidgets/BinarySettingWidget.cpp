@@ -5,7 +5,8 @@
 #include "Components/TextBlock.h"
 
 UBinarySettingWidget::UBinarySettingWidget()
-	: SettingValue1Label(TEXT("Default Value 1 Label")),
+	: SettingLabel(TEXT("Default Label")),
+	SettingValue1Label(TEXT("Default Value 1 Label")),
 	SettingValue2Label(TEXT("Default Value 2 Label")),
 	OnSettingValueChangedDelegate({}),
 	SettingValue(true)
@@ -31,6 +32,12 @@ void UBinarySettingWidget::SetSettingValue(bool NewValue)
 void UBinarySettingWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
+
+	// Update setting label text
+	if (UTextBlock* SettingLabelTextBlock = GetSettingLabelTextBlock())
+	{
+		SettingLabelTextBlock->SetText(FText::FromString(SettingLabel + TEXT(":")));
+	}
 
 	UpdateSettingValueLabel();
 }
