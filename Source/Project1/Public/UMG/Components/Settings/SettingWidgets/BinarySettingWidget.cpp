@@ -26,7 +26,7 @@ void UBinarySettingWidget::SetDefaultSettingValue(bool NewValue)
 void UBinarySettingWidget::SetSettingValue(bool NewValue)
 {
 	UpdateSettingValue(NewValue);
-	OnSettingValueChangedDelegate.Broadcast(NewValue);
+	OnSettingValueChangedDelegate.Broadcast(((NewValue) ? EBinarySettingValue::Value1 : EBinarySettingValue::Value2));
 }
 
 void UBinarySettingWidget::NativePreConstruct()

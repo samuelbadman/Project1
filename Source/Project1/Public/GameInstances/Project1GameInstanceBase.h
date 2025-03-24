@@ -18,10 +18,15 @@ class PROJECT1_API UProject1GameInstanceBase : public UGameInstance
 public:
 	UPROPERTY(BlueprintReadWrite)
 	bool TestSetting1Value = true;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool TestSetting2Value = false;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool TestSetting3Value = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString TestSettingValue4{ "Value3" };
 
 private:
 	FStreamableManager StreamableManager{};

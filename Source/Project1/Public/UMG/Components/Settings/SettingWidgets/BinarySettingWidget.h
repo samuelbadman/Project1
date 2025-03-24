@@ -6,7 +6,14 @@
 #include "SettingUserWidgetBase.h"
 #include "BinarySettingWidget.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSettingValueChangedDelegate, bool, NewValue);
+UENUM()
+enum class EBinarySettingValue : uint8
+{
+	Value1 UMETA(DisplayName = "Binary Setting Value 1"),
+	Value2 UMETA(DisplayName = "Binary Setting Value 2")
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBinarySettingValueChangedDelegate, EBinarySettingValue, NewValue);
 
 /**
  * 
@@ -27,7 +34,7 @@ private:
 	FString SettingValue2Label;
 
 	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Setting Value Changed"))
-	FOnSettingValueChangedDelegate OnSettingValueChangedDelegate;
+	FOnBinarySettingValueChangedDelegate OnSettingValueChangedDelegate;
 
 	bool SettingValue;
 

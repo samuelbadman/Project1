@@ -15,7 +15,7 @@ enum class ESettingInputResult : uint8
 	Unhandled
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGetSettingValueDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGetDefaultSettingValueDelegate);
 
 /**
  *
@@ -29,8 +29,8 @@ private:
 	UPROPERTY(EditAnywhere, meta = (MultiLine = "true"))
 	FText SettingDescriptionText;
 
-	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Get Setting Value"))
-	FOnGetSettingValueDelegate OnGetSettingValueDelegate;
+	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Get Default Setting Value"))
+	FOnGetDefaultSettingValueDelegate OnGetDefaultSettingValueDelegate;
 
 	// The settings page widget that owns this setting
 	TObjectPtr<USettingsPageWidget> OwningSettingsPage;

@@ -6,7 +6,7 @@
 
 USettingUserWidgetBase::USettingUserWidgetBase()
 	: SettingDescriptionText(FText::FromString(TEXT("No description"))),
-	OnGetSettingValueDelegate({}),
+	OnGetDefaultSettingValueDelegate({}),
 	OwningSettingsPage(nullptr)
 {
 }
@@ -39,5 +39,5 @@ void USettingUserWidgetBase::InitializeSetting(TObjectPtr<USettingsPageWidget> O
 	OwningSettingsPage = OwningPage;
 
 	// Notify blueprint to get current value of setting and update widget with value
-	OnGetSettingValueDelegate.Broadcast();
+	OnGetDefaultSettingValueDelegate.Broadcast();
 }
