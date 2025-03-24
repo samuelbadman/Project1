@@ -51,10 +51,11 @@ void UCompassBarUserWidget::NativeOnInitialized()
 	BackgroundBarDynamicMaterialInstance = GetBackgroundImage()->GetDynamicMaterial();
 
 	// Get game player camera manager
-	PlayerCameraManager = CastChecked<AGamePlayerCameraManager>(UGameplayStatics::GetPlayerCameraManager(this, 0));
-
-	// Add player camera updated callback to player camera manager
-	PlayerCameraUpdatedDelegateHandle = PlayerCameraManager->OnCameraUpdated.AddUObject(this, &UCompassBarUserWidget::OnPlayerCameraUpdated);
+	if (PlayerCameraManager = Cast<AGamePlayerCameraManager>(UGameplayStatics::GetPlayerCameraManager(this, 0)))
+	{
+		// Add player camera updated callback to player camera manager
+		PlayerCameraUpdatedDelegateHandle = PlayerCameraManager->OnCameraUpdated.AddUObject(this, &UCompassBarUserWidget::OnPlayerCameraUpdated);
+	}
 }
 
 void UCompassBarUserWidget::NativeDestruct()

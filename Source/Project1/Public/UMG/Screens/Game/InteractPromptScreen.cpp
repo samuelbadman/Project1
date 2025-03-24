@@ -15,27 +15,30 @@ void UInteractPromptScreen::NativeOnPushedToLayerStack()
 	// The interact prompt is persistent as long as the game primary layout widget is around. It is always the top of the widget layer
 
 	// Get game player controller
-	GamePlayerController = CastChecked<AGamePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	GamePlayerController = Cast<AGamePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 
-	// Get player interact component
-	PlayerInteractComponent = GamePlayerController->GetPlayerInteractComponent();
+	if (IsValid(GamePlayerController))
+	{
+		// Get player interact component
+		PlayerInteractComponent = GamePlayerController->GetPlayerInteractComponent();
 
-	// Get owning layer
-	OwningLayer = CastChecked<AProject1HUDBase>(GamePlayerController->GetHUD())->GetRegisteredPrimaryLayoutWidgetLayer(GetOwningLayerName());
+		// Get owning layer
+		OwningLayer = CastChecked<AProject1HUDBase>(GamePlayerController->GetHUD())->GetRegisteredPrimaryLayoutWidgetLayer(GetOwningLayerName());
 
-	// Hide interact prompt in owning layer
-	OwningLayer->CollapseTop();
+		// Hide interact prompt in owning layer
+		OwningLayer->CollapseTop();
 
-	// Register to events
-	OnBeginInteractablePlayerOverlapDelegateHandle =
-		PlayerInteractComponent->OnBeginInteractableOverlapDelegate.AddUObject(this, &UInteractPromptScreen::OnInteractableBeginPlayerOverlap);
-	OnEndInteractablePlayerOverlapDelegateHandle =
-		PlayerInteractComponent->OnEndInteractableOverlapDelegate.AddUObject(this, &UInteractPromptScreen::OnInteractableEndPlayerOverlap);
-	OnTargetInteractableChangedDelegateHandle =
-		PlayerInteractComponent->OnTargetInteractableChangedDelegate.AddUObject(this, &UInteractPromptScreen::OnTargetInteractableChanged);
+		// Register to events
+		OnBeginInteractablePlayerOverlapDelegateHandle =
+			PlayerInteractComponent->OnBeginInteractableOverlapDelegate.AddUObject(this, &UInteractPromptScreen::OnInteractableBeginPlayerOverlap);
+		OnEndInteractablePlayerOverlapDelegateHandle =
+			PlayerInteractComponent->OnEndInteractableOverlapDelegate.AddUObject(this, &UInteractPromptScreen::OnInteractableEndPlayerOverlap);
+		OnTargetInteractableChangedDelegateHandle =
+			PlayerInteractComponent->OnTargetInteractableChangedDelegate.AddUObject(this, &UInteractPromptScreen::OnTargetInteractableChanged);
 
-	GamePlayerController->InteractPromptInteractTriggered.AddUObject(this, &UInteractPromptScreen::OnInteractTriggered);
-	GamePlayerController->InteractPromptSwitchActionTriggered.AddUObject(this, &UInteractPromptScreen::OnSwitchActionTriggered);
+		GamePlayerController->InteractPromptInteractTriggered.AddUObject(this, &UInteractPromptScreen::OnInteractTriggered);
+		GamePlayerController->InteractPromptSwitchActionTriggered.AddUObject(this, &UInteractPromptScreen::OnSwitchActionTriggered);
+	}
 }
 
 void UInteractPromptScreen::NativeOnShown()
