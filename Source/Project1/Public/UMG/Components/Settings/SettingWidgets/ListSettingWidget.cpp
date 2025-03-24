@@ -7,7 +7,8 @@
 
 UListSettingWidget::UListSettingWidget()
 	: SettingValueLabels({}),
-	CurrentSettingValueIndex(INDEX_NONE)
+	CurrentSettingValueIndex(INDEX_NONE),
+	DefaultSettingValueIndex(CurrentSettingValueIndex)
 {
 }
 
@@ -15,6 +16,7 @@ void UListSettingWidget::SetDefaultSettingValueIndex(int32 Index)
 {
 	if (SettingValueLabels.IsValidIndex(Index))
 	{
+		DefaultSettingValueIndex = Index;
 		UpdateSettingValue(Index);
 	}
 }
@@ -47,6 +49,11 @@ ESettingInputResult UListSettingWidget::ProcessNavigationInput(const FVector2D& 
 	}
 
 	return ESettingInputResult::Unhandled;
+}
+
+bool UListSettingWidget::HasSettingValueChanged() const
+{
+	return (CurrentSettingValueIndex != DefaultSettingValueIndex);
 }
 
 void UListSettingWidget::UpdateSettingValue(int32 NewValueIndex)

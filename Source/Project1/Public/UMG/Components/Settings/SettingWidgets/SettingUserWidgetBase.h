@@ -58,6 +58,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SettingUserWidgetBase")
 	const FText& GetSettingDescription() const { return SettingDescriptionText; }
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "SettingUserWidgetBase")
+	virtual bool HasSettingValueChanged() const;
+
 	virtual void FocusSetting();
 	virtual void UnfocusSetting();
 	virtual ESettingInputResult ProcessConfirmInput();

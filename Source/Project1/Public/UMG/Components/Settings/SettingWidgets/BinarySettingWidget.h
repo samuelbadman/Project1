@@ -37,6 +37,7 @@ private:
 	FOnBinarySettingValueChangedDelegate OnSettingValueChangedDelegate;
 
 	bool SettingValue;
+	bool DefaultSettingValue;
 
 public:
 	UBinarySettingWidget();
@@ -61,6 +62,7 @@ public:
 private:
 	void NativePreConstruct() override;
 	ESettingInputResult ProcessConfirmInput() override;
+	bool HasSettingValueChanged() const override;
 
 	void UpdateSettingValue(bool NewValue);
 	void UpdateSettingValueLabel();

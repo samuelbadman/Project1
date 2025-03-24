@@ -11,6 +11,12 @@ USettingUserWidgetBase::USettingUserWidgetBase()
 {
 }
 
+bool USettingUserWidgetBase::HasSettingValueChanged() const
+{
+	// Base class implementation is empty
+	return false;
+}
+
 void USettingUserWidgetBase::FocusSetting()
 {
 	OnSettingFocused();

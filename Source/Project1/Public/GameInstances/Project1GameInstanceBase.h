@@ -16,6 +16,7 @@ class PROJECT1_API UProject1GameInstanceBase : public UGameInstance
 	GENERATED_BODY()
 	
 public:
+	// These test settings are debug values used to test setting widget functionality inside the settings screen. They are to be deleted when implementing settings screen
 	UPROPERTY(BlueprintReadWrite)
 	bool TestSetting1Value = true;
 

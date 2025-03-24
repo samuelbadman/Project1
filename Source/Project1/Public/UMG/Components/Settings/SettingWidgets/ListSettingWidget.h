@@ -26,6 +26,7 @@ private:
 	FOnListSettingValueChangedDelegate OnSettingValueChangedDelegate;
 
 	int32 CurrentSettingValueIndex;
+	int32 DefaultSettingValueIndex;
 
 public:
 	UListSettingWidget();
@@ -48,6 +49,7 @@ public:
 
 private:
 	ESettingInputResult ProcessNavigationInput(const FVector2D& NavigationInput) override;
+	bool HasSettingValueChanged() const override;
 
 	void UpdateSettingValue(int32 NewValueIndex);
 };

@@ -9,7 +9,8 @@ UBinarySettingWidget::UBinarySettingWidget()
 	SettingValue1Label(TEXT("Default Value 1 Label")),
 	SettingValue2Label(TEXT("Default Value 2 Label")),
 	OnSettingValueChangedDelegate({}),
-	SettingValue(true)
+	SettingValue(true),
+	DefaultSettingValue(SettingValue)
 {
 }
 
@@ -20,6 +21,7 @@ void UBinarySettingWidget::FlipSettingValue()
 
 void UBinarySettingWidget::SetDefaultSettingValue(bool NewValue)
 {
+	DefaultSettingValue = NewValue;
 	UpdateSettingValue(NewValue);
 }
 
@@ -46,6 +48,11 @@ ESettingInputResult UBinarySettingWidget::ProcessConfirmInput()
 {
 	FlipSettingValue();
 	return ESettingInputResult::Handled;
+}
+
+bool UBinarySettingWidget::HasSettingValueChanged() const
+{
+	return (SettingValue != DefaultSettingValue);
 }
 
 void UBinarySettingWidget::UpdateSettingValue(bool NewValue)
