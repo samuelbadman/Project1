@@ -63,6 +63,11 @@ void AProject1CharacterBase::SetGroundMovementState(ECharacterGroundMovementStat
 	Movement->MaxWalkSpeed = Speed;
 }
 
+void AProject1CharacterBase::OnFootstepNotify(const FName& FootBoneName)
+{
+	// Base class implementation is empty
+}
+
 FVector AProject1CharacterBase::GetAIRequestedVelocity(const FVector& AIMoveVelocity)
 {
 	return AIMoveVelocity;

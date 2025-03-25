@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataAsset.h"
+#include "Project1DataAssetBase.h"
 #include "CharacterAttributesDataAsset.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT1_API UCharacterAttributesDataAsset : public UDataAsset
+class PROJECT1_API UCharacterAttributesDataAsset : public UProject1DataAssetBase
 {
 	GENERATED_BODY()
 	

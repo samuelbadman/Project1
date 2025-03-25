@@ -37,6 +37,8 @@ public:
 	void UpdateCapsuleRotation(float DeltaTime);
 	void SetGroundMovementState(ECharacterGroundMovementState State);
 
+	virtual void OnFootstepNotify(const FName& FootBoneName);
+
 	FORCEINLINE TObjectPtr<UCharacterAttributesDataAsset> GetCharacterAttributes() const { return CharacterAttributes; }
 
 protected:

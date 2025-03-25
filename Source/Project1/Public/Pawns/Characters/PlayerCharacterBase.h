@@ -22,8 +22,15 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPointLightComponent> GlowPointLight;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "PlayerGlowLight")
 	TObjectPtr<UCurveFloat> GlowPointLightFadeCurve;
+
+	UPROPERTY(EditAnywhere, Category = "Footsteps")
+	TObjectPtr<USoundBase> FootstepSound;
+	UPROPERTY(EditAnywhere, Category = "Footsteps")
+	TObjectPtr<USoundAttenuation> FootstepSoundAttenuation;
+
+	TObjectPtr<UWorld> World;
 
 	float GlowPointLightIntensity;
 	FTimeline GlowPointLightFadeTimeline;
@@ -41,6 +48,8 @@ protected:
 	void Tick(float DeltaTime) override;
 
 private:
+	void OnFootstepNotify(const FName& FootBoneName) override;
+
 	UFUNCTION()
 	void GlowPointLightFadeTimelineProgress(float Value);
 	UFUNCTION()

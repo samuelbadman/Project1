@@ -3,16 +3,20 @@
 
 #include "TestAICharacter.h"
 #include "DataAssets/CharacterAttributesDataAsset.h"
+#include "FunctionLibraries/Project1CharacterLibrary.h"
 
 ATestAICharacter::ATestAICharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	FootstepSound(nullptr),
+	FootstepSoundAttenuation(nullptr),
+	World(nullptr)
 {
-	World = nullptr;
 }
 
 void ATestAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
 	World = GetWorld();
 }
 
@@ -24,4 +28,11 @@ FVector ATestAICharacter::GetAIRequestedVelocity(const FVector& AIMoveVelocity)
 		AIMoveVelocity.ToOrientationQuat(),
 		World->GetDeltaSeconds(),
 		GetCharacterAttributes()->CapsuleRotationSpeed).Vector() * AIMoveVelocity.Size());
+}
+
+void ATestAICharacter::OnFootstepNotify(const FName& FootBoneName)
+{
+	Super::OnFootstepNotify(FootBoneName);
+
+	UProject1CharacterLibrary::PlayFootstepFX(World, GetMesh(), FootBoneName, FootstepSound, FootstepSoundAttenuation);
 }

@@ -3,9 +3,13 @@
 
 #include "PlayerCharacterBase.h"
 #include "Components/PointLightComponent.h"
+#include "FunctionLibraries/Project1CharacterLibrary.h"
 
 APlayerCharacterBase::APlayerCharacterBase(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	FootstepSound(nullptr),
+	FootstepSoundAttenuation(nullptr),
+	World(nullptr)
 {
 	// Set actor tick
 	PrimaryActorTick.bCanEverTick = true;
@@ -43,6 +47,9 @@ void APlayerCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Get world
+	World = GetWorld();
+
 	// Setup glow point light fade timeline
 	FOnTimelineFloat GlowPointLightFadeTimelineInterpFunc{};
 	GlowPointLightFadeTimelineInterpFunc.BindUFunction(this, FName(TEXT("GlowPointLightFadeTimelineProgress")));
@@ -62,6 +69,13 @@ void APlayerCharacterBase::Tick(float DeltaTime)
 
 	// Tick glow point light fade timeline
 	GlowPointLightFadeTimeline.TickTimeline(DeltaTime);
+}
+
+void APlayerCharacterBase::OnFootstepNotify(const FName& FootBoneName)
+{
+	Super::OnFootstepNotify(FootBoneName);
+
+	UProject1CharacterLibrary::PlayFootstepFX(World, GetMesh(), FootBoneName, FootstepSound, FootstepSoundAttenuation);
 }
 
 void APlayerCharacterBase::GlowPointLightFadeTimelineProgress(float Value)
