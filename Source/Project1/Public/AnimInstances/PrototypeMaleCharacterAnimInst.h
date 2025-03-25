@@ -14,4 +14,28 @@ class PROJECT1_API UPrototypeMaleCharacterAnimInst : public UProject1AnimInstanc
 {
 	GENERATED_BODY()
 	
+private:
+	UPROPERTY(BlueprintReadOnly, Category = "AnimData", meta = (AllowPrivateAccess = "true"))
+	bool bIsWalking;
+
+	TObjectPtr<APawn> PawnOwner;
+	FVector PawnOwnerVelocity;
+
+public:
+	UPrototypeMaleCharacterAnimInst();
+
+private:
+	//// the below functions are the native overrides for each phase
+	//// Native initialization override point
+	void NativeInitializeAnimation() override;
+	//// Native update override point. It is usually a good idea to simply gather data in this step and 
+	//// for the bulk of the work to be done in NativeThreadSafeUpdateAnimation.
+	void NativeUpdateAnimation(float DeltaSeconds) override;
+	//// Native thread safe update override point. Executed on a worker thread just prior to graph update 
+	//// for linked anim instances, only called when the hosting node(s) are relevant
+	void NativeThreadSafeUpdateAnimation(float DeltaSeconds) override;
+	//// Native Post Evaluate override point
+	//void NativePostEvaluateAnimation() override;
+	//// Native Uninitialize override point
+	//void NativeUninitializeAnimation() override;
 };
