@@ -6,6 +6,8 @@
 #include "AnimInstances/Project1AnimInstanceBase.h"
 #include "PrototypeMaleCharacterAnimInst.generated.h"
 
+enum class ECharacterGroundMovementState : uint8;
+
 /**
  * 
  */
@@ -18,8 +20,11 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = "AnimData", meta = (AllowPrivateAccess = "true"))
 	bool bIsWalking;
 
-	TObjectPtr<APawn> PawnOwner;
-	FVector PawnOwnerVelocity;
+	UPROPERTY(BlueprintReadOnly, Category = "AnimData", meta = (AllowPrivateAccess = "true"))
+	bool bIsRunning;
+
+	FVector OwnerVelocity;
+	ECharacterGroundMovementState OwnerGroundMovementState;
 
 public:
 	UPrototypeMaleCharacterAnimInst();
@@ -27,7 +32,7 @@ public:
 private:
 	//// the below functions are the native overrides for each phase
 	//// Native initialization override point
-	void NativeInitializeAnimation() override;
+	//void NativeInitializeAnimation() override;
 	//// Native update override point. It is usually a good idea to simply gather data in this step and 
 	//// for the bulk of the work to be done in NativeThreadSafeUpdateAnimation.
 	void NativeUpdateAnimation(float DeltaSeconds) override;

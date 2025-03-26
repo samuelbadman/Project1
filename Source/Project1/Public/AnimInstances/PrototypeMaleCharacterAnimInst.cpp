@@ -2,28 +2,26 @@
 
 
 #include "PrototypeMaleCharacterAnimInst.h"
+#include "DataAssets/CharacterAttributesDataAsset.h"
+#include "Enums/CharacterGroundMovementState.h"
 
 UPrototypeMaleCharacterAnimInst::UPrototypeMaleCharacterAnimInst()
-	: bIsWalking(false),
-	PawnOwner(nullptr),
-	PawnOwnerVelocity(FVector::ZeroVector)
+	: 
+	bIsWalking(false),
+	bIsRunning(false),
+	OwnerVelocity(FVector::ZeroVector),
+	OwnerGroundMovementState(ECharacterGroundMovementState::Max)
 {
-}
-
-void UPrototypeMaleCharacterAnimInst::NativeInitializeAnimation()
-{
-	Super::NativeInitializeAnimation();
-
-	PawnOwner = TryGetPawnOwner();
 }
 
 void UPrototypeMaleCharacterAnimInst::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (IsValid(PawnOwner))
+	if (IsValid(GetProject1CharacterOwner()))
 	{
-		PawnOwnerVelocity = PawnOwner->GetVelocity();
+		OwnerVelocity = GetProject1CharacterOwner()->GetVelocity();
+		OwnerGroundMovementState = GetProject1CharacterOwner()->GetCurrentGroundMovementState();
 	}
 }
 
@@ -31,5 +29,15 @@ void UPrototypeMaleCharacterAnimInst::NativeThreadSafeUpdateAnimation(float Delt
 {
 	Super::NativeThreadSafeUpdateAnimation(DeltaSeconds);
 
-	bIsWalking = (PawnOwnerVelocity.SizeSquared() > 0.0f);
+	// Determine ground movement state of character
+	const bool bIsIdle{ FVector2D(OwnerVelocity.X, OwnerVelocity.Y).SizeSquared() == 0.0f };
+	if (!bIsIdle)
+	{
+		bIsWalking = (OwnerGroundMovementState == ECharacterGroundMovementState::Walk);
+		bIsRunning = (OwnerGroundMovementState == ECharacterGroundMovementState::Run);
+	}
+	else
+	{
+		bIsWalking = bIsRunning = false;
+	}
 }

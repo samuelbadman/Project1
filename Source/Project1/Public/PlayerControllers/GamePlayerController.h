@@ -136,6 +136,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|OpenGameMenu")
 	TObjectPtr<UInputAction> OpenGameMenuInputAction{ nullptr };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|LookLockOn")
+	TObjectPtr<UInputMappingContext> LookLockOnInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|LookLockOn")
+	int32 LookLockOnInputMappingContextPriority{ 0 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|LookLockOn")
+	TObjectPtr<UInputAction> LookLockOnInputAction{ nullptr };
+
 	UPROPERTY(EditAnywhere, Category = "Look")
 	FVector2D AbsoluteLookInputSensitivity{ 1.0, 1.0 };
 
@@ -145,9 +154,14 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Move")
 	float MoveRightViewYawRotationRate{ 25.0f };
 
+	// The time in seconds that can elapse since a potential lock on target was rendered before it is no longer considered as rendered on screen and not included as a potential lock on target
+	UPROPERTY(EditAnywhere, Category = "LookLockOn")
+	float LockOnTargetRecentlyRenderedTolerance{ 0.1f };
+
 	TObjectPtr<UWorld> World{ nullptr };
 	TObjectPtr<AGamePlayerCameraManager> GamePlayerCameraManager{ nullptr };
 	TObjectPtr<AGameHUD> GameHUD{ nullptr };
+	TArray<TObjectPtr<AActor>> PotentialLockOnTargets{};
 
 public:
 	AGamePlayerController();
@@ -184,4 +198,7 @@ private:
 	void OnMoveTriggered(const FInputActionValue& Value);
 	void OnJumpTriggered(const FInputActionValue& Value);
 	void OnOpenGameMenuTriggered(const FInputActionValue& Value);
+	void OnLookLockOnTriggered(const FInputActionValue& Value);
+
+	void GetPotentialLockOnTargets(TArray<TObjectPtr<AActor>>& OutPotentialTargets);
 };

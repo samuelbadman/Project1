@@ -18,19 +18,24 @@ AProject1CharacterBase::AProject1CharacterBase(const FObjectInitializer& ObjectI
 	World = nullptr;
 	TargetCapsuleWorldOrientation = FQuat::Identity;
 	CurrentGroundMovementState = ECharacterGroundMovementState::Max;
+
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
 	// Set colliding character components to overlap camera collision channel
 	static constexpr ECollisionChannel CameraCollisionChannel{ ECC_Camera };
 	static constexpr ECollisionResponse CameraCollisionChannelCharacterResponse{ ECR_Overlap };
 	GetCapsuleComponent()->SetCollisionResponseToChannel(CameraCollisionChannel, CameraCollisionChannelCharacterResponse);
 	GetMesh()->SetCollisionResponseToChannel(CameraCollisionChannel, CameraCollisionChannelCharacterResponse);
+
 	// Clear inherit controller rotation settings
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+
 	// Do not orient character to movement. This will be done by the controller
 	GetCharacterMovement()->bOrientRotationToMovement = false;
+
 	// Automatically possess character with AI controller whether spawned or placed in world unless a player controller possesses the character
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
@@ -61,6 +66,8 @@ void AProject1CharacterBase::SetGroundMovementState(ECharacterGroundMovementStat
 
 	Movement->MinAnalogWalkSpeed = Speed;
 	Movement->MaxWalkSpeed = Speed;
+
+	CurrentGroundMovementState = State;
 }
 
 void AProject1CharacterBase::OnFootstepNotify(const FName& FootBoneName)

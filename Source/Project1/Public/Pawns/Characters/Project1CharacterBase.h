@@ -40,6 +40,7 @@ public:
 	virtual void OnFootstepNotify(const FName& FootBoneName);
 
 	FORCEINLINE TObjectPtr<UCharacterAttributesDataAsset> GetCharacterAttributes() const { return CharacterAttributes; }
+	FORCEINLINE ECharacterGroundMovementState GetCurrentGroundMovementState() const { return CurrentGroundMovementState; }
 
 protected:
 	void BeginPlay() override;

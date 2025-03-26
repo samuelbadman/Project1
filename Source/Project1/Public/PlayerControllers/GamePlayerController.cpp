@@ -67,6 +67,7 @@ void AGamePlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnMoveTriggered);
 	EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnJumpTriggered);
 	EnhancedInputComponent->BindAction(OpenGameMenuInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnOpenGameMenuTriggered);
+	EnhancedInputComponent->BindAction(LookLockOnInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookLockOnTriggered);
 }
 
 void AGamePlayerController::OnPossess(APawn* aPawn)
@@ -105,6 +106,7 @@ void AGamePlayerController::BeginPlay()
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MoveInputMappingContext, MoveInputMappingContextPriority);
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(JumpInputMappingContext, JumpInputMappingContextPriority);
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(OpenGameMenuInputMappingContext, OpenGameMenuInputMappingContextPriority);
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(LookLockOnInputMappingContext, LookLockOnInputMappingContextPriority);
 }
 
 void AGamePlayerController::OnInteractPromptUIInteractTriggered(const FInputActionValue& Value)
@@ -219,4 +221,33 @@ void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)
 void AGamePlayerController::OnOpenGameMenuTriggered(const FInputActionValue& Value)
 {
 	GameHUD->OpenGameMenu();
+}
+
+void AGamePlayerController::OnLookLockOnTriggered(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Look lock on input triggered")));
+
+	GetPotentialLockOnTargets(PotentialLockOnTargets);
+
+	for (TObjectPtr<AActor> Target : PotentialLockOnTargets)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Found potential lock on target: %s"), *Target->GetName()));
+	}
+}
+
+void AGamePlayerController::GetPotentialLockOnTargets(TArray<TObjectPtr<AActor>>& OutPotentialTargets)
+{
+	OutPotentialTargets.Empty();
+
+	// Find actors rendered on screen within time tolerance
+	for (TObjectIterator<AActor> Itr; Itr; ++Itr)
+	{
+		if (Itr->WasRecentlyRendered(LockOnTargetRecentlyRenderedTolerance))
+		{
+			// TODO: Create a lock on target interface that can be implemented by actors that can be locked on. Add an OnLockedOn event to interface that can be 
+			// implemented by lock on targets. Maybe the enemy will become more aggressive when locked on?
+			// Return from here an array of found lock on targets
+			OutPotentialTargets.Add(*Itr);
+		}
+	}
 }
