@@ -9,6 +9,8 @@
 #include "Components/ActorComponents/PlayerInteractComponent.h"
 #include "HUDs/GameHUD.h"
 
+#include "Kismet/GameplayStatics.h"
+
 AGamePlayerController::AGamePlayerController()
 {
 	PlayerCharacterControllerComponent = CreateDefaultSubobject<UPlayerCharacterControllerComponent>(FName(TEXT("PlayerCharacterControllerComponent")));
@@ -202,12 +204,12 @@ void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
 	const FVector WorldMovementDirection{ ViewYawOrientation.RotateVector(InputVector).GetSafeNormal() };
 
 	// Add view yaw scaled by the amount of right input that will not be processed until the next input frame
-	const FVector ViewYawDirection{ ViewYawOrientation.Vector() };
-	const double ViewYawOffset{ FMath::Abs(1.0 -
-		FMath::Abs(FVector2D::DotProduct(FVector2D(WorldMovementDirection.X, WorldMovementDirection.Y), FVector2D(ViewYawDirection.X, ViewYawDirection.Y)))) };
-	const double Sign = -1.0 * FMath::Sign(FVector::DotProduct(FVector::CrossProduct(ViewYawDirection, FVector::UpVector).GetSafeNormal(), WorldMovementDirection));
+	//const FVector ViewYawDirection{ ViewYawOrientation.Vector() };
+	//const double ViewYawOffset{ FMath::Abs(1.0 -
+	//	FMath::Abs(FVector2D::DotProduct(FVector2D(WorldMovementDirection.X, WorldMovementDirection.Y), FVector2D(ViewYawDirection.X, ViewYawDirection.Y)))) };
+	//const double Sign = -1.0 * FMath::Sign(FVector::DotProduct(FVector::CrossProduct(ViewYawDirection, FVector::UpVector).GetSafeNormal(), WorldMovementDirection));
 
-	GamePlayerCameraManager->AddViewYawRotation(MoveRightViewYawRotationRate * (ViewYawOffset * Sign) * World->DeltaTimeSeconds);
+	//GamePlayerCameraManager->AddViewYawRotation(MoveRightViewYawRotationRate * (ViewYawOffset * Sign) * World->DeltaTimeSeconds);
 
 	// Add movement input
 	PlayerCharacterControllerComponent->OnMoveInput(WorldMovementDirection, InputMagnitude);
@@ -239,15 +241,41 @@ void AGamePlayerController::GetPotentialLockOnTargets(TArray<TObjectPtr<AActor>>
 {
 	OutPotentialTargets.Empty();
 
-	// Find actors rendered on screen within time tolerance
-	for (TObjectIterator<AActor> Itr; Itr; ++Itr)
+	// Find actors inside camera view frustum
+	if (TObjectPtr<ULocalPlayer> LocalPlayer = GetLocalPlayer())
 	{
-		if (Itr->WasRecentlyRendered(LockOnTargetRecentlyRenderedTolerance))
+		if (TObjectPtr<UGameViewportClient> ViewportClient = LocalPlayer->ViewportClient)
 		{
-			// TODO: Create a lock on target interface that can be implemented by actors that can be locked on. Add an OnLockedOn event to interface that can be 
-			// implemented by lock on targets. Maybe the enemy will become more aggressive when locked on?
-			// Return from here an array of found lock on targets
-			OutPotentialTargets.Add(*Itr);
+			FSceneViewFamilyContext ViewFamily(FSceneViewFamily::ConstructionValues(ViewportClient->Viewport,
+				World->Scene,
+				ViewportClient->EngineShowFlags).SetRealtimeUpdate(true));
+
+			FVector ViewLocation;
+			FRotator ViewRotation;
+			FSceneView* SceneView{ LocalPlayer->CalcSceneView(&ViewFamily, ViewLocation, ViewRotation, ViewportClient->Viewport) };
+
+			if (SceneView != nullptr)
+			{
+				TArray<AActor*> Actors{};
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
+
+				for (AActor* Actor : Actors)
+				{
+					FVector ActorBoundsOrigin;
+					FVector ActorBoundsExtent;
+					Actor->GetActorBounds(false, ActorBoundsOrigin, ActorBoundsExtent);
+
+					bool ActorInView{ SceneView->ViewFrustum.IntersectBox(ActorBoundsOrigin, ActorBoundsExtent) };
+
+					if (ActorInView)
+					{
+						// TODO: Create a lock on target interface that can be implemented by actors that can be locked on. Add an OnLockedOn event to interface that can be 
+						// implemented by lock on targets. Maybe the enemy will become more aggressive when locked on?
+						// Return from here an array of found lock on targets
+						GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Actor in view: %s"), *Actor->GetName()));
+					}
+				}
+			}
 		}
 	}
 }

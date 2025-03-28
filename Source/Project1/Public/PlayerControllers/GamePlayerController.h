@@ -154,10 +154,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Move")
 	float MoveRightViewYawRotationRate{ 25.0f };
 
-	// The time in seconds that can elapse since a potential lock on target was rendered before it is no longer considered as rendered on screen and not included as a potential lock on target
-	UPROPERTY(EditAnywhere, Category = "LookLockOn")
-	float LockOnTargetRecentlyRenderedTolerance{ 0.1f };
-
 	TObjectPtr<UWorld> World{ nullptr };
 	TObjectPtr<AGamePlayerCameraManager> GamePlayerCameraManager{ nullptr };
 	TObjectPtr<AGameHUD> GameHUD{ nullptr };
