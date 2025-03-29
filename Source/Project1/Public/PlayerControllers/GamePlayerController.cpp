@@ -8,8 +8,8 @@
 #include "Components/ActorComponents/PlayerCharacterControllerComponent.h"
 #include "Components/ActorComponents/PlayerInteractComponent.h"
 #include "HUDs/GameHUD.h"
-
 #include "Kismet/GameplayStatics.h"
+#include "Interfaces/ViewLockOnTargetInterface.h"
 
 AGamePlayerController::AGamePlayerController()
 {
@@ -231,51 +231,82 @@ void AGamePlayerController::OnLookLockOnTriggered(const FInputActionValue& Value
 
 	GetPotentialLockOnTargets(PotentialLockOnTargets);
 
-	for (TObjectPtr<AActor> Target : PotentialLockOnTargets)
+	for (IViewLockOnTargetInterface* Target : PotentialLockOnTargets)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Found potential lock on target: %s"), *Target->GetName()));
+		// Get target as an actor
+		AActor* const TargetActor{ Cast<AActor>(Target) };
+
+		if (TargetActor)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Found potential lock on target: %s"), *TargetActor->GetName()));
+		}
 	}
 }
 
-void AGamePlayerController::GetPotentialLockOnTargets(TArray<TObjectPtr<AActor>>& OutPotentialTargets)
+void AGamePlayerController::GetPotentialLockOnTargets(TArray<IViewLockOnTargetInterface*>& OutPotentialTargets)
 {
 	OutPotentialTargets.Empty();
 
 	// Find actors inside camera view frustum
-	if (TObjectPtr<ULocalPlayer> LocalPlayer = GetLocalPlayer())
+	const TObjectPtr<ULocalPlayer> LocalPlayer = GetLocalPlayer();
+
+	if (!IsValid(LocalPlayer))
 	{
-		if (TObjectPtr<UGameViewportClient> ViewportClient = LocalPlayer->ViewportClient)
+		return;
+	}
+
+	const TObjectPtr<UGameViewportClient> ViewportClient = LocalPlayer->ViewportClient;
+	if (!IsValid(ViewportClient))
+	{
+		return;
+	}
+
+	// Get scene view structure
+	FSceneViewFamilyContext ViewFamily(FSceneViewFamily::ConstructionValues(ViewportClient->Viewport,
+		World->Scene,
+		ViewportClient->EngineShowFlags).SetRealtimeUpdate(true));
+
+	FVector ViewLocation;
+	FRotator ViewRotation;
+	FSceneView* SceneView{ LocalPlayer->CalcSceneView(&ViewFamily, ViewLocation, ViewRotation, ViewportClient->Viewport) };
+
+	if (SceneView == nullptr)
+	{
+		return;
+	}
+
+	TArray<AActor*> Actors{};
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
+
+	for (AActor* Actor : Actors)
+	{
+		// Ignore the player character actor as the player character can never be locked on to with the view
+		if (GetPawn() == Actor)
 		{
-			FSceneViewFamilyContext ViewFamily(FSceneViewFamily::ConstructionValues(ViewportClient->Viewport,
-				World->Scene,
-				ViewportClient->EngineShowFlags).SetRealtimeUpdate(true));
-
-			FVector ViewLocation;
-			FRotator ViewRotation;
-			FSceneView* SceneView{ LocalPlayer->CalcSceneView(&ViewFamily, ViewLocation, ViewRotation, ViewportClient->Viewport) };
-
-			if (SceneView != nullptr)
-			{
-				TArray<AActor*> Actors{};
-				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
-
-				for (AActor* Actor : Actors)
-				{
-					FVector ActorBoundsOrigin;
-					FVector ActorBoundsExtent;
-					Actor->GetActorBounds(false, ActorBoundsOrigin, ActorBoundsExtent);
-
-					bool ActorInView{ SceneView->ViewFrustum.IntersectBox(ActorBoundsOrigin, ActorBoundsExtent) };
-
-					if (ActorInView)
-					{
-						// TODO: Create a lock on target interface that can be implemented by actors that can be locked on. Add an OnLockedOn event to interface that can be 
-						// implemented by lock on targets. Maybe the enemy will become more aggressive when locked on?
-						// Return from here an array of found lock on targets
-						GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Actor in view: %s"), *Actor->GetName()));
-					}
-				}
-			}
+			continue;
 		}
+
+		// Does the actor implement the view lock on target interface, making it a valid lock on target?
+		IViewLockOnTargetInterface* const ViewLockOnTargetInterface = Cast<IViewLockOnTargetInterface>(Actor);
+
+		if (ViewLockOnTargetInterface == nullptr)
+		{
+			continue;
+		}
+
+		// Calculate the actor's bounds
+		FVector ActorBoundsOrigin;
+		FVector ActorBoundsExtent;
+		Actor->GetActorBounds(false, ActorBoundsOrigin, ActorBoundsExtent, true);
+
+		// Is the actor inside the scene view's frustum
+		const bool ActorInView{ SceneView->ViewFrustum.IntersectBox(ActorBoundsOrigin, ActorBoundsExtent) };
+		if (!ActorInView)
+		{
+			continue;
+		}
+
+		// Actor is valid lock on target. Add it to the array of potential targets
+		OutPotentialTargets.Add(ViewLockOnTargetInterface);
 	}
 }

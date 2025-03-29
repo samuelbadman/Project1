@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/ViewLockOnTargetInterface.h"
 #include "Project1CharacterBase.generated.h"
 
 class UCharacterAttributesDataAsset;
 enum class ECharacterGroundMovementState : uint8;
 
 UCLASS()
-class PROJECT1_API AProject1CharacterBase : public ACharacter
+class PROJECT1_API AProject1CharacterBase : public ACharacter, public IViewLockOnTargetInterface
 {
 	GENERATED_BODY()
 
