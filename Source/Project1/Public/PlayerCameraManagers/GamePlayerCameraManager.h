@@ -73,6 +73,8 @@ public:
 	FQuat GetViewYawOrientation();
 	void ResetViewOrientation();
 
+	FVector GetViewWorldLocation() const;
+
 	FORCEINLINE void SetTargetFollowActor(TObjectPtr<const AActor> TargetActor) { TargetFollowActor = TargetActor; }
 
 private:

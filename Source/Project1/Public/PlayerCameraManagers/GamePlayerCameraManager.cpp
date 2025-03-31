@@ -66,6 +66,11 @@ void AGamePlayerCameraManager::ResetViewOrientation()
 	ViewYawTarget = static_cast<float>(TargetFollowActor->GetActorRotation().Yaw);
 }
 
+FVector AGamePlayerCameraManager::GetViewWorldLocation() const
+{
+	return PlayerCameraActor->GetCameraComponentWorldLocation();
+}
+
 void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
 {
 	if (IsValid(PlayerCameraActor))

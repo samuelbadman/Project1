@@ -7,14 +7,14 @@
 #include "PlayerCameraManagers/GamePlayerCameraManager.h"
 #include "Components/ActorComponents/PlayerCharacterControllerComponent.h"
 #include "Components/ActorComponents/PlayerInteractComponent.h"
+#include "Components/ActorComponents/PlayerViewLockOnComponent.h"
 #include "HUDs/GameHUD.h"
-#include "Kismet/GameplayStatics.h"
-#include "Interfaces/ViewLockOnTargetInterface.h"
 
 AGamePlayerController::AGamePlayerController()
 {
 	PlayerCharacterControllerComponent = CreateDefaultSubobject<UPlayerCharacterControllerComponent>(FName(TEXT("PlayerCharacterControllerComponent")));
 	PlayerInteractComponent = CreateDefaultSubobject<UPlayerInteractComponent>(FName(TEXT("PlayerInteractComponent")));
+	PlayerViewLockOnComponent = CreateDefaultSubobject<UPlayerViewLockOnComponent>(FName(TEXT("PlayerViewLockOnComponent")));
 }
 
 void AGamePlayerController::AddInteractPromptInputMappingContext()
@@ -227,86 +227,5 @@ void AGamePlayerController::OnOpenGameMenuTriggered(const FInputActionValue& Val
 
 void AGamePlayerController::OnLookLockOnTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Look lock on input triggered")));
-
-	GetPotentialLockOnTargets(PotentialLockOnTargets);
-
-	for (IViewLockOnTargetInterface* Target : PotentialLockOnTargets)
-	{
-		// Get target as an actor
-		AActor* const TargetActor{ Cast<AActor>(Target) };
-
-		if (TargetActor)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Cyan, FString::Printf(TEXT("Found potential lock on target: %s"), *TargetActor->GetName()));
-		}
-	}
-}
-
-void AGamePlayerController::GetPotentialLockOnTargets(TArray<IViewLockOnTargetInterface*>& OutPotentialTargets)
-{
-	OutPotentialTargets.Empty();
-
-	// Find actors inside camera view frustum
-	const TObjectPtr<ULocalPlayer> LocalPlayer = GetLocalPlayer();
-
-	if (!IsValid(LocalPlayer))
-	{
-		return;
-	}
-
-	const TObjectPtr<UGameViewportClient> ViewportClient = LocalPlayer->ViewportClient;
-	if (!IsValid(ViewportClient))
-	{
-		return;
-	}
-
-	// Get scene view structure
-	FSceneViewFamilyContext ViewFamily(FSceneViewFamily::ConstructionValues(ViewportClient->Viewport,
-		World->Scene,
-		ViewportClient->EngineShowFlags).SetRealtimeUpdate(true));
-
-	FVector ViewLocation;
-	FRotator ViewRotation;
-	FSceneView* SceneView{ LocalPlayer->CalcSceneView(&ViewFamily, ViewLocation, ViewRotation, ViewportClient->Viewport) };
-
-	if (SceneView == nullptr)
-	{
-		return;
-	}
-
-	TArray<AActor*> Actors{};
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), Actors);
-
-	for (AActor* Actor : Actors)
-	{
-		// Ignore the player character actor as the player character can never be locked on to with the view
-		if (GetPawn() == Actor)
-		{
-			continue;
-		}
-
-		// Does the actor implement the view lock on target interface, making it a valid lock on target?
-		IViewLockOnTargetInterface* const ViewLockOnTargetInterface = Cast<IViewLockOnTargetInterface>(Actor);
-
-		if (ViewLockOnTargetInterface == nullptr)
-		{
-			continue;
-		}
-
-		// Calculate the actor's bounds
-		FVector ActorBoundsOrigin;
-		FVector ActorBoundsExtent;
-		Actor->GetActorBounds(false, ActorBoundsOrigin, ActorBoundsExtent, true);
-
-		// Is the actor inside the scene view's frustum
-		const bool ActorInView{ SceneView->ViewFrustum.IntersectBox(ActorBoundsOrigin, ActorBoundsExtent) };
-		if (!ActorInView)
-		{
-			continue;
-		}
-
-		// Actor is valid lock on target. Add it to the array of potential targets
-		OutPotentialTargets.Add(ViewLockOnTargetInterface);
-	}
+	PlayerViewLockOnComponent->OnLockOnInput(World, this, GamePlayerCameraManager->GetViewWorldLocation());
 }

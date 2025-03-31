@@ -45,6 +45,7 @@ public:
 
 protected:
 	void BeginPlay() override;
+	bool IsConsideredForViewLockOn_Implementation() override;
 
 private:
 	void SetCharacterRotation(const FQuat& Rotation, const FQuat& MeshRotation);

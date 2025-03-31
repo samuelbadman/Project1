@@ -12,7 +12,7 @@ class UPlayerCharacterControllerComponent;
 class UPlayerInteractComponent;
 class AGameHUD;
 class UGameMenuScreen;
-class IViewLockOnTargetInterface;
+class UPlayerViewLockOnComponent;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptInteractTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptSwitchActionTriggeredDelegate, const FInputActionValue& /* Value */);
@@ -49,6 +49,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPlayerInteractComponent> PlayerInteractComponent{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPlayerViewLockOnComponent> PlayerViewLockOnComponent{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|InteractPrompt")
 	TObjectPtr<UInputMappingContext> InteractPromptInputMappingContext{ nullptr };
@@ -158,7 +161,6 @@ private:
 	TObjectPtr<UWorld> World{ nullptr };
 	TObjectPtr<AGamePlayerCameraManager> GamePlayerCameraManager{ nullptr };
 	TObjectPtr<AGameHUD> GameHUD{ nullptr };
-	TArray<IViewLockOnTargetInterface*> PotentialLockOnTargets{};
 
 public:
 	AGamePlayerController();
@@ -196,6 +198,4 @@ private:
 	void OnJumpTriggered(const FInputActionValue& Value);
 	void OnOpenGameMenuTriggered(const FInputActionValue& Value);
 	void OnLookLockOnTriggered(const FInputActionValue& Value);
-
-	void GetPotentialLockOnTargets(TArray<IViewLockOnTargetInterface*>& OutPotentialTargets);
 };

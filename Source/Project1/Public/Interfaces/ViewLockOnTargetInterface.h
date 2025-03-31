@@ -22,5 +22,6 @@ class PROJECT1_API IViewLockOnTargetInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-
+	UFUNCTION(BlueprintnativeEvent, Category = "ViewLockOnTargetInterface")
+	bool IsConsideredForViewLockOn();
 };

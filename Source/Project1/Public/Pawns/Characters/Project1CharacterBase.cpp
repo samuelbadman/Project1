@@ -90,6 +90,11 @@ void AProject1CharacterBase::BeginPlay()
 	TargetCapsuleWorldOrientation = GetActorQuat();
 }
 
+bool AProject1CharacterBase::IsConsideredForViewLockOn_Implementation()
+{
+	return true;
+}
+
 void AProject1CharacterBase::SetCharacterRotation(const FQuat& Rotation, const FQuat& MeshRotation)
 {
 	SetActorRotation(Rotation);

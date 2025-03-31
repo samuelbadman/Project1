@@ -1,0 +1,144 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "PlayerViewLockOnComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Interfaces/ViewLockOnTargetInterface.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+
+#include "Kismet/KismetSystemLibrary.h"
+
+void UPlayerViewLockOnComponent::OnLockOnInput(TObjectPtr<UWorld> World, TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation)
+{
+	// Find potential lock on targets
+	TArray<IViewLockOnTargetInterface*> PotentialLockOnTargets{};
+	GetPotentialLockOnTargets(World, PlayerController, ViewWorldLocation, PotentialLockOnTargets);
+
+	// Select which potential target to lock on to
+	// Lock on to the target closest to the center of the view on the horizontal axis
+	const FVector2D ViewportCenter{ UWidgetLayoutLibrary::GetViewportSize(World) * 0.5f };
+
+	const int32 NumPotentialLockOnTargets{ PotentialLockOnTargets.Num() };
+	TArray<float> TargetDistances{};
+	TargetDistances.SetNumZeroed(NumPotentialLockOnTargets);
+	for (int32 i = 0; i < NumPotentialLockOnTargets; ++i)
+	{
+		// Get target as an actor
+		AActor* const TargetActor{ Cast<AActor>(PotentialLockOnTargets[i]) };
+
+		if (TargetActor)
+		{
+			const FVector TargetActorWorldSpaceLocation{ TargetActor->GetActorLocation() };
+
+			// Get target actor screen space location
+			FVector2D ActorScreenLocation;
+			PlayerController->ProjectWorldLocationToScreen(TargetActorWorldSpaceLocation, ActorScreenLocation);
+
+			// Calculate the distance from the center of the view to the actor's screen space location on the horizontal axis
+			TargetDistances[i] = StaticCast<float>((ActorScreenLocation - ViewportCenter).SquaredLength());
+		}
+		else
+		{
+			TargetDistances[i] = UE_BIG_NUMBER;
+		}
+	}
+
+	// Get the index of the minimum distance value
+	const int32 ClosestIndex{ TargetDistances.Find(FMath::Min(TargetDistances)) };
+
+	if (PotentialLockOnTargets.IsValidIndex(ClosestIndex))
+	{
+		// TODO: Lock view on to found target
+		GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::Printf(TEXT("Lock on target: %s"),
+			*UKismetSystemLibrary::GetDisplayName(Cast<AActor>(PotentialLockOnTargets[ClosestIndex]))));
+	}
+}
+
+void UPlayerViewLockOnComponent::GetPotentialLockOnTargets(TObjectPtr<UWorld> World, TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation,
+	TArray<IViewLockOnTargetInterface*>& OutPotentialTargets)
+{
+	OutPotentialTargets.Empty();
+
+	// Find actors inside camera view frustum
+	const TObjectPtr<ULocalPlayer> LocalPlayer = PlayerController->GetLocalPlayer();
+
+	if (!IsValid(LocalPlayer))
+	{
+		return;
+	}
+
+	const TObjectPtr<UGameViewportClient> ViewportClient = LocalPlayer->ViewportClient;
+	if (!IsValid(ViewportClient))
+	{
+		return;
+	}
+
+	// Get scene view structure
+	FSceneViewFamilyContext ViewFamily(FSceneViewFamily::ConstructionValues(ViewportClient->Viewport,
+		World->Scene,
+		ViewportClient->EngineShowFlags).SetRealtimeUpdate(true));
+
+	FVector ViewLocation;
+	FRotator ViewRotation;
+	FSceneView* SceneView{ LocalPlayer->CalcSceneView(&ViewFamily, ViewLocation, ViewRotation, ViewportClient->Viewport) };
+
+	if (SceneView == nullptr)
+	{
+		return;
+	}
+
+	// Get actors around view
+	TArray<FHitResult> Hits;
+	if (!World->SweepMultiByChannel(Hits, ViewWorldLocation, ViewWorldLocation, FQuat::Identity, ECollisionChannel::ECC_Camera, FCollisionShape::MakeSphere(10000.0f)))
+	{
+		return;
+	}
+
+	for (const FHitResult& Hit : Hits)
+	{
+		const TObjectPtr<AActor> Actor{ Hit.GetActor() };
+
+		// Ignore the player character actor as the player character can never be locked on to with the view
+		if (PlayerController->GetPawn() == Actor)
+		{
+			continue;
+		}
+
+		// Does the actor implement the view lock on target interface, making it a valid lock on target?
+		IViewLockOnTargetInterface* const ViewLockOnTargetInterface = Cast<IViewLockOnTargetInterface>(Actor);
+
+		if (ViewLockOnTargetInterface == nullptr)
+		{
+			continue;
+		}
+
+		// Is the actor beyond the Z depth lock on limit
+		FVector ScreenLocation;
+		PlayerController->ProjectWorldLocationToScreenWithDistance(Actor->GetActorLocation(), ScreenLocation);
+		if (ScreenLocation.Z > StaticCast<double>(ViewLockOnMaxDepth))
+		{
+			continue;
+		}
+
+		// Can the actor currently be considered as a view lock on target
+		if (!IViewLockOnTargetInterface::Execute_IsConsideredForViewLockOn(Actor))
+		{
+			continue;
+		}
+
+		// Calculate the actor's bounds
+		FVector ActorBoundsOrigin;
+		FVector ActorBoundsExtent;
+		Actor->GetActorBounds(false, ActorBoundsOrigin, ActorBoundsExtent, true);
+
+		// Is the actor inside the scene view's frustum
+		const bool ActorInView{ SceneView->ViewFrustum.IntersectBox(ActorBoundsOrigin, ActorBoundsExtent) };
+		if (!ActorInView)
+		{
+			continue;
+		}
+
+		// Actor is valid lock on target. Add it to the array of potential targets
+		OutPotentialTargets.Add(ViewLockOnTargetInterface);
+	}
+}
