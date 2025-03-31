@@ -8,6 +8,7 @@
 #include "GameInstances/Project1GameInstanceBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameViewportClients/Project1GameViewportClientBase.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void AGamePlayerCameraManager::AddViewRotation(float Pitch, float Yaw)
 {
@@ -28,6 +29,12 @@ void AGamePlayerCameraManager::AddViewYawRotation(float Yaw)
 
 void AGamePlayerCameraManager::AddImmediateViewRotation(float Pitch, float Yaw)
 {
+	// Ignore immediate view rotation when the view is locked to a target
+	if (IsViewLocked())
+	{
+		return;
+	}
+
 	AddViewPitch(Pitch);
 	AddViewYaw(Yaw);
 
@@ -37,6 +44,12 @@ void AGamePlayerCameraManager::AddImmediateViewRotation(float Pitch, float Yaw)
 
 void AGamePlayerCameraManager::AddImmediateViewRotation(const FVector2D& InputVector)
 {
+	// Ignore immediate view rotation when the view is locked to a target
+	if (IsViewLocked())
+	{
+		return;
+	}
+
 	AddViewPitch(InputVector.Y);
 	AddViewYaw(InputVector.X);
 
@@ -69,6 +82,31 @@ void AGamePlayerCameraManager::ResetViewOrientation()
 FVector AGamePlayerCameraManager::GetViewWorldLocation() const
 {
 	return PlayerCameraActor->GetCameraComponentWorldLocation();
+}
+
+void AGamePlayerCameraManager::SetTargetFollowActor(TObjectPtr<const AActor> TargetActor)
+{
+	TargetFollowActor = TargetActor;
+}
+
+void AGamePlayerCameraManager::LockViewToTarget(TObjectPtr<const AActor> Target)
+{
+	ViewLockTargetActor = Target;
+}
+
+void AGamePlayerCameraManager::ClearViewLockTarget()
+{
+	LockViewToTarget(nullptr);
+}
+
+bool AGamePlayerCameraManager::IsViewLocked() const
+{
+	return IsValid(ViewLockTargetActor);
+}
+
+TObjectPtr<const AActor> AGamePlayerCameraManager::GetViewLockTarget() const
+{
+	return ViewLockTargetActor;
 }
 
 void AGamePlayerCameraManager::UpdateCamera(float DeltaTime)
@@ -139,6 +177,15 @@ void AGamePlayerCameraManager::AddViewYaw(float Yaw)
 
 void AGamePlayerCameraManager::UpdateCameraRotation(float DeltaTime)
 {
+	// If the view is locked on to a target, override the view pitch and yaw targets with calculated values to rotate the view to look at the lock on target
+	if (IsViewLocked())
+	{
+		const FRotator TargetLockOnViewRotation{ UKismetMathLibrary::FindLookAtRotation(GetViewWorldLocation(), ViewLockTargetActor->GetActorLocation()) };
+
+		ViewPitchTarget = StaticCast<float>(TargetLockOnViewRotation.Pitch);
+		ViewYawTarget = StaticCast<float>(TargetLockOnViewRotation.Yaw);
+	}
+
 	// Update player camera rotation. Current pitch and yaw values are interpolated as quaternions to ensure that the shortest path is taken during interpolations.
 	const float RotationInterpSpeed{ PlayerCameraActor->GetRotateInterpSpeed() };
 

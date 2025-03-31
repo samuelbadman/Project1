@@ -8,6 +8,7 @@
 
 class APlayerController;
 class IViewLockOnTargetInterface;
+class AGamePlayerCameraManager;
 
 /**
  * 
@@ -20,12 +21,21 @@ class PROJECT1_API UPlayerViewLockOnComponent : public UProject1ActorComponentBa
 private:
 	// Objects in with a screen space depth larger than this number will not be considered to be locked on to with the view
 	UPROPERTY(EditAnywhere)
-	float ViewLockOnMaxDepth{ 2000.0f };
+	float ViewLockMaxDepth;
+
+	TObjectPtr<UWorld> World;
+	TObjectPtr<AGamePlayerCameraManager> GamePlayerCameraManager;
+	FTimerHandle OverMaxDepthCheckTimerHandle;
+	float OverMaxDepthCheckIntervalSeconds;
 
 public:
-	void OnLockOnInput(TObjectPtr<UWorld> World, TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation);
+	UPlayerViewLockOnComponent();
+
+	void OnLockOnInput(TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation);
+	void SetGamePlayerCameraManager(TObjectPtr<AGamePlayerCameraManager> InGamePlayerCameraManager);
 
 private:
-	void GetPotentialLockOnTargets(TObjectPtr<UWorld> World, TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation, 
-		TArray<IViewLockOnTargetInterface*>& OutPotentialTargets);
+	void GetPotentialLockOnTargets(TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation, TArray<IViewLockOnTargetInterface*>& OutPotentialTargets);
+	void CheckOverMaxDepth();
+	void UnlockView();
 };

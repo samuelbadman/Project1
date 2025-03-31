@@ -80,6 +80,7 @@ void AGamePlayerController::OnPossess(APawn* aPawn)
 	if (!IsValid(GamePlayerCameraManager))
 	{
 		GamePlayerCameraManager = CastChecked<AGamePlayerCameraManager>(PlayerCameraManager);
+		PlayerViewLockOnComponent->SetGamePlayerCameraManager(GamePlayerCameraManager);
 	}
 
 	// Set player camera target actor to follow
@@ -227,5 +228,5 @@ void AGamePlayerController::OnOpenGameMenuTriggered(const FInputActionValue& Val
 
 void AGamePlayerController::OnLookLockOnTriggered(const FInputActionValue& Value)
 {
-	PlayerViewLockOnComponent->OnLockOnInput(World, this, GamePlayerCameraManager->GetViewWorldLocation());
+	PlayerViewLockOnComponent->OnLockOnInput(this, GamePlayerCameraManager->GetViewWorldLocation());
 }

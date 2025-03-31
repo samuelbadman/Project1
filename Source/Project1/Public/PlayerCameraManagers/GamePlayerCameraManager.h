@@ -54,10 +54,14 @@ private:
 	float ViewPitchTarget{ 0.0f };
 	float ViewYawTarget{ 0.0f };
 
+	// The actor the camera manager will place the camera behind in the world on update
 	TObjectPtr<const AActor> TargetFollowActor{ nullptr };
 
 	FCollisionQueryParams CameraProbeCollisionQueryParams{};
 	FCollisionShape CameraProbeShape{};
+
+	// The actor the camera manager will rotate the camera to look at on update
+	TObjectPtr<const AActor> ViewLockTargetActor{ nullptr };
 
 public:
 	void AddViewRotation(float Pitch, float Yaw);
@@ -75,7 +79,12 @@ public:
 
 	FVector GetViewWorldLocation() const;
 
-	FORCEINLINE void SetTargetFollowActor(TObjectPtr<const AActor> TargetActor) { TargetFollowActor = TargetActor; }
+	void SetTargetFollowActor(TObjectPtr<const AActor> TargetActor);
+
+	void LockViewToTarget(TObjectPtr<const AActor> Target);
+	void ClearViewLockTarget();
+	bool IsViewLocked() const;
+	TObjectPtr<const AActor> GetViewLockTarget() const;
 
 private:
 	/**
