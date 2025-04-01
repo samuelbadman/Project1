@@ -32,6 +32,7 @@ public:
 	UPlayerViewLockOnComponent();
 
 	void OnLockOnInput(TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation);
+	void OnSwitchLockTarget(float InputValue);
 	void SetGamePlayerCameraManager(TObjectPtr<AGamePlayerCameraManager> InGamePlayerCameraManager);
 
 private:

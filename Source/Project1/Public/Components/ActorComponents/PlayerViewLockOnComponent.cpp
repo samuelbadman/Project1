@@ -75,6 +75,11 @@ void UPlayerViewLockOnComponent::OnLockOnInput(TObjectPtr<APlayerController> Pla
 	}
 }
 
+void UPlayerViewLockOnComponent::OnSwitchLockTarget(float InputValue)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Switch lock target. Value: %f"), InputValue));
+}
+
 void UPlayerViewLockOnComponent::SetGamePlayerCameraManager(TObjectPtr<AGamePlayerCameraManager> InGamePlayerCameraManager)
 {
 	GamePlayerCameraManager = InGamePlayerCameraManager;

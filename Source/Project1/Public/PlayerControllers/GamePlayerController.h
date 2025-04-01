@@ -104,6 +104,18 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Look")
 	TObjectPtr<UInputAction> LookAnalogInputAction{ nullptr };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|LookLockOn")
+	TObjectPtr<UInputMappingContext> LookLockOnInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|LookLockOn")
+	int32 LookLockOnInputMappingContextPriority{ 0 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|LookLockOn")
+	TObjectPtr<UInputAction> LookLockOnInputAction{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|LookLockOn")
+	TObjectPtr<UInputAction> SwitchLockTargetInputAction{ nullptr };
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input|ResetLook")
 	TObjectPtr<UInputMappingContext> ResetLookInputMappingContext{ nullptr };
 
@@ -139,15 +151,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input|OpenGameMenu")
 	TObjectPtr<UInputAction> OpenGameMenuInputAction{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|LookLockOn")
-	TObjectPtr<UInputMappingContext> LookLockOnInputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|LookLockOn")
-	int32 LookLockOnInputMappingContextPriority{ 0 };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input|LookLockOn")
-	TObjectPtr<UInputAction> LookLockOnInputAction{ nullptr };
 
 	UPROPERTY(EditAnywhere, Category = "Look")
 	FVector2D AbsoluteLookInputSensitivity{ 1.0, 1.0 };
@@ -198,4 +201,5 @@ private:
 	void OnJumpTriggered(const FInputActionValue& Value);
 	void OnOpenGameMenuTriggered(const FInputActionValue& Value);
 	void OnLookLockOnTriggered(const FInputActionValue& Value);
+	void OnSwitchLockTargetTriggered(const FInputActionValue& Value);
 };

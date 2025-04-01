@@ -70,6 +70,7 @@ void AGamePlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnJumpTriggered);
 	EnhancedInputComponent->BindAction(OpenGameMenuInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnOpenGameMenuTriggered);
 	EnhancedInputComponent->BindAction(LookLockOnInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookLockOnTriggered);
+	EnhancedInputComponent->BindAction(SwitchLockTargetInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnSwitchLockTargetTriggered);
 }
 
 void AGamePlayerController::OnPossess(APawn* aPawn)
@@ -229,4 +230,17 @@ void AGamePlayerController::OnOpenGameMenuTriggered(const FInputActionValue& Val
 void AGamePlayerController::OnLookLockOnTriggered(const FInputActionValue& Value)
 {
 	PlayerViewLockOnComponent->OnLockOnInput(this, GamePlayerCameraManager->GetViewWorldLocation());
+}
+
+void AGamePlayerController::OnSwitchLockTargetTriggered(const FInputActionValue& Value)
+{
+	if (!IsValid(GamePlayerCameraManager))
+	{
+		return;
+	}
+
+	if (GamePlayerCameraManager->IsViewLocked())
+	{
+		PlayerViewLockOnComponent->OnSwitchLockTarget(Value.Get<float>());
+	}
 }
