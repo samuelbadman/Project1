@@ -107,7 +107,8 @@ void AProject1CharacterBase::UpdateCapsuleRotation(float DeltaTime)
 
 	FRotator MeshRotation(NewRotation);
 	MeshRotation += DefaultMeshLocalRotation;
-	const FQuat NewMeshRotation{ FMath::QInterpConstantTo(GetMesh()->GetComponentQuat(), FQuat(MeshRotation), DeltaTime, CharacterAttributes->MeshRotationSpeed) };
+	//const FQuat NewMeshRotation{ FMath::QInterpConstantTo(GetMesh()->GetComponentQuat(), FQuat(MeshRotation), DeltaTime, CharacterAttributes->MeshRotationSpeed) };
 
-	SetCharacterRotation(NewRotation, NewMeshRotation);
+	//SetCharacterRotation(NewRotation, NewMeshRotation);
+	SetCharacterRotation(NewRotation, FQuat(MeshRotation));
 }
