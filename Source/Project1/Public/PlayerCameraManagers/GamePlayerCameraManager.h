@@ -61,7 +61,7 @@ private:
 	FCollisionShape CameraProbeShape{};
 
 	// The actor the camera manager will rotate the camera to look at on update
-	TObjectPtr<const AActor> ViewLockTargetActor{ nullptr };
+	TObjectPtr<AActor> ViewLockTargetActor{ nullptr };
 
 public:
 	void AddViewRotation(float Pitch, float Yaw);
@@ -79,12 +79,12 @@ public:
 
 	FVector GetViewWorldLocation() const;
 
-	void SetTargetFollowActor(TObjectPtr<const AActor> TargetActor);
+	void SetTargetFollowActor(TObjectPtr<AActor> TargetActor);
 
-	void LockViewToTarget(TObjectPtr<const AActor> Target);
+	void LockViewToTarget(TObjectPtr<AActor> Target);
 	void ClearViewLockTarget();
 	bool IsViewLocked() const;
-	TObjectPtr<const AActor> GetViewLockTarget() const;
+	TObjectPtr<AActor> GetViewLockTarget() const;
 
 private:
 	/**

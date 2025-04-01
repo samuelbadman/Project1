@@ -32,11 +32,12 @@ public:
 	UPlayerViewLockOnComponent();
 
 	void OnLockOnInput(TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation);
-	void OnSwitchLockTarget(float InputValue);
+	void OnSwitchLockTarget(float InputValue, TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation);
 	void SetGamePlayerCameraManager(TObjectPtr<AGamePlayerCameraManager> InGamePlayerCameraManager);
 
 private:
 	void GetPotentialLockOnTargets(TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation, TArray<IViewLockOnTargetInterface*>& OutPotentialTargets);
 	void CheckOverMaxDepth();
+	void LockView(TObjectPtr<AActor> Target);
 	void UnlockView();
 };

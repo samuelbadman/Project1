@@ -241,6 +241,6 @@ void AGamePlayerController::OnSwitchLockTargetTriggered(const FInputActionValue&
 
 	if (GamePlayerCameraManager->IsViewLocked())
 	{
-		PlayerViewLockOnComponent->OnSwitchLockTarget(Value.Get<float>());
+		PlayerViewLockOnComponent->OnSwitchLockTarget(Value.Get<float>(), this, GamePlayerCameraManager->GetViewWorldLocation());
 	}
 }

@@ -84,12 +84,12 @@ FVector AGamePlayerCameraManager::GetViewWorldLocation() const
 	return PlayerCameraActor->GetCameraComponentWorldLocation();
 }
 
-void AGamePlayerCameraManager::SetTargetFollowActor(TObjectPtr<const AActor> TargetActor)
+void AGamePlayerCameraManager::SetTargetFollowActor(TObjectPtr<AActor> TargetActor)
 {
 	TargetFollowActor = TargetActor;
 }
 
-void AGamePlayerCameraManager::LockViewToTarget(TObjectPtr<const AActor> Target)
+void AGamePlayerCameraManager::LockViewToTarget(TObjectPtr<AActor> Target)
 {
 	ViewLockTargetActor = Target;
 }
@@ -104,7 +104,7 @@ bool AGamePlayerCameraManager::IsViewLocked() const
 	return IsValid(ViewLockTargetActor);
 }
 
-TObjectPtr<const AActor> AGamePlayerCameraManager::GetViewLockTarget() const
+TObjectPtr<AActor> AGamePlayerCameraManager::GetViewLockTarget() const
 {
 	return ViewLockTargetActor;
 }

@@ -9,8 +9,8 @@
 
 UPlayerViewLockOnComponent::UPlayerViewLockOnComponent()
 	:
-	World(GetWorld()),
 	ViewLockMaxDepth(2500.0f),
+	World(GetWorld()),
 	OverMaxDepthCheckTimerHandle({}),
 	OverMaxDepthCheckIntervalSeconds(0.001f)
 {
@@ -60,12 +60,7 @@ void UPlayerViewLockOnComponent::OnLockOnInput(TObjectPtr<APlayerController> Pla
 		if (PotentialLockOnTargets.IsValidIndex(ClosestIndex))
 		{
 			// Lock on to target
-			GamePlayerCameraManager->LockViewToTarget(Cast<AActor>(PotentialLockOnTargets[ClosestIndex]));
-
-			World->GetTimerManager().SetTimer(OverMaxDepthCheckTimerHandle, this, &UPlayerViewLockOnComponent::CheckOverMaxDepth, OverMaxDepthCheckIntervalSeconds, true);
-
-			GEngine->AddOnScreenDebugMessage(-1, 2.0, FColor::Green, FString::Printf(TEXT("Lock on target: %s"),
-				*UKismetSystemLibrary::GetDisplayName(Cast<AActor>(PotentialLockOnTargets[ClosestIndex]))));
+			LockView(Cast<AActor>(PotentialLockOnTargets[ClosestIndex]));
 		}
 	}
 	else
@@ -75,9 +70,42 @@ void UPlayerViewLockOnComponent::OnLockOnInput(TObjectPtr<APlayerController> Pla
 	}
 }
 
-void UPlayerViewLockOnComponent::OnSwitchLockTarget(float InputValue)
+void UPlayerViewLockOnComponent::OnSwitchLockTarget(float InputValue, TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, FString::Printf(TEXT("Switch lock target. Value: %f"), InputValue));
+	// Find potential lock on targets
+	TArray<IViewLockOnTargetInterface*> PotentialLockOnTargets{};
+	GetPotentialLockOnTargets(PlayerController, ViewWorldLocation, PotentialLockOnTargets);
+
+	// Sort potential lock on targets into ascending order along the horizontal screen axis
+	Algo::Sort(PotentialLockOnTargets, [PlayerController](IViewLockOnTargetInterface* A, IViewLockOnTargetInterface* B) {
+		const TObjectPtr<const AActor> TargetActorA{ Cast<AActor>(A) };
+		const TObjectPtr<const AActor> TargetActorB{ Cast<AActor>(B) };
+
+		if (!IsValid(TargetActorA) ||
+			!IsValid(TargetActorB))
+		{
+			return false;
+		}
+
+		// Calculate the horizontal axis screen space location of targets A and B
+		FVector2D ScreenSpaceLocationA;
+		PlayerController->ProjectWorldLocationToScreen(TargetActorA->GetActorLocation(), ScreenSpaceLocationA);
+
+		FVector2D ScreenSpaceLocationB;
+		PlayerController->ProjectWorldLocationToScreen(TargetActorB->GetActorLocation(), ScreenSpaceLocationB);
+
+		return (ScreenSpaceLocationA.X < ScreenSpaceLocationB.X);
+		});
+
+	// Find location (index) of current locked on target in sorted array
+	const int32 CurrentTargetIndex{ PotentialLockOnTargets.Find(Cast<IViewLockOnTargetInterface>(GamePlayerCameraManager->GetViewLockTarget())) };
+	if (!PotentialLockOnTargets.IsValidIndex(CurrentTargetIndex))
+	{
+		return;
+	}
+
+	// Move through the target array from the current target index in input direction and lock on to target in direction
+	LockView(Cast<AActor>(PotentialLockOnTargets[FMath::Clamp(CurrentTargetIndex + StaticCast<int32>(FMath::Sign(InputValue)), 0, PotentialLockOnTargets.Num() - 1)]));
 }
 
 void UPlayerViewLockOnComponent::SetGamePlayerCameraManager(TObjectPtr<AGamePlayerCameraManager> InGamePlayerCameraManager)
@@ -85,7 +113,7 @@ void UPlayerViewLockOnComponent::SetGamePlayerCameraManager(TObjectPtr<AGamePlay
 	GamePlayerCameraManager = InGamePlayerCameraManager;
 }
 
-void UPlayerViewLockOnComponent::GetPotentialLockOnTargets(TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation, 
+void UPlayerViewLockOnComponent::GetPotentialLockOnTargets(TObjectPtr<APlayerController> PlayerController, const FVector& ViewWorldLocation,
 	TArray<IViewLockOnTargetInterface*>& OutPotentialTargets)
 {
 	OutPotentialTargets.Empty();
@@ -179,6 +207,16 @@ void UPlayerViewLockOnComponent::CheckOverMaxDepth()
 	if ((GamePlayerCameraManager->GetViewLockTarget()->GetActorLocation() - GamePlayerCameraManager->GetViewWorldLocation()).Length() > ViewLockMaxDepth)
 	{
 		UnlockView();
+	}
+}
+
+void UPlayerViewLockOnComponent::LockView(TObjectPtr<AActor> Target)
+{
+	GamePlayerCameraManager->LockViewToTarget(Target);
+
+	if (!World->GetTimerManager().IsTimerActive(OverMaxDepthCheckTimerHandle))
+	{
+		World->GetTimerManager().SetTimer(OverMaxDepthCheckTimerHandle, this, &UPlayerViewLockOnComponent::CheckOverMaxDepth, OverMaxDepthCheckIntervalSeconds, true);
 	}
 }
 
