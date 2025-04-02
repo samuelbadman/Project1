@@ -12,6 +12,9 @@
 
 void UDialogueScreen::NativeOnPushedToLayerStack()
 {
+	// Get world
+	World = GetWorld();
+
 	// Get dialogue manager
 	DialogueManager = CastChecked<AGameGameMode>(UGameplayStatics::GetGameMode(this))->GetDialogueManager();
 
@@ -57,5 +60,21 @@ void UDialogueScreen::OnConfirmTriggered(const FInputActionValue& Value)
 
 void UDialogueScreen::OnDialogueNodePlayed(const TObjectPtr<UDialogueNode> DialogueNode)
 {
-	SetDialogueLineText(DialogueNode->GetDialogueLine());
+	ScrolledDialogueLineString.Empty();
+	PlayingDialogueLineStringCharIndex = 0;
+	PlayingDialogueLineString = DialogueNode->GetDialogueLine().ToString();
+	SetDialogueLineText(FText::FromString(TEXT("")));
+
+	World->GetTimerManager().SetTimer(DialogueLineScrollTimerHandle, this, &UDialogueScreen::IncrementDialogueLineScroll, DialogueLineScrollRate, true);
+}
+
+void UDialogueScreen::IncrementDialogueLineScroll()
+{
+	ScrolledDialogueLineString += PlayingDialogueLineString[PlayingDialogueLineStringCharIndex++];
+	SetDialogueLineText(FText::FromString(ScrolledDialogueLineString));
+
+	if (!PlayingDialogueLineString.IsValidIndex(PlayingDialogueLineStringCharIndex))
+	{
+		World->GetTimerManager().ClearTimer(DialogueLineScrollTimerHandle);
+	}
 }

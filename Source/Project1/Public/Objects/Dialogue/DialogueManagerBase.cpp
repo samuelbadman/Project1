@@ -29,15 +29,15 @@ void UDialogueManagerBase::BeginDialogueBranch(const FGameplayTag& BranchName, T
 	// TODO: Reject dialogue branch if dialogue is currently playing
 	const TObjectPtr<UDialogueNode> RootNode{ Component->GetDialogueTree()[BranchName] };
 
-	ComponentPlayingDialogue = Component;
-	PlayingBranchName = BranchName;
-	PlayDialogueNode(RootNode);
-
 	// Push dialogue screen widget to widget layer
 	const TObjectPtr<UDialogueScreenLoadPayload> DialogueScreenLoadPayload{ NewObject<UDialogueScreenLoadPayload>() };
 	DialogueScreenLoadPayload->InitialDialogueLineText = RootNode->GetDialogueLine();
 
-	Project1HUD->PushContentToPrimaryLayoutWidgetLayer(DialogueScreenWidgetLayerName, DialogueScreenWidgetClass, DialogueScreenLoadPayload);
+	Project1HUD->PushContentToPrimaryLayoutWidgetLayer(DialogueScreenWidgetLayerName, DialogueScreenWidgetClass, DialogueScreenLoadPayload, false);
+
+	ComponentPlayingDialogue = Component;
+	PlayingBranchName = BranchName;
+	PlayDialogueNode(RootNode);
 }
 
 void UDialogueManagerBase::ProgressDialogue()
