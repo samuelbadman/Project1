@@ -22,6 +22,11 @@ void UPlayerCharacterControllerComponent::SetConstrainPlayerToWalk(bool Constrai
 	bConstrainPlayerToWalk = Constrain;
 }
 
+void UPlayerCharacterControllerComponent::FlipConstrainPlayerToWalk()
+{
+	bConstrainPlayerToWalk = !bConstrainPlayerToWalk;
+}
+
 void UPlayerCharacterControllerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

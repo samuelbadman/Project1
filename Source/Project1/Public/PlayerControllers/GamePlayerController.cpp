@@ -71,6 +71,7 @@ void AGamePlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(OpenGameMenuInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnOpenGameMenuTriggered);
 	EnhancedInputComponent->BindAction(LookLockOnInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookLockOnTriggered);
 	EnhancedInputComponent->BindAction(SwitchLockTargetInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnSwitchLockTargetTriggered);
+	EnhancedInputComponent->BindAction(ToggleWalkInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnToggleWalkTriggered);
 }
 
 void AGamePlayerController::OnPossess(APawn* aPawn)
@@ -111,6 +112,7 @@ void AGamePlayerController::BeginPlay()
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(JumpInputMappingContext, JumpInputMappingContextPriority);
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(OpenGameMenuInputMappingContext, OpenGameMenuInputMappingContextPriority);
 	EnhancedInputLocalPlayerSubsystem->AddMappingContext(LookLockOnInputMappingContext, LookLockOnInputMappingContextPriority);
+	EnhancedInputLocalPlayerSubsystem->AddMappingContext(ToggleWalkInputMappingContext, ToggleWalkInputMappingContextPriority);
 }
 
 void AGamePlayerController::OnInteractPromptUIInteractTriggered(const FInputActionValue& Value)
@@ -243,4 +245,9 @@ void AGamePlayerController::OnSwitchLockTargetTriggered(const FInputActionValue&
 	{
 		PlayerViewLockOnComponent->OnSwitchLockTarget(Value.Get<float>(), this, GamePlayerCameraManager->GetViewWorldLocation());
 	}
+}
+
+void AGamePlayerController::OnToggleWalkTriggered(const FInputActionValue& Value)
+{
+	PlayerCharacterControllerComponent->FlipConstrainPlayerToWalk();
 }

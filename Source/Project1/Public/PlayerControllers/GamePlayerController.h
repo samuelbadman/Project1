@@ -152,6 +152,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|OpenGameMenu")
 	TObjectPtr<UInputAction> OpenGameMenuInputAction{ nullptr };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|ToggleWalk")
+	TObjectPtr<UInputMappingContext> ToggleWalkInputMappingContext{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|ToggleWalk")
+	int32 ToggleWalkInputMappingContextPriority{ 0 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|ToggleWalk")
+	TObjectPtr<UInputAction> ToggleWalkInputAction{ nullptr };
+
 	UPROPERTY(EditAnywhere, Category = "Look")
 	FVector2D AbsoluteLookInputSensitivity{ 1.0, 1.0 };
 
@@ -202,4 +211,5 @@ private:
 	void OnOpenGameMenuTriggered(const FInputActionValue& Value);
 	void OnLookLockOnTriggered(const FInputActionValue& Value);
 	void OnSwitchLockTargetTriggered(const FInputActionValue& Value);
+	void OnToggleWalkTriggered(const FInputActionValue& Value);
 };

@@ -26,11 +26,14 @@ public:
 	// Sets default values for this component's properties
 	UPlayerCharacterControllerComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerCharacterControllerComponent")
-	void SetConstrainPlayerToWalk(bool Constrain);
-
 	void OnPossessPawn(TObjectPtr<APawn> Pawn);
 	void OnMoveInput(const FVector& WorldDirection, float MoveInputMagnitude);
+
+	void SetConstrainPlayerToWalk(bool Constrain);
+	// Flips the value of the constrain player to walk flag. True becomes false and false becomes true
+	void FlipConstrainPlayerToWalk();
+
+	FORCEINLINE bool IsConstrainedToWalk() const { return bConstrainPlayerToWalk; }
 
 private:
 	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
