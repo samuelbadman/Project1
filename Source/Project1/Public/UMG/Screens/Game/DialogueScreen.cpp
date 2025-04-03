@@ -9,6 +9,7 @@
 #include "Objects/Dialogue/DialogueManagerBase.h"
 #include "Objects/ScreenLoadPayloads/DialogueScreenLoadPayload.h"
 #include "Objects/Dialogue/DialogueNode.h"
+#include "UMG/Components/ScrollingTextBlock.h"
 
 void UDialogueScreen::NativeOnPushedToLayerStack()
 {
@@ -47,34 +48,25 @@ void UDialogueScreen::NativeOnPoppedFromLayerStack()
 
 void UDialogueScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload)
 {
-	const TObjectPtr<UDialogueScreenLoadPayload> Payload{ CastChecked<UDialogueScreenLoadPayload>(LoadPayload) };
-
-	// Set initial dialogue line
-	SetDialogueLineText(Payload->InitialDialogueLineText);
+	//const TObjectPtr<UDialogueScreenLoadPayload> Payload{ CastChecked<UDialogueScreenLoadPayload>(LoadPayload) };
 }
 
 void UDialogueScreen::OnConfirmTriggered(const FInputActionValue& Value)
 {
-	DialogueManager->ProgressDialogue();
+	const TObjectPtr<UScrollingTextBlock> ScrollingTextBlock{ GetScrollingTextBlock() };
+	if (ScrollingTextBlock->IsScrolling())
+	{
+		GetScrollingTextBlock()->StopScroll(true);
+	}
+	else
+	{
+		DialogueManager->ProgressDialogue();
+	}
 }
 
 void UDialogueScreen::OnDialogueNodePlayed(const TObjectPtr<UDialogueNode> DialogueNode)
 {
-	ScrolledDialogueLineString.Empty();
-	PlayingDialogueLineStringCharIndex = 0;
-	PlayingDialogueLineString = DialogueNode->GetDialogueLine().ToString();
-	SetDialogueLineText(FText::FromString(TEXT("")));
-
-	World->GetTimerManager().SetTimer(DialogueLineScrollTimerHandle, this, &UDialogueScreen::IncrementDialogueLineScroll, DialogueLineScrollRate, true);
-}
-
-void UDialogueScreen::IncrementDialogueLineScroll()
-{
-	ScrolledDialogueLineString += PlayingDialogueLineString[PlayingDialogueLineStringCharIndex++];
-	SetDialogueLineText(FText::FromString(ScrolledDialogueLineString));
-
-	if (!PlayingDialogueLineString.IsValidIndex(PlayingDialogueLineStringCharIndex))
-	{
-		World->GetTimerManager().ClearTimer(DialogueLineScrollTimerHandle);
-	}
+	const TObjectPtr<UScrollingTextBlock> ScrollingTextBlock{ GetScrollingTextBlock() };
+	ScrollingTextBlock->SetText(DialogueNode->GetDialogueLine());
+	ScrollingTextBlock->BeginScroll();
 }

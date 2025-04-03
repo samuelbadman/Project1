@@ -10,6 +10,7 @@ class AGamePlayerController;
 struct FInputActionValue;
 class UDialogueManagerBase;
 class UDialogueNode;
+class UScrollingTextBlock;
 
 /**
  * 
@@ -20,23 +21,15 @@ class PROJECT1_API UDialogueScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(EditAnywhere)
-	float DialogueLineScrollRate{ 0.1f };
-
 	TObjectPtr<UWorld> World{ nullptr };
 	TObjectPtr<UDialogueManagerBase> DialogueManager{ nullptr };
 	TObjectPtr<AGamePlayerController> GamePlayerController{ nullptr };
 	FDelegateHandle ConfirmTriggeredDelegateHandle{};
 	FDelegateHandle DialogueNodePlayedDelegateHandle{};
 
-	FTimerHandle DialogueLineScrollTimerHandle{};
-	FString PlayingDialogueLineString{};
-	FString ScrolledDialogueLineString{};
-	int32 PlayingDialogueLineStringCharIndex{ 0 };
-
 public:
-	UFUNCTION(BlueprintImplementableEvent)
-	void SetDialogueLineText(const FText& Text);
+	UFUNCTION(BlueprintImplementableEvent, Category = "DialogueScreen")
+	UScrollingTextBlock* GetScrollingTextBlock();
 
 private:
 	void NativeOnPushedToLayerStack() override;
@@ -45,5 +38,4 @@ private:
 
 	void OnConfirmTriggered(const FInputActionValue& Value);
 	void OnDialogueNodePlayed(const TObjectPtr<UDialogueNode> DialogueNode);
-	void IncrementDialogueLineScroll();
 };
