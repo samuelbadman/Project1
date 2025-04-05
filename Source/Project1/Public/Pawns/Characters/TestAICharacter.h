@@ -28,5 +28,4 @@ public:
 private:
 	void BeginPlay() override;
 	FVector GetAIRequestedVelocity(const FVector& AIMoveVelocity) override;
-	void OnFootstepNotify(const FName& FootBoneName) override;
 };

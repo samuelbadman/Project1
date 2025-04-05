@@ -6,7 +6,6 @@
 #include "Goal_Common_MoveToLocation.h"
 #include "NavigationSystem.h"
 #include "AI/Navigation/NavigationTypes.h"
-#include "Enums/CharacterGroundMovementState.h"
 
 UGoal_Test_Idle::UGoal_Test_Idle()
 	: bJustMoved(false)
@@ -38,7 +37,7 @@ void UGoal_Test_Idle::AddMoveToRandomReachablePointSubGoal(TObjectPtr<AProject1A
 	const TObjectPtr<UGoal_Common_MoveToLocation> MoveToLocationGoal{ AI->CreateGoal<UGoal_Common_MoveToLocation>(UGoal_Common_MoveToLocation::StaticClass()) };
 	FNavLocation TargetMoveLocation;
 	FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld())->GetRandomReachablePointInRadius(FVector::ZeroVector, 2048.0f, TargetMoveLocation);
-	MoveToLocationGoal->Initialize(TargetMoveLocation.Location, ECharacterGroundMovementState::Walk, 50.0f);
+	MoveToLocationGoal->Initialize(TargetMoveLocation.Location, 410.0f/*Character movement speed*/, 50.0f);
 	AI->AddSubGoal(MoveToLocationGoal);
 	bJustMoved = true;
 }

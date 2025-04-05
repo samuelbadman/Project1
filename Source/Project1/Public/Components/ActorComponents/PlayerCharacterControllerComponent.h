@@ -34,7 +34,4 @@ public:
 	void FlipConstrainPlayerToWalk();
 
 	FORCEINLINE bool IsConstrainedToWalk() const { return bConstrainPlayerToWalk; }
-
-private:
-	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

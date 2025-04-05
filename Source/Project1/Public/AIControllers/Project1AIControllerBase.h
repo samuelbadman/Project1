@@ -21,7 +21,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAICharacterControllerComponent> AICharacterControllerComponent;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "AI Goals")
 	TSoftClassPtr<UAIGoalBase> EntryTopGoalClass;
 
 	UPROPERTY()

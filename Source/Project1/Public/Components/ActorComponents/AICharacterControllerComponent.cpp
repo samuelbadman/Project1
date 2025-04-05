@@ -28,11 +28,6 @@ void UAICharacterControllerComponent::OnPossessPawn(TObjectPtr<APawn> Pawn)
 	Project1Character->GetMesh()->SetAbsolute(false, true, false);
 }
 
-void UAICharacterControllerComponent::SetGroundMovementState(ECharacterGroundMovementState State)
-{
-	Project1Character->SetGroundMovementState(State);
-}
-
 void UAICharacterControllerComponent::SetCharacterWorldOrientation(const FQuat& Orientation, bool Instant)
 {
 	Project1Character->SetTargetWorldOrientation(Orientation, Instant);

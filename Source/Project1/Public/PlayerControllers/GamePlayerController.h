@@ -13,6 +13,7 @@ class UPlayerInteractComponent;
 class AGameHUD;
 class UGameMenuScreen;
 class UPlayerViewLockOnComponent;
+class AProject1CharacterBase;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptInteractTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptSwitchActionTriggeredDelegate, const FInputActionValue& /* Value */);
@@ -173,6 +174,7 @@ private:
 	TObjectPtr<UWorld> World{ nullptr };
 	TObjectPtr<AGamePlayerCameraManager> GamePlayerCameraManager{ nullptr };
 	TObjectPtr<AGameHUD> GameHUD{ nullptr };
+	TObjectPtr<AProject1CharacterBase> PossessedCharacter{ nullptr };
 
 public:
 	AGamePlayerController();

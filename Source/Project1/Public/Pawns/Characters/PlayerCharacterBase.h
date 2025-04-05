@@ -48,8 +48,6 @@ protected:
 	void Tick(float DeltaTime) override;
 
 private:
-	void OnFootstepNotify(const FName& FootBoneName) override;
-
 	UFUNCTION()
 	void GlowPointLightFadeTimelineProgress(float Value);
 	UFUNCTION()

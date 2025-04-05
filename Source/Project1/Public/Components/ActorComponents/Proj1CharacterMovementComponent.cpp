@@ -5,15 +5,18 @@
 #include "Pawns/Characters/Project1CharacterBase.h"
 
 UProj1CharacterMovementComponent::UProj1CharacterMovementComponent()
+	:
+	World(nullptr),
+	Project1Character(nullptr)
 {
-	World = nullptr;
-	Project1Character = nullptr;
 }
 
 void UProj1CharacterMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
 	World = GetWorld();
+
 	// Get owner project 1 character
 	Project1Character = CastChecked<AProject1CharacterBase>(GetOwner());
 }
@@ -40,6 +43,4 @@ void UProj1CharacterMovementComponent::RequestDirectMove(const FVector& MoveVelo
 	{
 		RequestedVelocity = ProjectToGravityFloor(RequestedVelocity);
 	}
-
-	Project1Character->UpdateCapsuleRotation(World->GetDeltaSeconds());
 }

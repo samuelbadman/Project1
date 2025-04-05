@@ -9,6 +9,7 @@
 #include "Components/ActorComponents/PlayerInteractComponent.h"
 #include "Components/ActorComponents/PlayerViewLockOnComponent.h"
 #include "HUDs/GameHUD.h"
+#include "Pawns/Characters/Project1CharacterBase.h"
 
 AGamePlayerController::AGamePlayerController()
 {
@@ -89,6 +90,8 @@ void AGamePlayerController::OnPossess(APawn* aPawn)
 	GamePlayerCameraManager->SetTargetFollowActor(aPawn);
 
 	// Setup new possessed pawn
+	PossessedCharacter = CastChecked<AProject1CharacterBase>(aPawn);
+
 	PlayerCharacterControllerComponent->OnPossessPawn(aPawn);
 	PlayerInteractComponent->OnPossessPawn(aPawn);
 }
