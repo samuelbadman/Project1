@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PlayerControllers/Project1PlayerControllerBase.h"
+#include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 #include "TitleScreenPlayerController.generated.h"
 
 class UProject1GameViewportClientBase;

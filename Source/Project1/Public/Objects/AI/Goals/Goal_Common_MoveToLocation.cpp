@@ -2,7 +2,6 @@
 
 
 #include "Goal_Common_MoveToLocation.h"
-#include "Components/ActorComponents/AICharacterControllerComponent.h"
 #include "Pawns/Characters/Project1CharacterBase.h"
 
 UGoal_Common_MoveToLocation::UGoal_Common_MoveToLocation()
@@ -31,7 +30,7 @@ void UGoal_Common_MoveToLocation::Start(TObjectPtr<AProject1AIControllerBase> AI
 
 void UGoal_Common_MoveToLocation::Tick(TObjectPtr<AProject1AIControllerBase> AI, float DeltaSeconds)
 {
-	AI->GetAICharacterController()->SetCharacterWorldOrientation(AI->GetPawn()->GetVelocity().ToOrientationQuat(), false);
+	CastChecked<AProject1CharacterBase>(AI->GetCharacter())->SetTargetWorldOrientation(AI->GetPawn()->GetVelocity().ToOrientationQuat(), false);
 }
 
 void UGoal_Common_MoveToLocation::Initialize(const FVector& InTargetLocation, float InCharacterMovementSpeed, float InAcceptanceRadius)

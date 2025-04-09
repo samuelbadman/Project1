@@ -3,15 +3,16 @@
 
 #include "Project1AIControllerBase.h"
 #include "Objects/AI/Goals/AIGoalBase.h"
-#include "Components/ActorComponents/AICharacterControllerComponent.h"
+#include "Pawns/Characters/Project1CharacterBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AProject1AIControllerBase::AProject1AIControllerBase()
+	:
+	EntryTopGoalClass(nullptr),
+	TopGoal(nullptr),
+	SubGoalQueue({})
 {
 	PrimaryActorTick.bCanEverTick = true;
-	AICharacterControllerComponent = CreateDefaultSubobject<UAICharacterControllerComponent>(FName(TEXT("AICharacterControllerComponent")));
-	EntryTopGoalClass = nullptr;
-	TopGoal = nullptr;
-	SubGoalQueue = {};
 }
 
 void AProject1AIControllerBase::SetTopGoal(TObjectPtr<UAIGoalBase> Goal)
@@ -77,7 +78,17 @@ void AProject1AIControllerBase::ClearSubGoals()
 void AProject1AIControllerBase::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	AICharacterControllerComponent->OnPossessPawn(InPawn);
+
+	// Get pawn as character
+	PossessedCharacter = CastChecked<AProject1CharacterBase>(InPawn);
+
+	// Clear character use controller rotation settings
+	PossessedCharacter->bUseControllerRotationPitch = false;
+	PossessedCharacter->bUseControllerRotationYaw = false;
+	PossessedCharacter->bUseControllerRotationRoll = false;
+
+	// Do not rotate character with movement
+	PossessedCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
 void AProject1AIControllerBase::BeginPlay()

@@ -5,7 +5,7 @@
 #include "Components/Border.h"
 #include "Components/BorderSlot.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerControllers/Project1PlayerControllerBase.h"
+#include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 #include "GameViewportClients/Project1GameViewportClientBase.h"
 
 void UProject1ButtonBase::NativePreConstruct()

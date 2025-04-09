@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PlayerControllers/Project1PlayerControllerBase.h"
+#include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 #include "GameplayTagContainer.h"
 #include "GamePlayerController.generated.h"
 
 class AGamePlayerCameraManager;
-class UPlayerInteractComponent;
 class AGameHUD;
 class UGameMenuScreen;
+class UPlayerInteractComponent;
 class UPlayerViewLockOnComponent;
 class AProject1CharacterBase;
 

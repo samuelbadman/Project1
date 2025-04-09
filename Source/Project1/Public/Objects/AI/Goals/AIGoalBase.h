@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Objects/Project1ObjectBase.h"
-#include "AIControllers/Project1AIControllerBase.h"
+#include "Controllers/AIControllers/Project1AIControllerBase.h"
 #include "AIGoalBase.generated.h"
 
 /**

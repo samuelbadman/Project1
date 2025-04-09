@@ -7,7 +7,7 @@
 #include "Project1AIControllerBase.generated.h"
 
 class UAIGoalBase;
-class UAICharacterControllerComponent;
+class AProject1CharacterBase;
 
 /**
  *
@@ -18,9 +18,6 @@ class PROJECT1_API AProject1AIControllerBase : public AAIController
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UAICharacterControllerComponent> AICharacterControllerComponent;
-
 	UPROPERTY(EditDefaultsOnly, Category = "AI Goals")
 	TSoftClassPtr<UAIGoalBase> EntryTopGoalClass;
 
@@ -29,6 +26,8 @@ private:
 
 	UPROPERTY()
 	TArray<TObjectPtr<UAIGoalBase>> SubGoalQueue;
+
+	TObjectPtr<AProject1CharacterBase> PossessedCharacter;
 
 public:
 	AProject1AIControllerBase();
@@ -40,8 +39,6 @@ public:
 	TWeakObjectPtr<UAIGoalBase> AddSubGoal(TObjectPtr<UAIGoalBase> Goal);
 	void RemoveSubGoal(const TWeakObjectPtr<UAIGoalBase>& Goal);
 	void ClearSubGoals();
-
-	FORCEINLINE TObjectPtr<UAICharacterControllerComponent> GetAICharacterController() const { return AICharacterControllerComponent; }
 
 private:
 	void OnPossess(APawn* InPawn) override;

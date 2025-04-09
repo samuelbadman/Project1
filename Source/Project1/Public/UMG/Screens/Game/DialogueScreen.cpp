@@ -3,7 +3,7 @@
 
 #include "DialogueScreen.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerControllers/GamePlayerController.h"
+#include "Controllers/PlayerControllers/GamePlayerController.h"
 #include "InputActionValue.h"
 #include "GameModes/GameGameMode.h"
 #include "Objects/Dialogue/DialogueManagerBase.h"

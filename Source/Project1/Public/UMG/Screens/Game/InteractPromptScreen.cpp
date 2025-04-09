@@ -5,7 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "HUDs/Project1HUDBase.h"
 #include "UMG/Layers/LayerUserWidgetBase.h"
-#include "PlayerControllers/GamePlayerController.h"
+#include "Controllers/PlayerControllers/GamePlayerController.h"
 #include "Components/ActorComponents/PlayerInteractComponent.h"
 #include "Interfaces/Interactable.h"
 #include "InputActionValue.h"

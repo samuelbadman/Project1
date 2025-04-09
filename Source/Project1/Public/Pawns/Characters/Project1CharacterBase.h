@@ -19,6 +19,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	float CharacterLinearRunSpeed;
 
+	UPROPERTY(EditAnywhere)
+	float CapsuleRotationRate;
+
 	TObjectPtr<UWorld> World;
 	FQuat TargetCapsuleWorldOrientation;
 	FRotator DefaultMeshLocalRotation;
@@ -27,8 +30,8 @@ public:
 	// Sets default values for this character's properties
 	AProject1CharacterBase(const FObjectInitializer& ObjectInitializer);
 
-	// Provides the opportunity for characters to provide a different velocity when the AI navigation system requests a velocity. This is used to implement a turning radius for AI
-	// characters when changing directions
+	// Provides the opportunity for characters to provide a different velocity when the AI navigation system requests a velocity. Passed AI move velocity is in the direction
+	// AI systems want the character to move regardless of the character's current velocity. This is used to implement a turning radius for AI characters when changing directions
 	virtual FVector GetAIRequestedVelocity(const FVector& AIMoveVelocity);
 
 	// Sets the target capsule and mesh component world orientations. The character's capsule and mesh component will be rotated towards this orientation each update at the rate

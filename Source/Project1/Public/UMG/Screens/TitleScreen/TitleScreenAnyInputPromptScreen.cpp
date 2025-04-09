@@ -4,7 +4,7 @@
 #include "TitleScreenAnyInputPromptScreen.h"
 #include "HUDs/Project1HUDBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerControllers/TitleScreenPlayerController.h"
+#include "Controllers/PlayerControllers/TitleScreenPlayerController.h"
 
 void UTitleScreenAnyInputPromptScreen::NativeOnPushedToLayerStack()
 {

@@ -3,7 +3,7 @@
 
 #include "SettingsScreen.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerControllers/Project1PlayerControllerBase.h"
+#include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 #include "HUDs/Project1HUDBase.h"
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
 #include "InputActionValue.h"

@@ -12,6 +12,7 @@ AProject1CharacterBase::AProject1CharacterBase(const FObjectInitializer& ObjectI
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UProj1CharacterMovementComponent>(ACharacter::CharacterMovementComponentName)),
 	CharacterLinearWalkSpeed(141.0f),
 	CharacterLinearRunSpeed(410.0f),
+	CapsuleRotationRate(10.0f),
 	World(nullptr),
 	TargetCapsuleWorldOrientation(FQuat::Identity),
 	DefaultMeshLocalRotation(FRotator::ZeroRotator)
@@ -85,7 +86,7 @@ bool AProject1CharacterBase::IsConsideredForViewLockOn_Implementation()
 
 void AProject1CharacterBase::UpdateCapsuleRotation(float DeltaTime)
 {
-	RotateCharacter(FMath::QInterpConstantTo(GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, 10.0f));
+	RotateCharacter(FMath::QInterpConstantTo(GetActorQuat(), TargetCapsuleWorldOrientation, DeltaTime, CapsuleRotationRate));
 }
 
 void AProject1CharacterBase::RotateCharacter(const FQuat& Rotation)

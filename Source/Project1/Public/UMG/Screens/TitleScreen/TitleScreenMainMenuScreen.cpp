@@ -3,7 +3,7 @@
 
 #include "TitleScreenMainMenuScreen.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerControllers/TitleScreenPlayerController.h"
+#include "Controllers/PlayerControllers/TitleScreenPlayerController.h"
 #include "InputActionValue.h"
 #include "Components/ScrollBox.h"
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"

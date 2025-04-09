@@ -3,7 +3,7 @@
 
 #include "GameMenuScreen.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerControllers/GamePlayerController.h"
+#include "Controllers/PlayerControllers/GamePlayerController.h"
 #include "HUDs/GameHUD.h"
 #include "InputActionValue.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
