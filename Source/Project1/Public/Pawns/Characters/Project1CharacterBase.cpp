@@ -10,6 +10,8 @@
 AProject1CharacterBase::AProject1CharacterBase(const FObjectInitializer& ObjectInitializer)
 	: 
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UProj1CharacterMovementComponent>(ACharacter::CharacterMovementComponentName)),
+	CharacterLinearWalkSpeed(141.0f),
+	CharacterLinearRunSpeed(410.0f),
 	World(nullptr),
 	TargetCapsuleWorldOrientation(FQuat::Identity),
 	DefaultMeshLocalRotation(FRotator::ZeroRotator)

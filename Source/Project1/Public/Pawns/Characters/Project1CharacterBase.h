@@ -13,6 +13,12 @@ class PROJECT1_API AProject1CharacterBase : public ACharacter, public IViewLockO
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditAnywhere)
+	float CharacterLinearWalkSpeed;
+
+	UPROPERTY(EditAnywhere)
+	float CharacterLinearRunSpeed;
+
 	TObjectPtr<UWorld> World;
 	FQuat TargetCapsuleWorldOrientation;
 	FRotator DefaultMeshLocalRotation;
@@ -29,6 +35,9 @@ public:
 	// defined in character attributes data asset. If Instant is true the capsule will be rotated on the same frame this function is called instead of over time
 	void SetTargetWorldOrientation(const FQuat& TargetOrientation, bool Instant);
 	void SetMovementSpeed(float Speed);
+
+	FORCEINLINE float GetLinearWalkSpeed() const { return CharacterLinearWalkSpeed; }
+	FORCEINLINE float GetLinearRunSpeed() const { return CharacterLinearRunSpeed; }
 
 protected:
 	void BeginPlay() override;

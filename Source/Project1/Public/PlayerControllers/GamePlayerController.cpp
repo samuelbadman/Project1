@@ -5,15 +5,16 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "PlayerCameraManagers/GamePlayerCameraManager.h"
-#include "Components/ActorComponents/PlayerCharacterControllerComponent.h"
+
 #include "Components/ActorComponents/PlayerInteractComponent.h"
 #include "Components/ActorComponents/PlayerViewLockOnComponent.h"
+
 #include "HUDs/GameHUD.h"
 #include "Pawns/Characters/Project1CharacterBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AGamePlayerController::AGamePlayerController()
 {
-	PlayerCharacterControllerComponent = CreateDefaultSubobject<UPlayerCharacterControllerComponent>(FName(TEXT("PlayerCharacterControllerComponent")));
 	PlayerInteractComponent = CreateDefaultSubobject<UPlayerInteractComponent>(FName(TEXT("PlayerInteractComponent")));
 	PlayerViewLockOnComponent = CreateDefaultSubobject<UPlayerViewLockOnComponent>(FName(TEXT("PlayerViewLockOnComponent")));
 }
@@ -92,7 +93,14 @@ void AGamePlayerController::OnPossess(APawn* aPawn)
 	// Setup new possessed pawn
 	PossessedCharacter = CastChecked<AProject1CharacterBase>(aPawn);
 
-	PlayerCharacterControllerComponent->OnPossessPawn(aPawn);
+	// Clear character use controller rotation settings
+	PossessedCharacter->bUseControllerRotationPitch = false;
+	PossessedCharacter->bUseControllerRotationYaw = false;
+	PossessedCharacter->bUseControllerRotationRoll = false;
+
+	// Do not rotate character with movement
+	PossessedCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
+
 	PlayerInteractComponent->OnPossessPawn(aPawn);
 }
 
@@ -219,7 +227,12 @@ void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
 	//GamePlayerCameraManager->AddViewYawRotation(MoveRightViewYawRotationRate * (ViewYawOffset * Sign) * World->DeltaTimeSeconds);
 
 	// Add movement input
-	PlayerCharacterControllerComponent->OnMoveInput(WorldMovementDirection, InputMagnitude);
+	PossessedCharacter->SetTargetWorldOrientation(WorldMovementDirection.ToOrientationQuat(), false);
+	PossessedCharacter->SetMovementSpeed((bRestrictPlayerToWalk) ? 
+		PossessedCharacter->GetLinearWalkSpeed() : (InputMagnitude < RunInputMagnitudeThreshold) ? 
+			PossessedCharacter->GetLinearWalkSpeed() : PossessedCharacter->GetLinearRunSpeed());
+
+	PossessedCharacter->AddMovementInput(WorldMovementDirection);
 }
 
 void AGamePlayerController::OnJumpTriggered(const FInputActionValue& Value)
@@ -252,5 +265,5 @@ void AGamePlayerController::OnSwitchLockTargetTriggered(const FInputActionValue&
 
 void AGamePlayerController::OnToggleWalkTriggered(const FInputActionValue& Value)
 {
-	PlayerCharacterControllerComponent->FlipConstrainPlayerToWalk();
+	bRestrictPlayerToWalk = !bRestrictPlayerToWalk;
 }

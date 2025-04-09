@@ -8,7 +8,6 @@
 #include "GamePlayerController.generated.h"
 
 class AGamePlayerCameraManager;
-class UPlayerCharacterControllerComponent;
 class UPlayerInteractComponent;
 class AGameHUD;
 class UGameMenuScreen;
@@ -45,9 +44,6 @@ public:
 	FOnGameMenuScreenQuitTriggeredDelegate GameMenuScreenQuitTriggered{};
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UPlayerCharacterControllerComponent> PlayerCharacterControllerComponent{ nullptr };
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPlayerInteractComponent> PlayerInteractComponent{ nullptr };
 
@@ -171,10 +167,14 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Move")
 	float MoveRightViewYawRotationRate{ 25.0f };
 
+	UPROPERTY(EditAnywhere, Category = "Move")
+	float RunInputMagnitudeThreshold{ 0.5f };
+
 	TObjectPtr<UWorld> World{ nullptr };
 	TObjectPtr<AGamePlayerCameraManager> GamePlayerCameraManager{ nullptr };
 	TObjectPtr<AGameHUD> GameHUD{ nullptr };
 	TObjectPtr<AProject1CharacterBase> PossessedCharacter{ nullptr };
+	bool bRestrictPlayerToWalk{ false };
 
 public:
 	AGamePlayerController();
