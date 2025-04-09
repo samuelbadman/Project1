@@ -41,6 +41,7 @@ public:
 
 	FORCEINLINE float GetLinearWalkSpeed() const { return CharacterLinearWalkSpeed; }
 	FORCEINLINE float GetLinearRunSpeed() const { return CharacterLinearRunSpeed; }
+	FORCEINLINE float GetCapsuleRotationRate() const { return CapsuleRotationRate; }
 
 protected:
 	void BeginPlay() override;

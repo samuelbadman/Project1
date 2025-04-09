@@ -19,9 +19,7 @@ APlayerCharacterBase::APlayerCharacterBase(const FObjectInitializer& ObjectIniti
 	GlowPointLightIntensity = 15000000.0f;
 	GlowPointLight->SetIntensity(GlowPointLightIntensity);
 	GlowPointLight->SetVisibility(false);
-	// Player is only affected by lights in lighting channel 1
-	GetMesh()->LightingChannels.bChannel0 = 0;
-	GetMesh()->LightingChannels.bChannel1 = 1;
+
 	// Initialize glow point light fade timeline
 	GlowPointLightFadeCurve = nullptr;
 	GlowPointLightFadeTimeline = {};

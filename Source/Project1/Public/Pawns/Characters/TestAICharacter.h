@@ -15,11 +15,6 @@ class PROJECT1_API ATestAICharacter : public AProject1CharacterBase
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(EditAnywhere, Category = "Footsteps")
-	TObjectPtr<USoundBase> FootstepSound;
-	UPROPERTY(EditAnywhere, Category = "Footsteps")
-	TObjectPtr<USoundAttenuation> FootstepSoundAttenuation;
-
 	TObjectPtr<UWorld> World;
 
 public:

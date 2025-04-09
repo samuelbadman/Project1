@@ -4,9 +4,8 @@
 #include "TestAICharacter.h"
 
 ATestAICharacter::ATestAICharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer),
-	FootstepSound(nullptr),
-	FootstepSoundAttenuation(nullptr),
+	: 
+	Super(ObjectInitializer),
 	World(nullptr)
 {
 }
@@ -21,9 +20,11 @@ void ATestAICharacter::BeginPlay()
 FVector ATestAICharacter::GetAIRequestedVelocity(const FVector& AIMoveVelocity)
 {
 	// This function implements AI character movement that is moved with MoveTo from the AI controller that supports turning with respect to the character's capsule rotation
-	// rate defined in the character attributes data asset
-	return (FMath::QInterpConstantTo(GetActorForwardVector().ToOrientationQuat(),
+	// rate defined in the character
+	return (FMath::QInterpConstantTo(
+		GetActorForwardVector().ToOrientationQuat(),
 		AIMoveVelocity.ToOrientationQuat(),
 		World->GetDeltaSeconds(),
-		5.0f /*Capsule rotation rate*/).Vector() * AIMoveVelocity.Size());
+		GetCapsuleRotationRate()
+	).Vector() * AIMoveVelocity.Size());
 }
