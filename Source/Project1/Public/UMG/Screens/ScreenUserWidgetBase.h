@@ -60,9 +60,10 @@ public:
 
 	FORCEINLINE TObjectPtr<ULayerUserWidgetBase> GetOwningLayer() const { return OwningLayer; }
 
-private:
+protected:
 	void NativeOnInitialized() override;
 
+private:
 	bool IsTopOfOwningLayer() const;
 	bool IsInputBlockedByHigherLayer() const;
 };

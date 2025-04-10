@@ -40,7 +40,7 @@ protected:
 	void BeginPlay() override;
 	void Tick(float DeltaSeconds) override;
 
-#ifdef WITH_EDITOR
+#if WITH_EDITOR
 	void PostEditChangeProperty(FPropertyChangedEvent& e) override;
 #endif
 

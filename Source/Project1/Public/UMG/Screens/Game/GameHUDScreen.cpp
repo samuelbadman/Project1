@@ -3,3 +3,9 @@
 
 #include "GameHUDScreen.h"
 
+void UGameHUDScreen::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+
+}

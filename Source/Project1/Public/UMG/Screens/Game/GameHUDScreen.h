@@ -19,4 +19,7 @@ class UGameHUDScreen : public UScreenUserWidgetBase
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	UCompassBarUserWidget* GetCompassBarWidget() const;
+
+protected:
+	void NativeOnInitialized() override;
 };
