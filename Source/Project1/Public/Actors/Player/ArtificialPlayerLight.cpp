@@ -62,6 +62,14 @@ void AArtificialPlayerLight::Tick(float DeltaSeconds)
 	PointLightFadeTimeline.TickTimeline(DeltaSeconds);
 }
 
+#if WITH_EDITOR
+void AArtificialPlayerLight::PostEditChangeProperty(FPropertyChangedEvent& e)
+{
+	PointLightComponentIntensity = PointLightComponent->Intensity;
+	Super::PostEditChangeProperty(e);
+}
+#endif
+
 void AArtificialPlayerLight::PointLightFadeTimelineProgress(float Value)
 {
 	PointLightComponent->SetIntensity(PointLightComponentIntensity * Value);

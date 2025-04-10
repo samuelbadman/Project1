@@ -25,7 +25,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCurveFloat> PointLightFadeCurve;
 
-	// TODO: On point light component intensity property changed, update this variable to the same value
 	float PointLightComponentIntensity;
 	FTimeline PointLightFadeTimeline;
 
@@ -40,6 +39,10 @@ public:
 protected:
 	void BeginPlay() override;
 	void Tick(float DeltaSeconds) override;
+
+#ifdef WITH_EDITOR
+	void PostEditChangeProperty(FPropertyChangedEvent& e) override;
+#endif
 
 private:
 	UFUNCTION()
