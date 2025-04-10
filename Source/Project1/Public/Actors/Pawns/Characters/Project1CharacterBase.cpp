@@ -56,6 +56,7 @@ void AProject1CharacterBase::SetMovementSpeed(float Speed)
 
 FVector AProject1CharacterBase::GetAIRequestedVelocity(const FVector& AIMoveVelocity)
 {
+	// Base implementation is empty and returns the original AI requested move velocity.
 	return AIMoveVelocity;
 }
 

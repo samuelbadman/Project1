@@ -17,5 +17,5 @@ class PROJECT1_API UProject1GameplayLibrary : public UBlueprintFunctionLibrary
 public:
 	// Returns true if the in actor is the player character actor
 	UFUNCTION(BlueprintCallable, Category = "Project1GameplayLibrary")
-	static bool IsPlayerCharacter(UObject* WorldContextObject, AActor* Actor);
+	static bool IsActorPlayerCharacter(UObject* WorldContextObject, AActor* Actor);
 };

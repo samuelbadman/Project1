@@ -25,8 +25,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCurveFloat> PointLightFadeCurve;
 
-	// TODO: Finish refactoring player glow light volume actor to use this new actor owned in the game player controller 
-	// TODO: Remove player character actor class
 	// TODO: On point light component intensity property changed, update this variable to the same value
 	float PointLightComponentIntensity;
 	FTimeline PointLightFadeTimeline;

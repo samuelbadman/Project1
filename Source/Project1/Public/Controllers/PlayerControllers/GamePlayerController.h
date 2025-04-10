@@ -206,6 +206,8 @@ public:
 	void AddGameMenuInputMappingContext();
 	void RemoveGameMenuInputMappingContext();
 
+	void ActivateArtificialPlayerLight(bool Activate);
+
 	FORCEINLINE TObjectPtr<UPlayerInteractComponent> GetPlayerInteractComponent() const { return PlayerInteractComponent; }
 
 private:

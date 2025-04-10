@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Pawns/Characters/Project1CharacterBase.h"
-#include "TestAICharacter.generated.h"
+#include "Actors/Pawns/Characters/Project1CharacterBase.h"
+#include "AIDevCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECT1_API ATestAICharacter : public AProject1CharacterBase
+class PROJECT1_API AAIDevCharacter : public AProject1CharacterBase
 {
 	GENERATED_BODY()
 	
@@ -18,7 +18,7 @@ private:
 	TObjectPtr<UWorld> World;
 
 public:
-	ATestAICharacter(const FObjectInitializer& ObjectInitializer);
+	AAIDevCharacter(const FObjectInitializer& ObjectInitializer);
 
 private:
 	void BeginPlay() override;

@@ -8,7 +8,7 @@
 #include "Components/ActorComponents/PlayerInteractComponent.h"
 #include "Components/ActorComponents/PlayerViewLockOnComponent.h"
 #include "HUDs/GameHUD.h"
-#include "Pawns/Characters/Project1CharacterBase.h"
+#include "Actors/Pawns/Characters/Project1CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Actors/Player/ArtificialPlayerLight.h"
 
@@ -46,6 +46,11 @@ void AGamePlayerController::AddGameMenuInputMappingContext()
 void AGamePlayerController::RemoveGameMenuInputMappingContext()
 {
 	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(GameMenuScreenInputMappingContext);
+}
+
+void AGamePlayerController::ActivateArtificialPlayerLight(bool Activate)
+{
+	ArtificialPlayerLight->SetLightVisibility(Activate);
 }
 
 void AGamePlayerController::SetupInputComponent()
@@ -100,10 +105,11 @@ void AGamePlayerController::OnPossess(APawn* aPawn)
 	// Do not rotate character with movement
 	PossessedCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
 
-	// Player character mesh is only lit by lights in lighting channel 1
+	// Player character mesh is only lit by lights affecting lighting channel 1. The player will only be lit by lights affecting lighting channel 1
 	const TObjectPtr<USkeletalMeshComponent> CharacterMesh{ PossessedCharacter->GetMesh() };
 	CharacterMesh->LightingChannels.bChannel0 = 0;
 	CharacterMesh->LightingChannels.bChannel1 = 1;
+	CharacterMesh->LightingChannels.bChannel2 = 0;
 
 	// Setup player interact
 	PlayerInteractComponent->OnPossessPawn(aPawn);

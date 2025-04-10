@@ -11,7 +11,7 @@ AArtificialPlayerLight::AArtificialPlayerLight()
 	PointLightFadeTimeline({}),
 	PointLightFadeTimelineDirection(ETimelineDirection::Forward)
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	// Create point light component. Set not visible by default
 	PointLightComponent = CreateDefaultSubobject<UPointLightComponent>(FName(TEXT("PointLightComponent")));
@@ -19,6 +19,7 @@ AArtificialPlayerLight::AArtificialPlayerLight()
 	PointLightComponent->SetCastShadows(false);
 	PointLightComponent->SetIntensity(PointLightComponentIntensity);
 	PointLightComponent->SetVisibility(false);
+	PointLightComponent->SetLightingChannels(true, false, false);
 }
 
 void AArtificialPlayerLight::SetLightVisibility(bool NewVisibility)
@@ -27,7 +28,6 @@ void AArtificialPlayerLight::SetLightVisibility(bool NewVisibility)
 	{
 		// Turning on point light, bring light intensity up gradually over time
 		PointLightComponent->SetVisibility(true);
-		PrimaryActorTick.bCanEverTick = true;
 		PointLightFadeTimeline.Play();
 	}
 	else
@@ -72,6 +72,5 @@ void AArtificialPlayerLight::PointLightFadeTimelineFinished()
 	if (PointLightFadeTimelineDirection == ETimelineDirection::Backward)
 	{
 		PointLightComponent->SetVisibility(false);
-		PrimaryActorTick.bCanEverTick = false;
 	}
 }

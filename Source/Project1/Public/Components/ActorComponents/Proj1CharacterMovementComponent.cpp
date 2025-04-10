@@ -2,7 +2,7 @@
 
 
 #include "Proj1CharacterMovementComponent.h"
-#include "Pawns/Characters/Project1CharacterBase.h"
+#include "Actors/Pawns/Characters/Project1CharacterBase.h"
 
 UProj1CharacterMovementComponent::UProj1CharacterMovementComponent()
 	:

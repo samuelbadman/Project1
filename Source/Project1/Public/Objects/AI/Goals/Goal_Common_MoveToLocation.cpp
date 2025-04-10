@@ -2,7 +2,7 @@
 
 
 #include "Goal_Common_MoveToLocation.h"
-#include "Pawns/Characters/Project1CharacterBase.h"
+#include "Actors/Pawns/Characters/Project1CharacterBase.h"
 
 UGoal_Common_MoveToLocation::UGoal_Common_MoveToLocation()
 	:

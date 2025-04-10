@@ -5,7 +5,7 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
-bool UProject1GameplayLibrary::IsPlayerCharacter(UObject* WorldContextObject, AActor* Actor)
+bool UProject1GameplayLibrary::IsActorPlayerCharacter(UObject* WorldContextObject, AActor* Actor)
 {
 	return (Actor == StaticCast<AActor*>(UGameplayStatics::GetPlayerCharacter(WorldContextObject, 0)));
 }
