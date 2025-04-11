@@ -52,45 +52,45 @@ private:
 	TObjectPtr<UPlayerViewLockOnComponent> PlayerViewLockOnComponent{ nullptr };
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|InteractPrompt")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|InteractPrompt")
 	TObjectPtr<UInputMappingContext> InteractPromptInputMappingContext{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|InteractPrompt")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|InteractPrompt")
 	int32 InteractPromptInputPriority{ 10 };
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|InteractPrompt")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|InteractPrompt")
 	TObjectPtr<UInputAction> InteractPromptInteractInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|InteractPrompt")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|InteractPrompt")
 	TObjectPtr<UInputAction> InteractPromptSwitchActionInputAction{ nullptr };
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|DialogueScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|DialogueScreen")
 	TObjectPtr<UInputMappingContext> DialogueScreenInputMappingContext{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|DialogueScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|DialogueScreen")
 	int32 DialogueScreenInputPriority{ 11 };
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|DialogueScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|DialogueScreen")
 	TObjectPtr<UInputAction> DialogueScreenConfirmInputAction{ nullptr };
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|GameMenuScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
 	TObjectPtr<UInputMappingContext> GameMenuScreenInputMappingContext{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|GameMenuScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
 	int32 GameMenuScreenInputPriority{ 0 };
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|GameMenuScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
 	TObjectPtr<UInputAction> GameMenuScreenConfirmInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|GameMenuScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
 	TObjectPtr<UInputAction> GameMenuScreenNavigateInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|GameMenuScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
 	TObjectPtr<UInputAction> GameMenuScreenCancelInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|GameMenuScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
 	TObjectPtr<UInputAction> GameMenuScreenQuitInputAction{ nullptr };
 
 

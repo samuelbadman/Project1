@@ -65,46 +65,46 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	bool DefaultCenterCursorInViewportOnBecomeVisible{ true };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|SettingsScreen")
 	TObjectPtr<UInputMappingContext> SettingsScreenInputMappingContext{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|SettingsScreen")
 	int32 SettingsScreenInputPriority{ 10 };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|SettingsScreen")
 	TObjectPtr<UInputAction> SettingsScreenTabInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|SettingsScreen")
 	TObjectPtr<UInputAction> SettingsScreenCancelInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|SettingsScreen")
 	TObjectPtr<UInputAction> SettingsScreenNavigateInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|SettingsScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|SettingsScreen")
 	TObjectPtr<UInputAction> SettingsScreenConfirmInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|ConfirmModal")
 	TObjectPtr<UInputMappingContext> ConfirmModalInputMappingContext{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|ConfirmModal")
 	int32 ConfirmModalInputPriority{ 15 };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|ConfirmModal")
 	TObjectPtr<UInputAction> ConfirmModalConfirmInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|ConfirmModal")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|ConfirmModal")
 	TObjectPtr<UInputAction> ConfirmModalNavigateInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|DynamicModal")
 	TObjectPtr<UInputMappingContext> DynamicModalInputMappingContext{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|DynamicModal")
 	int32 DynamicModalInputPriority{ 15 };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|DynamicModal")
 	TObjectPtr<UInputAction> DynamicModalConfirmInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|DynamicModal")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|DynamicModal")
 	TObjectPtr<UInputAction> DynamicModalNavigateInputAction{ nullptr };
 
 public:

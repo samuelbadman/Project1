@@ -34,25 +34,25 @@ public:
 	FOnMainMenuScreenNavigateTriggeredDelegate MainMenuScreenNavigateTriggered{};
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|PressAnyInputPrompt")
 	TObjectPtr<UInputMappingContext> PressAnyInputPromptInputMappingContext{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|PressAnyInputPrompt")
 	int32 PressAnyInputPromptInputPriority{ 10 };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|PressAnyInputPrompt")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|PressAnyInputPrompt")
 	TObjectPtr<UInputAction> PressAnyInputPromptAnyInputInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|MainMenuScreen")
 	TObjectPtr<UInputMappingContext> MainMenuScreenInputMappingContext{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|MainMenuScreen")
 	int32 MainMenuScreenInputPriority{ 10 };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|MainMenuScreen")
 	TObjectPtr<UInputAction> MainMenuScreenConfirmInputAction{ nullptr };
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input|MainMenuScreen")
+	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|MainMenuScreen")
 	TObjectPtr<UInputAction> MainMenuScreenNavigateInputAction{ nullptr };
 
 	TObjectPtr<UProject1GameViewportClientBase> Project1GameViewportClient{ nullptr };
