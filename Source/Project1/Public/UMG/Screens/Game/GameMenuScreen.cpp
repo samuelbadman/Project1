@@ -8,10 +8,13 @@
 #include "InputActionValue.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
+#include "GameModes/GameGameMode.h"
+#include "Components/TextBlock.h"
 
 UGameMenuScreen::UGameMenuScreen()
 	: GamePlayerController(nullptr),
 	GameHUD(nullptr),
+	GameGameMode(nullptr),
 	ConfirmDelegateHandle({}),
 	NavigateDelegateHandle({}),
 	CancelDelegateHandle({})
@@ -23,6 +26,13 @@ void UGameMenuScreen::NativeOnPushedToLayerStack()
 {
 	GamePlayerController = CastChecked<AGamePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	GameHUD = CastChecked<AGameHUD>(GamePlayerController->GetHUD());
+	GameGameMode = CastChecked<AGameGameMode>(UGameplayStatics::GetGameMode(this));
+
+	// Display current total play time text
+	UpdateTotalPlayTimeText();
+
+	// Bind to game second elapsed event in game mode
+	GameGameMode->OnGameSecondElapsed.AddDynamic(this, &UGameMenuScreen::OnGameSecondElapsed);
 
 	AddScreenInputBindings();
 	GameHUD->SetGameHUDScreenShown(false);
@@ -30,6 +40,8 @@ void UGameMenuScreen::NativeOnPushedToLayerStack()
 
 void UGameMenuScreen::NativeOnPoppedFromLayerStack()
 {
+	GameGameMode->OnGameSecondElapsed.RemoveDynamic(this, &UGameMenuScreen::OnGameSecondElapsed);
+
 	RemoveScreenInputBindings();
 	GameHUD->SetGameHUDScreenShown(true);
 }
@@ -98,4 +110,44 @@ void UGameMenuScreen::RemoveScreenInputBindings()
 	CancelDelegateHandle.Reset();
 
 	GamePlayerController->RemoveGameMenuInputMappingContext();
+}
+
+void UGameMenuScreen::OnGameSecondElapsed(bool GamePaused)
+{
+	UpdateTotalPlayTimeText();
+}
+
+void UGameMenuScreen::UpdateTotalPlayTimeText()
+{
+	const TObjectPtr<UTextBlock> TotalPlayTimeTextBlock{ GetTotalPlayTimeTextBlock() };
+
+	// Build display string
+	uint64 Hours;
+	uint8 Minutes, Seconds;
+	GameGameMode->GetTotalPlayTime(Hours, Minutes, Seconds);
+
+	FString DisplayString(TEXT(""));
+	DisplayString.Reserve(9); // Reserve enough characters for format: HHH:MM:SS
+
+	DisplayString.Append((Hours < 10) ?
+		FString::Printf(TEXT("0%d"), Hours) :
+		FString::Printf(TEXT("%d"), Hours)
+	);
+
+	DisplayString.AppendChar(':');
+
+	DisplayString.Append((Minutes < 10) ?
+		FString::Printf(TEXT("0%d"), Minutes) :
+		FString::Printf(TEXT("%d"), Minutes)
+	);
+
+	DisplayString.AppendChar(':');
+
+	DisplayString.Append((Seconds < 10) ?
+		FString::Printf(TEXT("0%d"), Seconds) :
+		FString::Printf(TEXT("%d"), Seconds)
+	);
+
+	// Update text in widget
+	TotalPlayTimeTextBlock->SetText(FText::FromString(DisplayString));
 }

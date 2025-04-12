@@ -8,9 +8,11 @@
 
 class AGamePlayerController;
 class AGameHUD;
+class AGameGameMode;
 struct FInputActionValue;
 class UProject1ButtonBase;
 class UButtonMenuComponent;
+class UTextBlock;
 
 /**
  *
@@ -26,6 +28,7 @@ private:
 
 	TObjectPtr<AGamePlayerController> GamePlayerController;
 	TObjectPtr<AGameHUD> GameHUD;
+	TObjectPtr<AGameGameMode> GameGameMode;
 	FDelegateHandle QuitDelegateHandle;
 	FDelegateHandle ConfirmDelegateHandle;
 	FDelegateHandle NavigateDelegateHandle;
@@ -33,6 +36,9 @@ private:
 
 public:
 	UGameMenuScreen();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "TotalPlayTime")
+	UTextBlock* GetTotalPlayTimeTextBlock();
 
 private:
 	void NativeOnPushedToLayerStack() override;
@@ -47,4 +53,9 @@ private:
 
 	void AddScreenInputBindings();
 	void RemoveScreenInputBindings();
+
+	UFUNCTION()
+	void OnGameSecondElapsed(bool GamePaused);
+
+	void UpdateTotalPlayTimeText();
 };
