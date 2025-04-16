@@ -1,6 +1,13 @@
 #include "UIInputBase.h"
 #include "EnhancedInputSubsystems.h"
 
+UUIInputBase::UUIInputBase()
+	: 
+	InputMappingContext(nullptr),
+	InputPriority(0)
+{
+}
+
 void UUIInputBase::SetupInput(TObjectPtr<UEnhancedInputComponent> InputComponent)
 {
 	// Base class implementation is empty
@@ -8,22 +15,10 @@ void UUIInputBase::SetupInput(TObjectPtr<UEnhancedInputComponent> InputComponent
 
 void UUIInputBase::Add(TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSubsystem)
 {
-	InputSubsystem->AddMappingContext(GetInputMappingContext(), GetInputPriority());
+	InputSubsystem->AddMappingContext(InputMappingContext, InputPriority);
 }
 
 void UUIInputBase::Remove(TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSubsystem)
 {
-	InputSubsystem->RemoveMappingContext(GetInputMappingContext());
-}
-
-TObjectPtr<UInputMappingContext> UUIInputBase::GetInputMappingContext() const
-{
-	// Base class implementation is empty
-	return nullptr;
-}
-
-int32 UUIInputBase::GetInputPriority() const
-{
-	// Base class implementation is empty
-	return 0;
+	InputSubsystem->RemoveMappingContext(InputMappingContext);
 }

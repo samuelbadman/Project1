@@ -26,12 +26,6 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UInputMappingContext> InputMapping{ nullptr };
-
-	UPROPERTY(EditAnywhere)
-	int32 InputPriority{ 10 };
-
-	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> TabInputAction{ nullptr };
 
 	UPROPERTY(EditAnywhere)
@@ -45,8 +39,6 @@ private:
 
 private:
 	void SetupInput(TObjectPtr<UEnhancedInputComponent> InputComponent) override;
-	virtual TObjectPtr<UInputMappingContext> GetInputMappingContext() const;
-	virtual int32 GetInputPriority() const;
 
 	void OnTabTriggered(const FInputActionValue& Value);
 	void OnCancelTriggered(const FInputActionValue& Value);

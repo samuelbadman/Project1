@@ -8,16 +8,6 @@ void UDynamicModalScreenUIInput::SetupInput(TObjectPtr<UEnhancedInputComponent> 
 	InputComponent->BindAction(DynamicModalNavigateInputAction, ETriggerEvent::Triggered, this, &UDynamicModalScreenUIInput::OnDynamicModalNavigateTriggered);
 }
 
-TObjectPtr<UInputMappingContext> UDynamicModalScreenUIInput::GetInputMappingContext() const
-{
-	return DynamicModalInputMappingContext;
-}
-
-int32 UDynamicModalScreenUIInput::GetInputPriority() const
-{
-	return DynamicModalInputPriority;
-}
-
 void UDynamicModalScreenUIInput::OnDynamicModalConfirmTriggered(const FInputActionValue& Value)
 {
 	DynamicModalConfirmTriggered.Broadcast(Value);

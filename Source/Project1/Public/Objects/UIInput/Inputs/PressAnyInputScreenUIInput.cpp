@@ -10,16 +10,6 @@ void UPressAnyInputScreenUIInput::SetupInput(TObjectPtr<UEnhancedInputComponent>
 		&UPressAnyInputScreenUIInput::OnPressAnyInputPromptAnyInputTriggered);
 }
 
-TObjectPtr<UInputMappingContext> UPressAnyInputScreenUIInput::GetInputMappingContext() const
-{
-	return PressAnyInputPromptInputMappingContext;
-}
-
-int32 UPressAnyInputScreenUIInput::GetInputPriority() const
-{
-	return PressAnyInputPromptInputPriority;
-}
-
 void UPressAnyInputScreenUIInput::OnPressAnyInputPromptAnyInputTriggered(const FInputActionValue& Value)
 {
 	AnyInputTriggered.Broadcast(Value);

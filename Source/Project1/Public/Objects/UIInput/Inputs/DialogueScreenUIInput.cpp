@@ -9,16 +9,6 @@ void UDialogueScreenUIInput::SetupInput(TObjectPtr<UEnhancedInputComponent> Inpu
 	InputComponent->BindAction(ConfirmInputAction, ETriggerEvent::Triggered, this, &UDialogueScreenUIInput::OnConfirmTriggered);
 }
 
-TObjectPtr<UInputMappingContext> UDialogueScreenUIInput::GetInputMappingContext() const
-{
-	return InputMappingContext;
-}
-
-int32 UDialogueScreenUIInput::GetInputPriority() const
-{
-	return InputPriority;
-}
-
 void UDialogueScreenUIInput::OnConfirmTriggered(const FInputActionValue& Value)
 {
 	ConfirmTriggered.Broadcast(Value);

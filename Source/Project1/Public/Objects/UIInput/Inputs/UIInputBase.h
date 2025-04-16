@@ -13,13 +13,18 @@ class PROJECT1_API UUIInputBase : public UProject1ObjectBase
 {
 	GENERATED_BODY()
 
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Input Mapping")
+	TObjectPtr<UInputMappingContext> InputMappingContext;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input Mapping")
+	int32 InputPriority;
+
 public:
+	UUIInputBase();
+
 	virtual void SetupInput(TObjectPtr<UEnhancedInputComponent> InputComponent);
 
 	void Add(TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSubsystem);
 	void Remove(TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSubsystem);
-
-private:
-	virtual TObjectPtr<UInputMappingContext> GetInputMappingContext() const;
-	virtual int32 GetInputPriority() const;
 };

@@ -26,12 +26,6 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UInputMappingContext> InputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly)
-	int32 InputPriority{ 10 };
-
-	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UInputAction> InteractInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly)
@@ -39,8 +33,6 @@ private:
 
 private:
 	void SetupInput(TObjectPtr<UEnhancedInputComponent> InputComponent) override;
-	TObjectPtr<UInputMappingContext> GetInputMappingContext() const override;
-	int32 GetInputPriority() const override;
 
 	void OnInteractTriggered(const FInputActionValue& Value);
 	void OnSwitchActionTriggered(const FInputActionValue& Value);

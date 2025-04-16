@@ -6,7 +6,6 @@
 
 class UEnhancedInputLocalPlayerSubsystem;
 class UEnhancedInputComponent;
-class UInputMappingContext;
 struct FInputActionValue;
 class UInputAction;
 
@@ -24,12 +23,6 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UInputMappingContext> DynamicModalInputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly)
-	int32 DynamicModalInputPriority{ 15 };
-
-	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UInputAction> DynamicModalConfirmInputAction{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly)
@@ -39,9 +32,6 @@ public:
 	void SetupInput(TObjectPtr<UEnhancedInputComponent> InputComponent) override;
 
 private:
-	TObjectPtr<UInputMappingContext> GetInputMappingContext() const override;
-	int32 GetInputPriority() const override;
-
 	void OnDynamicModalConfirmTriggered(const FInputActionValue& Value);
 	void OnDynamicModalNavigateTriggered(const FInputActionValue& Value);
 };

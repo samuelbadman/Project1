@@ -9,16 +9,6 @@ void USettingsScreenUIInput::SetupInput(TObjectPtr<UEnhancedInputComponent> Inpu
 	InputComponent->BindAction(ConfirmInputAction, ETriggerEvent::Triggered, this, &USettingsScreenUIInput::OnConfirmTriggered);
 }
 
-TObjectPtr<UInputMappingContext> USettingsScreenUIInput::GetInputMappingContext() const
-{
-	return InputMapping;
-}
-
-int32 USettingsScreenUIInput::GetInputPriority() const
-{
-	return InputPriority;
-}
-
 void USettingsScreenUIInput::OnTabTriggered(const FInputActionValue& Value)
 {
 	TabTriggeredDelegate.Broadcast(Value);

@@ -24,18 +24,10 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UInputMappingContext> PressAnyInputPromptInputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly)
-	int32 PressAnyInputPromptInputPriority{ 15 };
-
-	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UInputAction> PressAnyInputPromptAnyInputInputAction{ nullptr };
 
 private:
 	void SetupInput(TObjectPtr<UEnhancedInputComponent> InputComponent) override;
-	TObjectPtr<UInputMappingContext> GetInputMappingContext() const override;
-	int32 GetInputPriority() const override;
 
 	void OnPressAnyInputPromptAnyInputTriggered(const FInputActionValue& Value);
 };

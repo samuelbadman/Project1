@@ -10,16 +10,6 @@ void UInteractPromptScreenUIInput::SetupInput(TObjectPtr<UEnhancedInputComponent
 	InputComponent->BindAction(SwitchActionInputAction, ETriggerEvent::Triggered, this, &UInteractPromptScreenUIInput::OnSwitchActionTriggered);
 }
 
-TObjectPtr<UInputMappingContext> UInteractPromptScreenUIInput::GetInputMappingContext() const
-{
-	return InputMappingContext;
-}
-
-int32 UInteractPromptScreenUIInput::GetInputPriority() const
-{
-	return InputPriority;
-}
-
 void UInteractPromptScreenUIInput::OnInteractTriggered(const FInputActionValue& Value)
 {
 	InteractTriggered.Broadcast(Value);

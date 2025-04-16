@@ -10,16 +10,6 @@ void UMainMenuScreenUIInput::SetupInput(TObjectPtr<UEnhancedInputComponent> Inpu
 	InputComponent->BindAction(NavigateInputAction, ETriggerEvent::Triggered,	this, &UMainMenuScreenUIInput::OnNavigateTriggered);
 }
 
-TObjectPtr<UInputMappingContext> UMainMenuScreenUIInput::GetInputMappingContext() const
-{
-	return InputMappingContext;
-}
-
-int32 UMainMenuScreenUIInput::GetInputPriority() const
-{
-	return InputPriority;
-}
-
 void UMainMenuScreenUIInput::OnConfirmTriggered(const FInputActionValue& Value)
 {
 	ConfirmTriggered.Broadcast(Value);

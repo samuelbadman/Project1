@@ -24,18 +24,10 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UInputMappingContext> InputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly)
-	int32 InputPriority{ 11 };
-
-	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UInputAction> ConfirmInputAction{ nullptr };
 
 private:
-	virtual void SetupInput(TObjectPtr<UEnhancedInputComponent> InputComponent);
-	virtual TObjectPtr<UInputMappingContext> GetInputMappingContext() const;
-	virtual int32 GetInputPriority() const;
+	void SetupInput(TObjectPtr<UEnhancedInputComponent> InputComponent) override;
 
 	void OnConfirmTriggered(const FInputActionValue& Value);
 };

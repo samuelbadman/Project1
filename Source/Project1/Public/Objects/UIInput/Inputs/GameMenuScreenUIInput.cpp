@@ -12,16 +12,6 @@ void UGameMenuScreenUIInput::SetupInput(TObjectPtr<UEnhancedInputComponent> Inpu
 	InputComponent->BindAction(QuitInputAction, ETriggerEvent::Triggered, this, &UGameMenuScreenUIInput::OnQuitTriggered);
 }
 
-TObjectPtr<UInputMappingContext> UGameMenuScreenUIInput::GetInputMappingContext() const
-{
-	return InputMappingContext;
-}
-
-int32 UGameMenuScreenUIInput::GetInputPriority() const
-{
-	return InputPriority;
-}
-
 void UGameMenuScreenUIInput::OnConfirmTriggered(const FInputActionValue& Value)
 {
 	ConfirmTriggered.Broadcast(Value);
