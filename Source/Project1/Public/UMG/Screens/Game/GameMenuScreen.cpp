@@ -3,16 +3,21 @@
 
 #include "GameMenuScreen.h"
 #include "Kismet/GameplayStatics.h"
-#include "Controllers/PlayerControllers/GamePlayerController.h"
+#include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 #include "HUDs/GameHUD.h"
 #include "InputActionValue.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
 #include "GameModes/GameGameMode.h"
 #include "Components/TextBlock.h"
+#include "Components/ActorComponents/UIInputComponent.h"
+#include "Objects/UIInput/Inputs/GameMenuScreenUIInput.h"
 
 UGameMenuScreen::UGameMenuScreen()
-	: GamePlayerController(nullptr),
+	: UIInputKey({}),
+	ButtonMenuComponent(nullptr),
+	PlayerController(nullptr),
+	GameMenuScreenUIInput(nullptr),
 	GameHUD(nullptr),
 	GameGameMode(nullptr),
 	ConfirmDelegateHandle({}),
@@ -24,8 +29,9 @@ UGameMenuScreen::UGameMenuScreen()
 
 void UGameMenuScreen::NativeOnPushedToLayerStack()
 {
-	GamePlayerController = CastChecked<AGamePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-	GameHUD = CastChecked<AGameHUD>(GamePlayerController->GetHUD());
+	PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
+	GameMenuScreenUIInput = PlayerController->GetUIInputComponent()->GetUIInputAs<UGameMenuScreenUIInput>(UIInputKey);
+	GameHUD = CastChecked<AGameHUD>(PlayerController->GetHUD());
 	GameGameMode = CastChecked<AGameGameMode>(UGameplayStatics::GetGameMode(this));
 
 	// Display current total play time text
@@ -90,26 +96,29 @@ void UGameMenuScreen::OnCancelTriggered(const FInputActionValue& Value)
 
 void UGameMenuScreen::AddScreenInputBindings()
 {
-	QuitDelegateHandle = GamePlayerController->GameMenuScreenQuitTriggered.AddUObject(this, &UGameMenuScreen::OnQuitTriggered);
-	ConfirmDelegateHandle = GamePlayerController->GameMenuScreenConfirmTriggered.AddUObject(this, &UGameMenuScreen::OnConfirmTriggered);
-	NavigateDelegateHandle = GamePlayerController->GameMenuScreenNavigateTriggered.AddUObject(this, &UGameMenuScreen::OnNavigateTriggered);
-	CancelDelegateHandle = GamePlayerController->GameMenuScreenCancelTriggered.AddUObject(this, &UGameMenuScreen::OnCancelTriggered);
+	QuitDelegateHandle = GameMenuScreenUIInput->QuitTriggered.AddUObject(this, &UGameMenuScreen::OnQuitTriggered);
+	ConfirmDelegateHandle = GameMenuScreenUIInput->ConfirmTriggered.AddUObject(this, &UGameMenuScreen::OnConfirmTriggered);
+	NavigateDelegateHandle = GameMenuScreenUIInput->NavigateTriggered.AddUObject(this, &UGameMenuScreen::OnNavigateTriggered);
+	CancelDelegateHandle = GameMenuScreenUIInput->CancelTriggered.AddUObject(this, &UGameMenuScreen::OnCancelTriggered);
 
-	GamePlayerController->AddGameMenuInputMappingContext();
+	GameMenuScreenUIInput->Add(PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UGameMenuScreen::RemoveScreenInputBindings()
 {
-	GamePlayerController->GameMenuScreenQuitTriggered.Remove(QuitDelegateHandle);
+	GameMenuScreenUIInput->QuitTriggered.Remove(QuitDelegateHandle);
 	QuitDelegateHandle.Reset();
-	GamePlayerController->GameMenuScreenConfirmTriggered.Remove(ConfirmDelegateHandle);
+
+	GameMenuScreenUIInput->ConfirmTriggered.Remove(ConfirmDelegateHandle);
 	ConfirmDelegateHandle.Reset();
-	GamePlayerController->GameMenuScreenNavigateTriggered.Remove(NavigateDelegateHandle);
+
+	GameMenuScreenUIInput->NavigateTriggered.Remove(NavigateDelegateHandle);
 	NavigateDelegateHandle.Reset();
-	GamePlayerController->GameMenuScreenCancelTriggered.Remove(CancelDelegateHandle);
+
+	GameMenuScreenUIInput->CancelTriggered.Remove(CancelDelegateHandle);
 	CancelDelegateHandle.Reset();
 
-	GamePlayerController->RemoveGameMenuInputMappingContext();
+	GameMenuScreenUIInput->Remove(PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UGameMenuScreen::OnGameSecondElapsed(bool GamePaused)

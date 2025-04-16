@@ -12,6 +12,8 @@
 #include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 #include "InputActionValue.h"
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
+#include "Objects/UIInput/Inputs/DynamicModalScreenUIInput.h"
+#include "Components/ActorComponents/UIInputComponent.h"
 
 UDynamicModalScreen::UDynamicModalScreen()
 {
@@ -23,25 +25,28 @@ void UDynamicModalScreen::NativeOnPushedToLayerStack()
 	// Get project player controller
 	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(GetOwningLocalPlayer()->GetPlayerController(GetWorld()));
 
+	// Get dynamic modal UI inputs
+	DynamicModalScreenUIInput = Project1PlayerController->GetUIInputComponent()->GetUIInputAs<UDynamicModalScreenUIInput>(UIInputKey);
+
 	// Bind to modal inputs
-	OnConfirmTriggeredDelegateHandle = Project1PlayerController->DynamicModalConfirmTriggered.AddUObject(this, &UDynamicModalScreen::OnConfirmTriggered);
-	OnNavigateTriggeredDelegateHandle = Project1PlayerController->DynamicModalNavigateTriggered.AddUObject(this, &UDynamicModalScreen::OnNavigateTriggered);
+	OnConfirmTriggeredDelegateHandle = DynamicModalScreenUIInput->DynamicModalConfirmTriggered.AddUObject(this, &UDynamicModalScreen::OnConfirmTriggered);
+	OnNavigateTriggeredDelegateHandle = DynamicModalScreenUIInput->DynamicModalNavigateTriggered.AddUObject(this, &UDynamicModalScreen::OnNavigateTriggered);
 
 	// Add modal inputs
-	Project1PlayerController->AddDynamicModalInputMappingContext();
+	DynamicModalScreenUIInput->Add(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UDynamicModalScreen::NativeOnPoppedFromLayerStack()
 {
 	// Unbind from modal inputs
-	Project1PlayerController->DynamicModalConfirmTriggered.Remove(OnConfirmTriggeredDelegateHandle);
+	DynamicModalScreenUIInput->DynamicModalConfirmTriggered.Remove(OnConfirmTriggeredDelegateHandle);
 	OnConfirmTriggeredDelegateHandle.Reset();
 
-	Project1PlayerController->DynamicModalNavigateTriggered.Remove(OnNavigateTriggeredDelegateHandle);
+	DynamicModalScreenUIInput->DynamicModalNavigateTriggered.Remove(OnNavigateTriggeredDelegateHandle);
 	OnNavigateTriggeredDelegateHandle.Reset();
 
 	// Remove modal inputs
-	Project1PlayerController->RemoveDynamicModalInputMappingContext();
+	DynamicModalScreenUIInput->Remove(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UDynamicModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload)

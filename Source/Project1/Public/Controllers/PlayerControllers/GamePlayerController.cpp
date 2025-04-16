@@ -18,36 +18,6 @@ AGamePlayerController::AGamePlayerController()
 	PlayerViewLockOnComponent = CreateDefaultSubobject<UPlayerViewLockOnComponent>(FName(TEXT("PlayerViewLockOnComponent")));
 }
 
-void AGamePlayerController::AddInteractPromptInputMappingContext()
-{
-	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(InteractPromptInputMappingContext, InteractPromptInputPriority);
-}
-
-void AGamePlayerController::RemoveInteractPromptInputMappingContext()
-{
-	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(InteractPromptInputMappingContext);
-}
-
-void AGamePlayerController::AddDialogueScreenInputMappingContext()
-{
-	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(DialogueScreenInputMappingContext, DialogueScreenInputPriority);
-}
-
-void AGamePlayerController::RemoveDialogueScreenInputMappingContext()
-{
-	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(DialogueScreenInputMappingContext);
-}
-
-void AGamePlayerController::AddGameMenuInputMappingContext()
-{
-	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(GameMenuScreenInputMappingContext, GameMenuScreenInputPriority);
-}
-
-void AGamePlayerController::RemoveGameMenuInputMappingContext()
-{
-	GetEnhancedInputLocalPlayerSubsystem()->RemoveMappingContext(GameMenuScreenInputMappingContext);
-}
-
 void AGamePlayerController::ActivateArtificialPlayerLight(bool Activate)
 {
 	ArtificialPlayerLight->SetLightVisibility(Activate);
@@ -58,16 +28,6 @@ void AGamePlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	const TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent{ CastChecked<UEnhancedInputComponent>(InputComponent) };
-
-	EnhancedInputComponent->BindAction(InteractPromptInteractInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUIInteractTriggered);
-	EnhancedInputComponent->BindAction(InteractPromptSwitchActionInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnInteractPromptUISwitchActionTriggered);
-
-	EnhancedInputComponent->BindAction(DialogueScreenConfirmInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnDialogueScreenConfirmTriggered);
-
-	EnhancedInputComponent->BindAction(GameMenuScreenConfirmInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnGameMenuScreenConfirmTriggered);
-	EnhancedInputComponent->BindAction(GameMenuScreenNavigateInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnGameMenuScreenNavigateTriggered);
-	EnhancedInputComponent->BindAction(GameMenuScreenCancelInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnGameMenuScreenCancelTriggered);
-	EnhancedInputComponent->BindAction(GameMenuScreenQuitInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnGameMenuScreenQuitTriggered);
 
 	EnhancedInputComponent->BindAction(LookAbsoluteInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAbsoluteTriggered);
 	EnhancedInputComponent->BindAction(LookAnalogInputAction, ETriggerEvent::Triggered, this, &AGamePlayerController::OnLookAnalogTriggered);
@@ -137,50 +97,13 @@ void AGamePlayerController::BeginPlay()
 	GameHUD = CastChecked<AGameHUD>(GetHUD());
 
 	// Add game input mapping contexts
-	const TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem = GetEnhancedInputLocalPlayerSubsystem();
-
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(LookInputMappingContext, LookInputMappingContextPriority);
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(ResetLookInputMappingContext, ResetLookInputMappingContextPriority);
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(MoveInputMappingContext, MoveInputMappingContextPriority);
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(JumpInputMappingContext, JumpInputMappingContextPriority);
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(OpenGameMenuInputMappingContext, OpenGameMenuInputMappingContextPriority);
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(LookLockOnInputMappingContext, LookLockOnInputMappingContextPriority);
-	EnhancedInputLocalPlayerSubsystem->AddMappingContext(ToggleWalkInputMappingContext, ToggleWalkInputMappingContextPriority);
-}
-
-void AGamePlayerController::OnInteractPromptUIInteractTriggered(const FInputActionValue& Value)
-{
-	InteractPromptInteractTriggered.Broadcast(Value);
-}
-
-void AGamePlayerController::OnInteractPromptUISwitchActionTriggered(const FInputActionValue& Value)
-{
-	InteractPromptSwitchActionTriggered.Broadcast(Value);
-}
-
-void AGamePlayerController::OnDialogueScreenConfirmTriggered(const FInputActionValue& Value)
-{
-	DialogueScreenConfirmTriggered.Broadcast(Value);
-}
-
-void AGamePlayerController::OnGameMenuScreenConfirmTriggered(const FInputActionValue& Value)
-{
-	GameMenuScreenConfirmTriggered.Broadcast(Value);
-}
-
-void AGamePlayerController::OnGameMenuScreenNavigateTriggered(const FInputActionValue& Value)
-{
-	GameMenuScreenNavigateTriggered.Broadcast(Value);
-}
-
-void AGamePlayerController::OnGameMenuScreenCancelTriggered(const FInputActionValue& Value)
-{
-	GameMenuScreenCancelTriggered.Broadcast(Value);
-}
-
-void AGamePlayerController::OnGameMenuScreenQuitTriggered(const FInputActionValue& Value)
-{
-	GameMenuScreenQuitTriggered.Broadcast(Value);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(LookInputMappingContext, LookInputMappingContextPriority);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(ResetLookInputMappingContext, ResetLookInputMappingContextPriority);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(MoveInputMappingContext, MoveInputMappingContextPriority);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(JumpInputMappingContext, JumpInputMappingContextPriority);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(OpenGameMenuInputMappingContext, OpenGameMenuInputMappingContextPriority);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(LookLockOnInputMappingContext, LookLockOnInputMappingContextPriority);
+	GetEnhancedInputLocalPlayerSubsystem()->AddMappingContext(ToggleWalkInputMappingContext, ToggleWalkInputMappingContextPriority);
 }
 
 void AGamePlayerController::OnLookAbsoluteTriggered(const FInputActionValue& Value)

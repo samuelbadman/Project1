@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ModalScreenBase.h"
+#include "GameplayTagContainer.h"
 #include "DynamicModalScreen.generated.h"
 
 class UVerticalBox;
@@ -13,6 +14,7 @@ struct FInputActionValue;
 class UProject1ButtonBase;
 class FDynamicModalOptionSelectedDelegate;
 class UButtonMenuComponent;
+class UDynamicModalScreenUIInput;
 
 /**
  * 
@@ -26,6 +28,9 @@ private:
 	UPROPERTY()
 	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	FGameplayTag UIInputKey{};
+
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<UDynamicModalOptionUserWidget> DynamicModalOptionWidgetClass{ nullptr };
 
@@ -33,6 +38,7 @@ private:
 	FMargin OptionSpacerPadding{};
 
 	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
+	TObjectPtr<UDynamicModalScreenUIInput> DynamicModalScreenUIInput{ nullptr };
 	FDelegateHandle OnConfirmTriggeredDelegateHandle{};
 	FDelegateHandle OnNavigateTriggeredDelegateHandle{};
 	TArray<TPair<TObjectPtr<UDynamicModalOptionUserWidget>, FDynamicModalOptionSelectedDelegate>> ModalOptions{};

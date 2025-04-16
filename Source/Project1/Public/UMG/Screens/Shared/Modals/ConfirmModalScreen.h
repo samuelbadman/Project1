@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "ModalScreenBase.h"
 #include "Objects/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
+#include "GameplayTagContainer.h"
 #include "ConfirmModalScreen.generated.h"
 
 class AProject1PlayerControllerBase;
 struct FInputActionValue;
 class UButtonMenuComponent;
+class UConfirmModalScreenUIInput;
 
 /**
  * 
@@ -20,10 +22,14 @@ class PROJECT1_API UConfirmModalScreen : public UModalScreenBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (DisplayName = "UI Input Key"))
+	FGameplayTag UIInputKey{};
+
 	UPROPERTY()
 	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
 
 	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
+	TObjectPtr<UConfirmModalScreenUIInput> ConfirmModalUIInput{ nullptr };
 
 	FDelegateHandle ConfirmInputTriggeredDelegateHandle{};
 	FDelegateHandle NavigateInputTriggeredDelegateHandle{};

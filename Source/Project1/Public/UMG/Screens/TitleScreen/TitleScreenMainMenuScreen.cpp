@@ -3,10 +3,12 @@
 
 #include "TitleScreenMainMenuScreen.h"
 #include "Kismet/GameplayStatics.h"
-#include "Controllers/PlayerControllers/TitleScreenPlayerController.h"
+#include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 #include "InputActionValue.h"
 #include "Components/ScrollBox.h"
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
+#include "Components/ActorComponents/UIInputComponent.h"
+#include "Objects/UIInput/Inputs/MainMenuScreenUIInput.h"
 
 UTitleScreenMainMenuScreen::UTitleScreenMainMenuScreen()
 {
@@ -15,29 +17,31 @@ UTitleScreenMainMenuScreen::UTitleScreenMainMenuScreen()
 
 void UTitleScreenMainMenuScreen::NativeOnPushedToLayerStack()
 {
-	TitleScreenPlayerController = CastChecked<ATitleScreenPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-	TitleScreenPlayerController->AddMainMenuScreenInputMappingContext();
+	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
+	MainMenuScreenUIInput = Project1PlayerController->GetUIInputComponent()->GetUIInputAs<UMainMenuScreenUIInput>(UIInputKey);
+
+	MainMenuScreenUIInput->Add(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 
 	// Register events
-	MainMenuUIConfirmTriggeredDelegateHandle = 
-		TitleScreenPlayerController->MainMenuScreenConfirmTriggered.AddUObject(this, &UTitleScreenMainMenuScreen::OnMainMenuScreenConfirmTriggered);
-	MainMenuUINavigateTriggeredDelegateHandle =
-		TitleScreenPlayerController->MainMenuScreenNavigateTriggered.AddUObject(this, &UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered);
+	MainMenuUIConfirmTriggeredDelegateHandle = MainMenuScreenUIInput->ConfirmTriggered.AddUObject(this,
+		&UTitleScreenMainMenuScreen::OnConfirmTriggered);
+	MainMenuUINavigateTriggeredDelegateHandle = MainMenuScreenUIInput->NavigateTriggered.AddUObject(this, 
+		&UTitleScreenMainMenuScreen::OnNavigateTriggered);
 }
 
 void UTitleScreenMainMenuScreen::NativeOnPoppedFromLayerStack()
 {
-	TitleScreenPlayerController->RemoveMainMenuScreenInputMappingContext();
+	MainMenuScreenUIInput->Remove(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 
 	// Unregister events
-	TitleScreenPlayerController->MainMenuScreenConfirmTriggered.Remove(MainMenuUIConfirmTriggeredDelegateHandle);
+	MainMenuScreenUIInput->ConfirmTriggered.Remove(MainMenuUIConfirmTriggeredDelegateHandle);
 	MainMenuUIConfirmTriggeredDelegateHandle.Reset();
 
-	TitleScreenPlayerController->MainMenuScreenNavigateTriggered.Remove(MainMenuUINavigateTriggeredDelegateHandle);
+	MainMenuScreenUIInput->NavigateTriggered.Remove(MainMenuUINavigateTriggeredDelegateHandle);
 	MainMenuUINavigateTriggeredDelegateHandle.Reset();
 }
 
-void UTitleScreenMainMenuScreen::OnMainMenuScreenConfirmTriggered(const FInputActionValue& Value)
+void UTitleScreenMainMenuScreen::OnConfirmTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
@@ -45,7 +49,7 @@ void UTitleScreenMainMenuScreen::OnMainMenuScreenConfirmTriggered(const FInputAc
 	}
 }
 
-void UTitleScreenMainMenuScreen::OnMainMenuScreenNavigateTriggered(const FInputActionValue& Value)
+void UTitleScreenMainMenuScreen::OnNavigateTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{

@@ -3,13 +3,15 @@
 
 #include "DialogueScreen.h"
 #include "Kismet/GameplayStatics.h"
-#include "Controllers/PlayerControllers/GamePlayerController.h"
+#include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 #include "InputActionValue.h"
 #include "GameModes/GameGameMode.h"
 #include "Objects/Dialogue/DialogueManagerBase.h"
 #include "Objects/ScreenLoadPayloads/DialogueScreenLoadPayload.h"
 #include "Objects/Dialogue/DialogueNode.h"
 #include "UMG/Components/ScrollingTextBlock.h"
+#include "Components/ActorComponents/UIInputComponent.h"
+#include "Objects/UIInput/Inputs/DialogueScreenUIInput.h"
 
 void UDialogueScreen::NativeOnPushedToLayerStack()
 {
@@ -20,22 +22,25 @@ void UDialogueScreen::NativeOnPushedToLayerStack()
 	DialogueManager = CastChecked<AGameGameMode>(UGameplayStatics::GetGameMode(this))->GetDialogueManager();
 
 	// Get game player controller
-	GamePlayerController = CastChecked<AGamePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
+
+	// Get dialogue screen UI input
+	DialogueScreenUIInput = PlayerController->GetUIInputComponent()->GetUIInputAs<UDialogueScreenUIInput>(UIInputKey);
 
 	// Register dialogue screen input events
-	ConfirmTriggeredDelegateHandle = GamePlayerController->DialogueScreenConfirmTriggered.AddUObject(this, &UDialogueScreen::OnConfirmTriggered);
+	ConfirmTriggeredDelegateHandle = DialogueScreenUIInput->ConfirmTriggered.AddUObject(this, &UDialogueScreen::OnConfirmTriggered);
 
 	// Register dialogue manager events
 	DialogueNodePlayedDelegateHandle = DialogueManager->OnPlayedDialogueNode.AddUObject(this, &UDialogueScreen::OnDialogueNodePlayed);
 
 	// Add dialogue screen inputs
-	GamePlayerController->AddDialogueScreenInputMappingContext();
+	DialogueScreenUIInput->Add(PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UDialogueScreen::NativeOnPoppedFromLayerStack()
 {
 	// Remove dialogue screen input events
-	GamePlayerController->DialogueScreenConfirmTriggered.Remove(ConfirmTriggeredDelegateHandle);
+	DialogueScreenUIInput->ConfirmTriggered.Remove(ConfirmTriggeredDelegateHandle);
 	ConfirmTriggeredDelegateHandle.Reset();
 
 	// Remove dialogue manager events
@@ -43,7 +48,7 @@ void UDialogueScreen::NativeOnPoppedFromLayerStack()
 	DialogueNodePlayedDelegateHandle.Reset();
 
 	// Remove dialogue screen inputs
-	GamePlayerController->RemoveDialogueScreenInputMappingContext();
+	DialogueScreenUIInput->Remove(PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UDialogueScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload)

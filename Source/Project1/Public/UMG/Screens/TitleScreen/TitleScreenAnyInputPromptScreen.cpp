@@ -4,27 +4,30 @@
 #include "TitleScreenAnyInputPromptScreen.h"
 #include "HUDs/Project1HUDBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "Controllers/PlayerControllers/TitleScreenPlayerController.h"
+#include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
+#include "Components/ActorComponents/UIInputComponent.h"
+#include "Objects/UIInput/Inputs/PressAnyInputScreenUIInput.h"
 
 void UTitleScreenAnyInputPromptScreen::NativeOnPushedToLayerStack()
 {
-	TitleScreenPlayerController = CastChecked<ATitleScreenPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-	Project1HUD = CastChecked<AProject1HUDBase>(TitleScreenPlayerController->GetHUD());
+	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
+	Project1HUD = CastChecked<AProject1HUDBase>(Project1PlayerController->GetHUD());
+	PressAnyInputScreenUIInput = Project1PlayerController->GetUIInputComponent()->GetUIInputAs<UPressAnyInputScreenUIInput>(UIInputKey);
 
 	// Register to events
-	PressAnyInputTriggeredDelegateHandle = TitleScreenPlayerController->AnyInputTriggered.AddUObject(this, &UTitleScreenAnyInputPromptScreen::OnPressAnyInputPromptAnyInputTriggered);
+	PressAnyInputTriggeredDelegateHandle = PressAnyInputScreenUIInput->AnyInputTriggered.AddUObject(this, &UTitleScreenAnyInputPromptScreen::OnPressAnyInputPromptAnyInputTriggered);
 
 	// Add input mapping context
-	TitleScreenPlayerController->AddPressAnyInputPromptInputMappingContext();
+	PressAnyInputScreenUIInput->Add(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UTitleScreenAnyInputPromptScreen::NativeOnPoppedFromLayerStack()
 {
 	// Remove input mapping context
-	TitleScreenPlayerController->RemovePressAnyInputPromptInputMappingContext();
+	PressAnyInputScreenUIInput->Remove(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 
 	// Unregister from events
-	TitleScreenPlayerController->AnyInputTriggered.Remove(PressAnyInputTriggeredDelegateHandle);
+	PressAnyInputScreenUIInput->AnyInputTriggered.Remove(PressAnyInputTriggeredDelegateHandle);
 	PressAnyInputTriggeredDelegateHandle.Reset();
 }
 

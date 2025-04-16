@@ -4,13 +4,16 @@
 #include "SettingsScreen.h"
 #include "Kismet/GameplayStatics.h"
 #include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
-#include "HUDs/Project1HUDBase.h"
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
 #include "InputActionValue.h"
 #include "UMG/Components/Settings/SettingsPageWidget.h"
+#include "Objects/UIInput/Inputs/SettingsScreenUIInput.h"
+#include "Components/ActorComponents/UIInputComponent.h"
 
 USettingsScreen::USettingsScreen()
-	: Project1PlayerController(nullptr),
+	: 
+	Project1PlayerController(nullptr),
+	SettingsScreenUIInput(nullptr),
 	TabInputDelegateHandle({}),
 	CancelInputDelegateHandle({}),
 	NavigateInputDelegateHandle({}),
@@ -33,30 +36,31 @@ void USettingsScreen::ChangeSettingsPage(USettingsPageWidget* NewPage)
 void USettingsScreen::NativeOnPushedToLayerStack()
 {
 	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
+	SettingsScreenUIInput = Project1PlayerController->GetUIInputComponent()->GetUIInputAs<USettingsScreenUIInput>(UIInputKey);
 
-	TabInputDelegateHandle = Project1PlayerController->SettingsScreenTabTriggeredDelegate.AddUObject(this, &USettingsScreen::OnTabInput);
-	CancelInputDelegateHandle = Project1PlayerController->SettingsScreenCancelTriggeredDelegate.AddUObject(this, &USettingsScreen::OnCancelInput);
-	NavigateInputDelegateHandle = Project1PlayerController->SettingsScreenNavigateTriggeredDelegate.AddUObject(this, &USettingsScreen::OnNavigateInput);
-	ConfirmInputDelegateHandle = Project1PlayerController->SettingsScreenConfirmTriggeredDelegate.AddUObject(this, &USettingsScreen::OnConfirmInput);
+	TabInputDelegateHandle = SettingsScreenUIInput->TabTriggeredDelegate.AddUObject(this, &USettingsScreen::OnTabInput);
+	CancelInputDelegateHandle = SettingsScreenUIInput->CancelTriggeredDelegate.AddUObject(this, &USettingsScreen::OnCancelInput);
+	NavigateInputDelegateHandle = SettingsScreenUIInput->NavigateTriggeredDelegate.AddUObject(this, &USettingsScreen::OnNavigateInput);
+	ConfirmInputDelegateHandle = SettingsScreenUIInput->ConfirmTriggeredDelegate.AddUObject(this, &USettingsScreen::OnConfirmInput);
 
-	Project1PlayerController->AddSettingsScreenInputMappingContext();
+	SettingsScreenUIInput->Add(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void USettingsScreen::NativeOnPoppedFromLayerStack()
 {
-	Project1PlayerController->SettingsScreenTabTriggeredDelegate.Remove(TabInputDelegateHandle);
+	SettingsScreenUIInput->TabTriggeredDelegate.Remove(TabInputDelegateHandle);
 	TabInputDelegateHandle.Reset();
 
-	Project1PlayerController->SettingsScreenCancelTriggeredDelegate.Remove(CancelInputDelegateHandle);
+	SettingsScreenUIInput->CancelTriggeredDelegate.Remove(CancelInputDelegateHandle);
 	CancelInputDelegateHandle.Reset();
 
-	Project1PlayerController->SettingsScreenNavigateTriggeredDelegate.Remove(NavigateInputDelegateHandle);
+	SettingsScreenUIInput->NavigateTriggeredDelegate.Remove(NavigateInputDelegateHandle);
 	NavigateInputDelegateHandle.Reset();
 
-	Project1PlayerController->SettingsScreenConfirmTriggeredDelegate.Remove(ConfirmInputDelegateHandle);
+	SettingsScreenUIInput->ConfirmTriggeredDelegate.Remove(ConfirmInputDelegateHandle);
 	ConfirmInputDelegateHandle.Reset();
 
-	Project1PlayerController->RemoveSettingsScreenInputMappingContext();
+	SettingsScreenUIInput->Remove(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void USettingsScreen::OnTabInput(const FInputActionValue& Value)

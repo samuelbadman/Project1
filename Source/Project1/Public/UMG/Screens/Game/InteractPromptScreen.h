@@ -9,6 +9,7 @@
 class AGamePlayerController;
 class UPlayerInteractComponent;
 struct FInputActionValue;
+class UInteractPromptScreenUIInput;
 
 /**
  *
@@ -19,7 +20,11 @@ class PROJECT1_API UInteractPromptScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	FGameplayTag UIInputKey{};
+
 	TObjectPtr<AGamePlayerController> GamePlayerController{ nullptr };
+	TObjectPtr<UInteractPromptScreenUIInput> InteractPromptScreenUIInput{ nullptr };
 	TObjectPtr<UPlayerInteractComponent> PlayerInteractComponent{ nullptr };
 	TObjectPtr<ULayerUserWidgetBase> OwningLayer{ nullptr };
 

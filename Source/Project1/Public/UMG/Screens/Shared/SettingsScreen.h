@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "UMG/Screens/ScreenUserWidgetBase.h"
+#include "GameplayTagContainer.h"
 #include "SettingsScreen.generated.h"
 
 class AProject1PlayerControllerBase;
 struct FInputActionValue;
 class UButtonMenuComponent;
 class USettingsPageWidget;
+class UInputMappingContext;
+class USettingsScreenUIInput;
 
 /**
  * 
@@ -20,10 +23,14 @@ class PROJECT1_API USettingsScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (DisplayName = "UI Input Key"))
+	FGameplayTag UIInputKey{};
+
 	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UButtonMenuComponent> TabButtonMenuComponent;
 
 	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController;
+	TObjectPtr<USettingsScreenUIInput> SettingsScreenUIInput;
 	FDelegateHandle TabInputDelegateHandle;
 	FDelegateHandle CancelInputDelegateHandle;
 	FDelegateHandle NavigateInputDelegateHandle;

@@ -6,11 +6,12 @@
 #include "UMG/Screens/ScreenUserWidgetBase.h"
 #include "DialogueScreen.generated.h"
 
-class AGamePlayerController;
+class AProject1PlayerControllerBase;
 struct FInputActionValue;
 class UDialogueManagerBase;
 class UDialogueNode;
 class UScrollingTextBlock;
+class UDialogueScreenUIInput;
 
 /**
  * 
@@ -21,9 +22,13 @@ class PROJECT1_API UDialogueScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	FGameplayTag UIInputKey{};
+
 	TObjectPtr<UWorld> World{ nullptr };
 	TObjectPtr<UDialogueManagerBase> DialogueManager{ nullptr };
-	TObjectPtr<AGamePlayerController> GamePlayerController{ nullptr };
+	TObjectPtr<AProject1PlayerControllerBase> PlayerController{ nullptr };
+	TObjectPtr<UDialogueScreenUIInput> DialogueScreenUIInput{ nullptr };
 	FDelegateHandle ConfirmTriggeredDelegateHandle{};
 	FDelegateHandle DialogueNodePlayedDelegateHandle{};
 

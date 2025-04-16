@@ -6,10 +6,11 @@
 #include "UMG/Screens/ScreenUserWidgetBase.h"
 #include "TitleScreenMainMenuScreen.generated.h"
 
-class ATitleScreenPlayerController;
+class AProject1PlayerControllerBase;
 struct FInputActionValue;
 class UScrollBox;
 class UButtonMenuComponent;
+class UMainMenuScreenUIInput;
 
 /**
  *
@@ -20,10 +21,14 @@ class UTitleScreenMainMenuScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	FGameplayTag UIInputKey{};
+
 	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
 
-	TObjectPtr<ATitleScreenPlayerController> TitleScreenPlayerController{ nullptr };
+	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
+	TObjectPtr<UMainMenuScreenUIInput> MainMenuScreenUIInput{ nullptr };
 
 	FDelegateHandle MainMenuUIConfirmTriggeredDelegateHandle{};
 	FDelegateHandle MainMenuUINavigateTriggeredDelegateHandle{};
@@ -38,6 +43,6 @@ private:
 	void NativeOnPushedToLayerStack() override;
 	void NativeOnPoppedFromLayerStack() override;
 
-	void OnMainMenuScreenConfirmTriggered(const FInputActionValue& Value);
-	void OnMainMenuScreenNavigateTriggered(const FInputActionValue& Value);
+	void OnConfirmTriggered(const FInputActionValue& Value);
+	void OnNavigateTriggered(const FInputActionValue& Value);
 };

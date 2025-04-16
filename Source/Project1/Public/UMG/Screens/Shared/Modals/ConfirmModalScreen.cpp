@@ -7,6 +7,8 @@
 #include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 #include "InputActionValue.h"
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
+#include "Components/ActorComponents/UIInputComponent.h"
+#include "Objects/UIInput/Inputs/ConfirmModalScreenUIInput.h"
 
 UConfirmModalScreen::UConfirmModalScreen()
 {
@@ -33,12 +35,15 @@ void UConfirmModalScreen::NativeOnPushedToLayerStack()
 	// Get player controller
 	Project1PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
 
+	// Get confirm modal screen UI input
+	ConfirmModalUIInput = Project1PlayerController->GetUIInputComponent()->GetUIInputAs<UConfirmModalScreenUIInput>(UIInputKey);
+
 	// Register to confirm modal inputs
-	ConfirmInputTriggeredDelegateHandle = Project1PlayerController->ConfirmModalConfirmTriggered.AddUObject(this, &UConfirmModalScreen::OnConfirmInputTriggered);
-	NavigateInputTriggeredDelegateHandle = Project1PlayerController->ConfirmModalNavigateTriggered.AddUObject(this, &UConfirmModalScreen::OnNavigateInputTriggered);
+	ConfirmInputTriggeredDelegateHandle = ConfirmModalUIInput->ConfirmTriggeredDelegate.AddUObject(this, &UConfirmModalScreen::OnConfirmInputTriggered);
+	NavigateInputTriggeredDelegateHandle = ConfirmModalUIInput->NavigateTriggeredDelegate.AddUObject(this, &UConfirmModalScreen::OnNavigateInputTriggered);
 
 	// Add confirm modal inputs
-	Project1PlayerController->AddConfirmModalInputMappingContext();
+	ConfirmModalUIInput->Add(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UConfirmModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadPayloadBase> LoadPayload)
@@ -59,14 +64,14 @@ void UConfirmModalScreen::NativeConsumeLoadPayload(TObjectPtr<UScreenWidgetLoadP
 void UConfirmModalScreen::NativeOnPoppedFromLayerStack()
 {
 	// Unregister confirm modal inputs
-	Project1PlayerController->ConfirmModalConfirmTriggered.Remove(ConfirmInputTriggeredDelegateHandle);
+	ConfirmModalUIInput->ConfirmTriggeredDelegate.Remove(ConfirmInputTriggeredDelegateHandle);
 	ConfirmInputTriggeredDelegateHandle.Reset();
 
-	Project1PlayerController->ConfirmModalNavigateTriggered.Remove(NavigateInputTriggeredDelegateHandle);
+	ConfirmModalUIInput->NavigateTriggeredDelegate.Remove(NavigateInputTriggeredDelegateHandle);
 	NavigateInputTriggeredDelegateHandle.Reset();
 
 	// Remove confirm modal inputs
-	Project1PlayerController->RemoveConfirmModalInputMappingContext();
+	ConfirmModalUIInput->Remove(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UConfirmModalScreen::OnConfirmInputTriggered(const FInputActionValue& Value)

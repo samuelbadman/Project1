@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
-#include "GameplayTagContainer.h"
 #include "GamePlayerController.generated.h"
 
 class AGamePlayerCameraManager;
@@ -14,16 +13,9 @@ class UPlayerInteractComponent;
 class UPlayerViewLockOnComponent;
 class AProject1CharacterBase;
 class AArtificialPlayerLight;
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptInteractTriggeredDelegate, const FInputActionValue& /* Value */);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnInteractPromptSwitchActionTriggeredDelegate, const FInputActionValue& /* Value */);
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnDialogueScreenConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameMenuScreenConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameMenuScreenNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameMenuScreenCancelTriggeredDelegate, const FInputActionValue& /* Value */);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameMenuScreenQuitTriggeredDelegate, const FInputActionValue& /* Value */);
+struct FInputActionValue;
+class UInputMappingContext;
+class UInputAction;
 
 /**
  *
@@ -33,66 +25,12 @@ class PROJECT1_API AGamePlayerController : public AProject1PlayerControllerBase
 {
 	GENERATED_BODY()
 
-public:
-	FOnInteractPromptInteractTriggeredDelegate InteractPromptInteractTriggered{};
-	FOnInteractPromptSwitchActionTriggeredDelegate InteractPromptSwitchActionTriggered{};
-
-	FOnDialogueScreenConfirmTriggeredDelegate DialogueScreenConfirmTriggered{};
-
-	FOnGameMenuScreenConfirmTriggeredDelegate GameMenuScreenConfirmTriggered{};
-	FOnGameMenuScreenNavigateTriggeredDelegate GameMenuScreenNavigateTriggered{};
-	FOnGameMenuScreenCancelTriggeredDelegate GameMenuScreenCancelTriggered{};
-	FOnGameMenuScreenQuitTriggeredDelegate GameMenuScreenQuitTriggered{};
-
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPlayerInteractComponent> PlayerInteractComponent{ nullptr };
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPlayerViewLockOnComponent> PlayerViewLockOnComponent{ nullptr };
-
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|InteractPrompt")
-	TObjectPtr<UInputMappingContext> InteractPromptInputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|InteractPrompt")
-	int32 InteractPromptInputPriority{ 10 };
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|InteractPrompt")
-	TObjectPtr<UInputAction> InteractPromptInteractInputAction{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|InteractPrompt")
-	TObjectPtr<UInputAction> InteractPromptSwitchActionInputAction{ nullptr };
-
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|DialogueScreen")
-	TObjectPtr<UInputMappingContext> DialogueScreenInputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|DialogueScreen")
-	int32 DialogueScreenInputPriority{ 11 };
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|DialogueScreen")
-	TObjectPtr<UInputAction> DialogueScreenConfirmInputAction{ nullptr };
-
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
-	TObjectPtr<UInputMappingContext> GameMenuScreenInputMappingContext{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
-	int32 GameMenuScreenInputPriority{ 0 };
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
-	TObjectPtr<UInputAction> GameMenuScreenConfirmInputAction{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
-	TObjectPtr<UInputAction> GameMenuScreenNavigateInputAction{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
-	TObjectPtr<UInputAction> GameMenuScreenCancelInputAction{ nullptr };
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Screens|GameMenuScreen")
-	TObjectPtr<UInputAction> GameMenuScreenQuitInputAction{ nullptr };
-
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Look")
 	TObjectPtr<UInputMappingContext> LookInputMappingContext{ nullptr };
@@ -106,7 +44,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Look")
 	TObjectPtr<UInputAction> LookAnalogInputAction{ nullptr };
 
-
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|LookLockOn")
 	TObjectPtr<UInputMappingContext> LookLockOnInputMappingContext{ nullptr };
 
@@ -119,7 +56,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|LookLockOn")
 	TObjectPtr<UInputAction> SwitchLockTargetInputAction{ nullptr };
 
-
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|ResetLook")
 	TObjectPtr<UInputMappingContext> ResetLookInputMappingContext{ nullptr };
 
@@ -128,7 +64,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|ResetLook")
 	TObjectPtr<UInputAction> ResetLookInputAction{ nullptr };
-
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Move")
 	TObjectPtr<UInputMappingContext> MoveInputMappingContext{ nullptr };
@@ -139,7 +74,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Move")
 	TObjectPtr<UInputAction> MoveInputAction{ nullptr };
 
-
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Jump")
 	TObjectPtr<UInputMappingContext> JumpInputMappingContext{ nullptr };
 
@@ -148,7 +82,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|Jump")
 	TObjectPtr<UInputAction> JumpInputAction{ nullptr };
-
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|OpenGameMenu")
 	TObjectPtr<UInputMappingContext> OpenGameMenuInputMappingContext{ nullptr };
@@ -159,7 +92,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|OpenGameMenu")
 	TObjectPtr<UInputAction> OpenGameMenuInputAction{ nullptr };
 
-
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|ToggleWalk")
 	TObjectPtr<UInputMappingContext> ToggleWalkInputMappingContext{ nullptr };
 
@@ -169,20 +101,17 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GameInput|ToggleWalk")
 	TObjectPtr<UInputAction> ToggleWalkInputAction{ nullptr };
 
-
 	UPROPERTY(EditAnywhere, Category = "Look")
 	FVector2D AbsoluteLookInputSensitivity{ 1.0, 1.0 };
 
 	UPROPERTY(EditAnywhere, Category = "Look")
 	FVector2D AnalogLookInputSensitivity{ 2.0, 2.0 };
 
-
 	UPROPERTY(EditAnywhere, Category = "Move")
 	float MoveRightViewYawRotationRate{ 25.0f };
 
 	UPROPERTY(EditAnywhere, Category = "Move")
 	float RunInputMagnitudeThreshold{ 0.5f };
-
 
 	UPROPERTY(EditAnywhere, Category = "Player")
 	TSoftClassPtr<AArtificialPlayerLight> ArtificialPlayerLightClass{ nullptr };
@@ -197,15 +126,6 @@ private:
 public:
 	AGamePlayerController();
 
-	void AddInteractPromptInputMappingContext();
-	void RemoveInteractPromptInputMappingContext();
-
-	void AddDialogueScreenInputMappingContext();
-	void RemoveDialogueScreenInputMappingContext();
-
-	void AddGameMenuInputMappingContext();
-	void RemoveGameMenuInputMappingContext();
-
 	void ActivateArtificialPlayerLight(bool Activate);
 
 	FORCEINLINE TObjectPtr<UPlayerInteractComponent> GetPlayerInteractComponent() const { return PlayerInteractComponent; }
@@ -214,16 +134,6 @@ private:
 	void SetupInputComponent() override;
 	void OnPossess(APawn* aPawn) override;
 	void BeginPlay() override;
-
-	void OnInteractPromptUIInteractTriggered(const FInputActionValue& Value);
-	void OnInteractPromptUISwitchActionTriggered(const FInputActionValue& Value);
-
-	void OnDialogueScreenConfirmTriggered(const FInputActionValue& Value);
-
-	void OnGameMenuScreenConfirmTriggered(const FInputActionValue& Value);
-	void OnGameMenuScreenNavigateTriggered(const FInputActionValue& Value);
-	void OnGameMenuScreenCancelTriggered(const FInputActionValue& Value);
-	void OnGameMenuScreenQuitTriggered(const FInputActionValue& Value);
 
 	void OnLookAbsoluteTriggered(const FInputActionValue& Value);
 	void OnLookAnalogTriggered(const FInputActionValue& Value);

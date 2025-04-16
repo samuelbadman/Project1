@@ -6,9 +6,10 @@
 #include "UMG/Screens/ScreenUserWidgetBase.h"
 #include "TitleScreenAnyInputPromptScreen.generated.h"
 
-class ATitleScreenPlayerController;
+class AProject1PlayerControllerBase;
 class AProject1HUDBase;
 struct FInputActionValue;
+class UPressAnyInputScreenUIInput;
 
 /**
  * 
@@ -19,6 +20,9 @@ class UTitleScreenAnyInputPromptScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	FGameplayTag UIInputKey{};
+
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<UScreenUserWidgetBase> TitleScreenMainMenuScreenClass{ nullptr };
 
@@ -26,7 +30,8 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag TitleScreenMainMenuScreenTargetLayerName{};
 
-	TObjectPtr<ATitleScreenPlayerController> TitleScreenPlayerController{ nullptr };
+	TObjectPtr<AProject1PlayerControllerBase> Project1PlayerController{ nullptr };
+	TObjectPtr<UPressAnyInputScreenUIInput> PressAnyInputScreenUIInput{ nullptr };
 	TObjectPtr<AProject1HUDBase> Project1HUD{ nullptr };
 
 	FDelegateHandle PressAnyInputTriggeredDelegateHandle{};

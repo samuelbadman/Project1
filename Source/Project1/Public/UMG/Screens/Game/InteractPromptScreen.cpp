@@ -9,16 +9,21 @@
 #include "Components/ActorComponents/PlayerInteractComponent.h"
 #include "Interfaces/Interactable.h"
 #include "InputActionValue.h"
+#include "Objects/UIInput/Inputs/InteractPromptScreenUIInput.h"
+#include "Components/ActorComponents/UIInputComponent.h"
 
 void UInteractPromptScreen::NativeOnPushedToLayerStack()
 {
-	// The interact prompt is persistent as long as the game primary layout widget is around. It is always the top of the widget layer
+	// The interact prompt is persistent as long as the game primary layout widget is around. It is always the top of its widget layer
 
-	// Get game player controller
+	// Get player controller
 	GamePlayerController = Cast<AGamePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 
 	if (IsValid(GamePlayerController))
 	{
+		// Get interact prompt screen UI input
+		InteractPromptScreenUIInput = GamePlayerController->GetUIInputComponent()->GetUIInputAs<UInteractPromptScreenUIInput>(UIInputKey);
+
 		// Get player interact component
 		PlayerInteractComponent = GamePlayerController->GetPlayerInteractComponent();
 
@@ -36,19 +41,19 @@ void UInteractPromptScreen::NativeOnPushedToLayerStack()
 		OnTargetInteractableChangedDelegateHandle =
 			PlayerInteractComponent->OnTargetInteractableChangedDelegate.AddUObject(this, &UInteractPromptScreen::OnTargetInteractableChanged);
 
-		GamePlayerController->InteractPromptInteractTriggered.AddUObject(this, &UInteractPromptScreen::OnInteractTriggered);
-		GamePlayerController->InteractPromptSwitchActionTriggered.AddUObject(this, &UInteractPromptScreen::OnSwitchActionTriggered);
+		InteractPromptScreenUIInput->InteractTriggered.AddUObject(this, &UInteractPromptScreen::OnInteractTriggered);
+		InteractPromptScreenUIInput->SwitchActionTriggered.AddUObject(this, &UInteractPromptScreen::OnSwitchActionTriggered);
 	}
 }
 
 void UInteractPromptScreen::NativeOnShown()
 {
-	GamePlayerController->AddInteractPromptInputMappingContext();
+	InteractPromptScreenUIInput->Add(GamePlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UInteractPromptScreen::NativeOnCollapsed()
 {
-	GamePlayerController->RemoveInteractPromptInputMappingContext();
+	InteractPromptScreenUIInput->Remove(GamePlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UInteractPromptScreen::NativeOnPoppedFromLayerStack()
@@ -62,10 +67,10 @@ void UInteractPromptScreen::NativeOnPoppedFromLayerStack()
 	PlayerInteractComponent->OnTargetInteractableChangedDelegate.Remove(OnTargetInteractableChangedDelegateHandle);
 	OnTargetInteractableChangedDelegateHandle.Reset();
 
-	GamePlayerController->InteractPromptInteractTriggered.Remove(OnInteractTriggeredDelegateHandle);
+	InteractPromptScreenUIInput->InteractTriggered.Remove(OnInteractTriggeredDelegateHandle);
 	OnInteractTriggeredDelegateHandle.Reset();
 
-	GamePlayerController->InteractPromptSwitchActionTriggered.Remove(OnSwitchActionTriggeredDelegateHandle);
+	InteractPromptScreenUIInput->SwitchActionTriggered.Remove(OnSwitchActionTriggeredDelegateHandle);
 	OnSwitchActionTriggeredDelegateHandle.Reset();
 }
 

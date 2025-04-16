@@ -6,13 +6,14 @@
 #include "UMG/Screens/ScreenUserWidgetBase.h"
 #include "GameMenuScreen.generated.h"
 
-class AGamePlayerController;
+class AProject1PlayerControllerBase;
 class AGameHUD;
 class AGameGameMode;
 struct FInputActionValue;
 class UProject1ButtonBase;
 class UButtonMenuComponent;
 class UTextBlock;
+class UGameMenuScreenUIInput;
 
 /**
  *
@@ -23,10 +24,14 @@ class PROJECT1_API UGameMenuScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	FGameplayTag UIInputKey;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
 
-	TObjectPtr<AGamePlayerController> GamePlayerController;
+	TObjectPtr<AProject1PlayerControllerBase> PlayerController;
+	TObjectPtr<UGameMenuScreenUIInput> GameMenuScreenUIInput;
 	TObjectPtr<AGameHUD> GameHUD;
 	TObjectPtr<AGameGameMode> GameGameMode;
 	FDelegateHandle QuitDelegateHandle;
