@@ -67,9 +67,7 @@ void AGamePlayerController::OnPossess(APawn* aPawn)
 
 	// Player character mesh is only lit by lights affecting lighting channel 1. The player will only be lit by lights affecting lighting channel 1
 	const TObjectPtr<USkeletalMeshComponent> CharacterMesh{ PossessedCharacter->GetMesh() };
-	CharacterMesh->LightingChannels.bChannel0 = 0;
-	CharacterMesh->LightingChannels.bChannel1 = 1;
-	CharacterMesh->LightingChannels.bChannel2 = 0;
+	CharacterMesh->SetLightingChannels(0, 1, 0);
 
 	// Setup player interact
 	PlayerInteractComponent->OnPossessPawn(aPawn);
