@@ -3,7 +3,7 @@
 
 #include "Project1AIControllerBase.h"
 #include "Objects/AI/Goals/AIGoalBase.h"
-#include "Actors/Pawns/Characters/Project1CharacterBase.h"
+#include "Pawns/Characters/Project1CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AProject1AIControllerBase::AProject1AIControllerBase()

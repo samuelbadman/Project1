@@ -6,7 +6,7 @@
 #include "Goal_Common_MoveToLocation.h"
 #include "NavigationSystem.h"
 #include "AI/Navigation/NavigationTypes.h"
-#include "Actors/Pawns/Characters/Project1CharacterBase.h"
+#include "Pawns/Characters/Project1CharacterBase.h"
 #include "NavigationPath.h"
 
 UGoal_Test_Idle::UGoal_Test_Idle()

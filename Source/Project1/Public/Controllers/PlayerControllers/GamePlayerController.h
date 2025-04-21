@@ -121,7 +121,7 @@ private:
 	TObjectPtr<AGameHUD> GameHUD{ nullptr };
 	TObjectPtr<AProject1CharacterBase> PossessedCharacter{ nullptr };
 	TObjectPtr<AArtificialPlayerLight> ArtificialPlayerLight{nullptr};
-	bool bRestrictPlayerToWalk{ true };
+	bool bLimitPlayerToWalk{ false };
 
 public:
 	AGamePlayerController();

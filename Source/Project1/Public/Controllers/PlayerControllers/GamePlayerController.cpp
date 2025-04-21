@@ -8,7 +8,7 @@
 #include "Components/ActorComponents/PlayerInteractComponent.h"
 #include "Components/ActorComponents/PlayerViewLockOnComponent.h"
 #include "HUDs/GameHUD.h"
-#include "Actors/Pawns/Characters/Project1CharacterBase.h"
+#include "Pawns/Characters/Project1CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Actors/Player/ArtificialPlayerLight.h"
 
@@ -171,7 +171,7 @@ void AGamePlayerController::OnMoveTriggered(const FInputActionValue& Value)
 
 	// Add movement input
 	PossessedCharacter->SetTargetWorldOrientation(WorldMovementDirection.ToOrientationQuat(), false);
-	PossessedCharacter->SetMovementSpeed((bRestrictPlayerToWalk) ? 
+	PossessedCharacter->SetMovementSpeed((bLimitPlayerToWalk) ? 
 		PossessedCharacter->GetLinearWalkSpeed() : (InputMagnitude < RunInputMagnitudeThreshold) ? 
 			PossessedCharacter->GetLinearWalkSpeed() : PossessedCharacter->GetLinearRunSpeed());
 
@@ -208,5 +208,5 @@ void AGamePlayerController::OnSwitchLockTargetTriggered(const FInputActionValue&
 
 void AGamePlayerController::OnToggleWalkTriggered(const FInputActionValue& Value)
 {
-	bRestrictPlayerToWalk = !bRestrictPlayerToWalk;
+	bLimitPlayerToWalk = !bLimitPlayerToWalk;
 }
