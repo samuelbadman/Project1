@@ -35,6 +35,21 @@ void UGameHUDScreen::FadeScreenAfterDelay(EGameHUDScreenFadeDirection Direction,
 	GetWorld()->GetTimerManager().SetTimer(ScreenFadeDelayTimerHandle, TimerDel, DelayDuration, false);
 }
 
+bool UGameHUDScreen::IsScreenFadedOut() const
+{
+	return (GetRenderOpacity() == ScreenFadeOutTargetRenderOpacity);
+}
+
+bool UGameHUDScreen::IsScreenFadeDelayActive() const
+{
+	return GetWorld()->GetTimerManager().IsTimerActive(ScreenFadeDelayTimerHandle);
+}
+
+void UGameHUDScreen::ClearScreenFadeDelayTimer()
+{
+	GetWorld()->GetTimerManager().ClearTimer(ScreenFadeDelayTimerHandle);
+}
+
 void UGameHUDScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);

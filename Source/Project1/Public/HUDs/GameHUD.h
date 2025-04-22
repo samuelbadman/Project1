@@ -31,7 +31,7 @@ private:
 public:
 	AGameHUD();
 
-	// Returns the game HUD screen. This can return null
+	// Returns the game HUD screen. This can return null if the top widget on the game HUD widget layer is not the game HUD screen widget
 	UFUNCTION(BlueprintCallable)
 	UGameHUDScreen* GetGameHUDScreen() const;
 

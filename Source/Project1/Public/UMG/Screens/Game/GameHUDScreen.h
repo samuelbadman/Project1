@@ -54,6 +54,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameHUDScreen")
 	void FadeScreenAfterDelay(EGameHUDScreenFadeDirection Direction, float Rate = 1.0f, float DelayDuration = 0.2f);
 
+	UFUNCTION(BlueprintCallable, Category = "GameHUDScreen")
+	bool IsScreenFadedOut() const;
+
+	UFUNCTION(BlueprintCallable, Category = "GameHUDScreen")
+	bool IsScreenFadeDelayActive() const;
+
+	UFUNCTION(BlueprintCallable, Category = "GameHUDScreen")
+	void ClearScreenFadeDelayTimer();
+
 protected:
 	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
