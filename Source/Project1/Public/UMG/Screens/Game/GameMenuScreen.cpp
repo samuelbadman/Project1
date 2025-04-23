@@ -15,7 +15,7 @@
 
 UGameMenuScreen::UGameMenuScreen()
 	: UIInputKey({}),
-	ButtonMenuComponent(nullptr),
+	ButtonMenuComponent(CreateDefaultSubobject<UButtonMenuComponent>(FName(TEXT("ButtonMenuComponent")))),
 	PlayerController(nullptr),
 	GameMenuScreenUIInput(nullptr),
 	GameHUD(nullptr),
@@ -24,7 +24,6 @@ UGameMenuScreen::UGameMenuScreen()
 	NavigateDelegateHandle({}),
 	CancelDelegateHandle({})
 {
-	ButtonMenuComponent = CreateDefaultSubobject<UButtonMenuComponent>(FName(TEXT("ButtonMenuComponent")));
 }
 
 void UGameMenuScreen::NativeOnPushedToLayerStack()

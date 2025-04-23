@@ -27,7 +27,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	FGameplayTag UIInputKey;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
 
 	TObjectPtr<AProject1PlayerControllerBase> PlayerController;

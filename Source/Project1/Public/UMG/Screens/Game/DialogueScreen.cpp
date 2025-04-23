@@ -9,7 +9,7 @@
 #include "Objects/Dialogue/DialogueManagerBase.h"
 #include "Objects/ScreenLoadPayloads/DialogueScreenLoadPayload.h"
 #include "Objects/Dialogue/DialogueNode.h"
-#include "UMG/Components/ScrollingTextBlock.h"
+#include "UMG/Components/Text/ScrollingTextBlock.h"
 #include "Components/ActorComponents/UIInputComponent.h"
 #include "Objects/UIInput/Inputs/DialogueScreenUIInput.h"
 

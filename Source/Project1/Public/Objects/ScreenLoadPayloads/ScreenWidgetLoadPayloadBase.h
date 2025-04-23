@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class PROJECT1_API UScreenWidgetLoadPayloadBase : public UProject1ObjectBase
 {
 	GENERATED_BODY()
