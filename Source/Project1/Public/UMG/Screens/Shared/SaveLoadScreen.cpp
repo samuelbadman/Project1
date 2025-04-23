@@ -36,7 +36,7 @@ void USaveLoadScreen::NativeOnPushedToLayerStack()
 
 	SaveLoadScreenUIInput->Add(PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("SaveLoadScreen is %s"), (bInSaveMode) ? *FString(TEXT("saving")) : *FString(TEXT("loading"))));
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, FString::Printf(TEXT("SaveLoadScreen is %s"), (bInSaveMode) ? *FString(TEXT("saving")) : *FString(TEXT("loading"))));
 }
 
 void USaveLoadScreen::NativeOnPoppedFromLayerStack()
@@ -49,5 +49,8 @@ void USaveLoadScreen::NativeOnPoppedFromLayerStack()
 
 void USaveLoadScreen::OnCancelInputTriggered(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Savel load screen cancel input"));
+	if (CanReceiveInput())
+	{
+		CastChecked<AProject1HUDBase>(PlayerController->GetHUD())->PopContentFromPrimaryLayoutWidgetLayer(GetOwningLayerName());
+	}
 }
