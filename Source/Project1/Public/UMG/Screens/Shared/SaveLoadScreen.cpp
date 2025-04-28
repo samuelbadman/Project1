@@ -7,13 +7,16 @@
 #include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 #include "Components/ActorComponents/UIInputComponent.h"
 #include "Objects/UIInput/Inputs/SaveLoadScreenUIInput.h"
+#include "InputActionValue.h"
 
 USaveLoadScreen::USaveLoadScreen()
 	:
 	UIInputKey({}),
 	bInSaveMode(true),
 	SaveLoadScreenUIInput(nullptr),
-	CancelInputDelegateHandle({})
+	CancelInputDelegateHandle({}),
+	ConfirmInputDelegateHandle({}),
+	NavigateInputDelegateHandle({})
 {
 }
 
@@ -32,17 +35,24 @@ void USaveLoadScreen::NativeOnPushedToLayerStack()
 	PlayerController = CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0));
 	SaveLoadScreenUIInput = PlayerController->GetUIInputComponent()->GetUIInputAs<USaveLoadScreenUIInput>(UIInputKey);
 
+	// Bind to UI input delegate events
 	CancelInputDelegateHandle = SaveLoadScreenUIInput->OnCancelInputTriggeredDelegate.AddUObject(this, &USaveLoadScreen::OnCancelInputTriggered);
+	ConfirmInputDelegateHandle = SaveLoadScreenUIInput->OnConfirmInputTriggeredDelegate.AddUObject(this, &USaveLoadScreen::OnConfirmInputTriggered);
+	NavigateInputDelegateHandle = SaveLoadScreenUIInput->OnNavigateInputTriggeredDelegate.AddUObject(this, &USaveLoadScreen::OnNavigateInputTriggered);
 
 	SaveLoadScreenUIInput->Add(PlayerController->GetEnhancedInputLocalPlayerSubsystem());
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, FString::Printf(TEXT("SaveLoadScreen is %s"), (bInSaveMode) ? *FString(TEXT("saving")) : *FString(TEXT("loading"))));
 }
 
 void USaveLoadScreen::NativeOnPoppedFromLayerStack()
 {
 	SaveLoadScreenUIInput->OnCancelInputTriggeredDelegate.Remove(CancelInputDelegateHandle);
 	CancelInputDelegateHandle.Reset();
+
+	SaveLoadScreenUIInput->OnConfirmInputTriggeredDelegate.Remove(ConfirmInputDelegateHandle);
+	ConfirmInputDelegateHandle.Reset();
+
+	SaveLoadScreenUIInput->OnNavigateInputTriggeredDelegate.Remove(NavigateInputDelegateHandle);
+	NavigateInputDelegateHandle.Reset();
 
 	SaveLoadScreenUIInput->Remove(PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
@@ -52,5 +62,21 @@ void USaveLoadScreen::OnCancelInputTriggered(const FInputActionValue& Value)
 	if (CanReceiveInput())
 	{
 		CastChecked<AProject1HUDBase>(PlayerController->GetHUD())->PopContentFromPrimaryLayoutWidgetLayer(GetOwningLayerName());
+	}
+}
+
+void USaveLoadScreen::OnConfirmInputTriggered(const FInputActionValue& Value)
+{
+	if (CanReceiveInput())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Save load screen Confirm input triggered")));
+	}
+}
+
+void USaveLoadScreen::OnNavigateInputTriggered(const FInputActionValue& Value)
+{
+	if (CanReceiveInput())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Save load screen Navigate input triggered: %s"), *Value.Get<FVector2D>().ToString()));
 	}
 }

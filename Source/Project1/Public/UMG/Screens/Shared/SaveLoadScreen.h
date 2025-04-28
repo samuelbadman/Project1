@@ -23,10 +23,14 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag UIInputKey;
 
+	UPROPERTY(BlueprintReadOnly, Category = "SaveLoadScreen", meta = (AllowPrivateAccess = "true"))
 	bool bInSaveMode;
+
 	TObjectPtr<AProject1PlayerControllerBase> PlayerController;
 	TObjectPtr<USaveLoadScreenUIInput> SaveLoadScreenUIInput;
 	FDelegateHandle CancelInputDelegateHandle;
+	FDelegateHandle ConfirmInputDelegateHandle;
+	FDelegateHandle NavigateInputDelegateHandle;
 
 public:
 	USaveLoadScreen();
@@ -37,4 +41,6 @@ private:
 	void NativeOnPoppedFromLayerStack() override;
 
 	void OnCancelInputTriggered(const FInputActionValue& Value);
+	void OnConfirmInputTriggered(const FInputActionValue& Value);
+	void OnNavigateInputTriggered(const FInputActionValue& Value);
 };
