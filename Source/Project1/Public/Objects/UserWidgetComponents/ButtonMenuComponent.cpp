@@ -20,8 +20,11 @@ void UButtonMenuComponent::RegisterMenuButtons(const TArray<UProject1ButtonBase*
 	{
 		if (ActivateButtonMouseInput)
 		{
+			Button->SetGenerateHoverEvents(false);
+
 			Button->OnMouseCursorOver.AddDynamic(this, &UButtonMenuComponent::OnMouseCursorOverMenuButton);
 			Button->OnMouseCursorLeft.AddDynamic(this, &UButtonMenuComponent::OnMouseCursorLeftMenuButton);
+
 			Button->ActivateMouseInput();
 		}
 	}

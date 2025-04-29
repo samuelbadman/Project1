@@ -176,10 +176,20 @@ void UProject1ButtonBase::OnMouseCursorOverWidget()
 {
 	bCursorOver = true;
 	OnMouseCursorOver.Broadcast(this);
+
+	if (bGenerateHoverEvents)
+	{
+		MakeHovered();
+	}
 }
 
 void UProject1ButtonBase::OnMouseCursorLeftWidget()
 {
 	bCursorOver = false;
 	OnMouseCursorLeft.Broadcast(this);
+
+	if (bGenerateHoverEvents)
+	{
+		MakeUnhovered();
+	}
 }

@@ -54,6 +54,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	FSlateBrush HoveredBrush{};
 
+	// Toggles whether the button becomes hovered when the mouse cursor moves over and leaves the button widget's geometry. When this is false, it is expected code using the button
+	// will manage the button's hovered state. For an example of this see ButtonMenuComponent
+	bool bGenerateHoverEvents{ true };
+
 	// The key that generates button click events when pressed and the mouse cursor is over the button widget's geometry
 	UPROPERTY(EditAnywhere)
 	FKey ClickKey{ EKeys::LeftMouseButton };
@@ -92,6 +96,7 @@ public:
 
 	FORCEINLINE bool AreMouseInputsActivated() const { return bMouseInputsActivated; }
 	FORCEINLINE bool IsHovered() const { return bHovered; }
+	FORCEINLINE void SetGenerateHoverEvents(const bool NewGenerateHoverEvents) { bGenerateHoverEvents = NewGenerateHoverEvents; }
 
 private:
 	void NativePreConstruct() override;
