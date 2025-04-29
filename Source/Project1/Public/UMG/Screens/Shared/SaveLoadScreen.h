@@ -20,6 +20,10 @@ class USaveLoadScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 	
 private:
+	// TODO: Consider using a button menu component for save slots when implementing multiple save slots
+	// TODO: Cannot interact with save slot when not using mouse controls such as in the in game save game menu
+		// TODO: Need to implement gamepad controls for selecting save slot buttons. Use a button menu component for save slots?
+
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag UIInputKey;
 
