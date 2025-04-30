@@ -9,6 +9,7 @@
 
 class AProject1PlayerControllerBase;
 class USaveLoadScreenUIInput;
+class UButtonMenuComponent;
 struct FInputActionValue;
 
 /**
@@ -20,9 +21,8 @@ class USaveLoadScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 	
 private:
-	// TODO: Consider using a button menu component for save slots when implementing multiple save slots
-	// TODO: Cannot interact with save slot when not using mouse controls such as in the in game save game menu
-		// TODO: Need to implement gamepad controls for selecting save slot buttons. Use a button menu component for save slots?
+	UPROPERTY(BlueprintReadOnly, Category = "SaveLoadScreen", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
 
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag UIInputKey;

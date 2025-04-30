@@ -6,6 +6,8 @@
 #include "UMG/Project1UserWidgetBase.h"
 #include "SaveSlotWidget.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSaveSlotSelectedSignature);
+
 /**
  * 
  */
@@ -14,4 +16,10 @@ class USaveSlotWidget : public UProject1UserWidgetBase
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnSaveSlotSelectedSignature OnSaveSlotSelectedDelegate;
+
+public:
+	USaveSlotWidget();
 };

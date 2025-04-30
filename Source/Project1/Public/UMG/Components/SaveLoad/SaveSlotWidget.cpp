@@ -3,3 +3,7 @@
 
 #include "SaveSlotWidget.h"
 
+USaveSlotWidget::USaveSlotWidget()
+	: OnSaveSlotSelectedDelegate({})
+{
+}

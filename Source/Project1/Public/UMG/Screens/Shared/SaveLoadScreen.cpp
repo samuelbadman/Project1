@@ -8,9 +8,11 @@
 #include "Components/ActorComponents/UIInputComponent.h"
 #include "Objects/UIInput/Inputs/SaveLoadScreenUIInput.h"
 #include "InputActionValue.h"
+#include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
 
 USaveLoadScreen::USaveLoadScreen()
 	:
+	ButtonMenuComponent(CreateDefaultSubobject<UButtonMenuComponent>(FName(TEXT("ButtonMenuComponent")))),
 	UIInputKey({}),
 	bInSaveMode(true),
 	SaveLoadScreenUIInput(nullptr),
@@ -69,7 +71,7 @@ void USaveLoadScreen::OnConfirmInputTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Save load screen Confirm input triggered")));
+		ButtonMenuComponent->PressFocusedButton();
 	}
 }
 
