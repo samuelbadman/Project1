@@ -4,6 +4,7 @@
 #include "SaveSlotWidget.h"
 
 USaveSlotWidget::USaveSlotWidget()
-	: OnSaveSlotSelectedDelegate({})
+	: OnSaveSlotSelectedDelegate({}),
+	SaveSlotName(TEXT("DefaultSaveSlotName"))
 {
 }

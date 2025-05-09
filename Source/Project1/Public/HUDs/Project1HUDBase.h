@@ -82,5 +82,9 @@ public:
 		bool Async = true
 	);
 
+	// Helper function to create the save load screen and push it to a widget layer
+	UFUNCTION(BlueprintCallable)
+	void PushSaveLoadScreenToWidgetLayer(const FGameplayTag& LayerName, const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass, bool InSaveMode, bool Async);
+
 	void CreatePrimaryLayoutWidget();
 };

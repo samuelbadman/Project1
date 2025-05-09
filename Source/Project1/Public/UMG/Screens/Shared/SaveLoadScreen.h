@@ -21,7 +21,7 @@ class USaveLoadScreen : public UScreenUserWidgetBase
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(BlueprintReadOnly, Category = "SaveLoadScreen", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SaveLoadScreen", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UButtonMenuComponent> ButtonMenuComponent;
 
 	UPROPERTY(EditDefaultsOnly)

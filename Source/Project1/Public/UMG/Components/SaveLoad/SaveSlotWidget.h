@@ -20,6 +20,13 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnSaveSlotSelectedSignature OnSaveSlotSelectedDelegate;
 
+private:
+	UPROPERTY(EditAnywhere, Category = "SaveSlotWidget")
+	FString SaveSlotName;
+
 public:
 	USaveSlotWidget();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "SaveSlotWidget")
+	const FString& GetSaveSlotName() const { return SaveSlotName; }
 };

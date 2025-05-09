@@ -6,6 +6,7 @@
 #include "UMG/Layers/LayerUserWidgetBase.h"
 #include "Objects/ScreenLoadPayloads/ConfirmModalScreenLoadPayload.h"
 #include "Objects/ScreenLoadPayloads/DynamicModalScreenLoadPayload.h"
+#include "Objects/ScreenLoadPayloads/SaveLoadScreenLoadPayload.h"
 
 void AProject1HUDBase::PushContentToPrimaryLayoutWidgetLayer(
 	const FGameplayTag& LayerName,
@@ -86,6 +87,14 @@ void AProject1HUDBase::PushDynamicModalToWidgetLayer(
 	ModalLoadPayload->Options = Options;
 
 	PushContentToPrimaryLayoutWidgetLayer(LayerName, WidgetClass, ModalLoadPayload, Async);
+}
+
+void AProject1HUDBase::PushSaveLoadScreenToWidgetLayer(const FGameplayTag& LayerName, const TSoftClassPtr<UScreenUserWidgetBase>& WidgetClass, bool InSaveMode, bool Async)
+{
+	const TObjectPtr<USaveLoadScreenLoadPayload> SaveLoadPayload{ NewObject<USaveLoadScreenLoadPayload>() };
+	SaveLoadPayload->bSaving = InSaveMode;
+
+	PushContentToPrimaryLayoutWidgetLayer(LayerName, WidgetClass, SaveLoadPayload, Async);
 }
 
 void AProject1HUDBase::CreatePrimaryLayoutWidget()
