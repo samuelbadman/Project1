@@ -37,7 +37,7 @@ void UGameMenuScreen::NativeOnPushedToLayerStack()
 	UpdateTotalPlayTimeText();
 
 	// Bind to game second elapsed event in game mode
-	GameGameMode->OnGameSecondElapsed.AddDynamic(this, &UGameMenuScreen::OnGameSecondElapsed);
+	GameGameMode->OnGameSecondElapsed.AddDynamic(this, &UGameMenuScreen::OnGameModeGameSecondElapsed);
 
 	AddScreenInputBindings();
 	GameHUD->SetGameHUDScreenShown(false);
@@ -45,7 +45,7 @@ void UGameMenuScreen::NativeOnPushedToLayerStack()
 
 void UGameMenuScreen::NativeOnPoppedFromLayerStack()
 {
-	GameGameMode->OnGameSecondElapsed.RemoveDynamic(this, &UGameMenuScreen::OnGameSecondElapsed);
+	GameGameMode->OnGameSecondElapsed.RemoveDynamic(this, &UGameMenuScreen::OnGameModeGameSecondElapsed);
 
 	RemoveScreenInputBindings();
 	GameHUD->SetGameHUDScreenShown(true);
@@ -120,7 +120,7 @@ void UGameMenuScreen::RemoveScreenInputBindings()
 	GameMenuScreenUIInput->Remove(PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
-void UGameMenuScreen::OnGameSecondElapsed(bool GamePaused)
+void UGameMenuScreen::OnGameModeGameSecondElapsed(bool GamePaused)
 {
 	UpdateTotalPlayTimeText();
 }
@@ -128,34 +128,8 @@ void UGameMenuScreen::OnGameSecondElapsed(bool GamePaused)
 void UGameMenuScreen::UpdateTotalPlayTimeText()
 {
 	const TObjectPtr<UTextBlock> TotalPlayTimeTextBlock{ GetTotalPlayTimeTextBlock() };
-
-	// Build display string
-	uint64 Hours;
-	uint8 Minutes, Seconds;
-	GameGameMode->GetTotalPlayTime(Hours, Minutes, Seconds);
-
-	FString DisplayString(TEXT(""));
-	DisplayString.Reserve(9); // Reserve enough characters for format: HHH:MM:SS
-
-	DisplayString.Append((Hours < 10) ?
-		FString::Printf(TEXT("0%d"), Hours) :
-		FString::Printf(TEXT("%d"), Hours)
-	);
-
-	DisplayString.AppendChar(':');
-
-	DisplayString.Append((Minutes < 10) ?
-		FString::Printf(TEXT("0%d"), Minutes) :
-		FString::Printf(TEXT("%d"), Minutes)
-	);
-
-	DisplayString.AppendChar(':');
-
-	DisplayString.Append((Seconds < 10) ?
-		FString::Printf(TEXT("0%d"), Seconds) :
-		FString::Printf(TEXT("%d"), Seconds)
-	);
+	const PlayTime& TotalPlayTime{ GameGameMode->GetTotalPlayTime() };
 
 	// Update text in widget
-	TotalPlayTimeTextBlock->SetText(FText::FromString(DisplayString));
+	TotalPlayTimeTextBlock->SetText(FText::FromString(TotalPlayTime.ToString()));
 }

@@ -60,7 +60,7 @@ private:
 	void RemoveScreenInputBindings();
 
 	UFUNCTION()
-	void OnGameSecondElapsed(bool GamePaused);
+	void OnGameModeGameSecondElapsed(bool GamePaused);
 
 	void UpdateTotalPlayTimeText();
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameModes/Project1GameModeBase.h"
+#include "Classes/PlayTime.h"
 #include "GameGameMode.generated.h"
 
 class UDialogueManagerBase;
@@ -33,16 +34,13 @@ private:
 	float ElapsedDeltaSeconds{ 0.0f };
 
 	// Total play time
-	uint64 TotalPlayHours{ 0 };
-	uint8 TotalPlayMinutes{ 0 };
-	uint8 TotalPlaySeconds{ 0 };
+	PlayTime TotalPlayTime{};
 
 public:
 	AGameGameMode();
 
 	FORCEINLINE UDialogueManagerBase* GetDialogueManager() const { return DialogueManagerInstance; }
-
-	void GetTotalPlayTime(uint64& Hours, uint8& Minutes, uint8& Seconds) const;
+	FORCEINLINE const PlayTime& GetTotalPlayTime() const { return TotalPlayTime; }
 
 private:
 	void StartPlay() override;
@@ -55,5 +53,4 @@ private:
 	void OnSecondElapsed(bool GamePaused);
 
 	void CreateDialogueManager();
-	void AddSecondToTotalPlayTime();
 };

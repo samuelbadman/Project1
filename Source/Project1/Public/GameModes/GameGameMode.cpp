@@ -11,13 +11,6 @@ AGameGameMode::AGameGameMode()
 	PrimaryActorTick.bTickEvenWhenPaused = true;
 }
 
-void AGameGameMode::GetTotalPlayTime(uint64& Hours, uint8& Minutes, uint8& Seconds) const
-{
-	Hours = TotalPlayHours;
-	Minutes = TotalPlayMinutes;
-	Seconds = TotalPlaySeconds;
-}
-
 void AGameGameMode::StartPlay()
 {
 	// Create dialogue manager instance before beginning play on actors to ensure that dialogue manager instance is valid during actor begin play
@@ -73,7 +66,7 @@ void AGameGameMode::TickUnpaused(float DeltaSeconds)
 void AGameGameMode::OnSecondElapsed(bool GamePaused)
 {
 	// Update total time game played
-	AddSecondToTotalPlayTime();
+	TotalPlayTime.AddSecond();
 
 	OnGameSecondElapsed.Broadcast(GamePaused);
 }
@@ -85,22 +78,5 @@ void AGameGameMode::CreateDialogueManager()
 	if (IsValid(DialogueManagerLoadedClass))
 	{
 		DialogueManagerInstance = NewObject<UDialogueManagerBase>(this, DialogueManagerLoadedClass);
-	}
-}
-
-void AGameGameMode::AddSecondToTotalPlayTime()
-{
-	++TotalPlaySeconds;
-
-	if (TotalPlaySeconds == 60)
-	{
-		++TotalPlayMinutes;
-		TotalPlaySeconds = 0;
-
-		if (TotalPlayMinutes == 60)
-		{
-			++TotalPlayHours;
-			TotalPlayMinutes = 0;
-		}
 	}
 }
