@@ -5,10 +5,19 @@
 #include "Objects/Dialogue/DialogueManagerBase.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "GameInstances/Project1GameInstanceBase.h"
+#include "Objects/SaveLoad/SaveManager.h"
+#include "SaveGame/Project1SaveGame.h"
+
 AGameGameMode::AGameGameMode()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bTickEvenWhenPaused = true;
+}
+
+void AGameGameMode::SetTotalPlayTime(const FPlayTime& InTotalPlayTime)
+{
+	TotalPlayTime = InTotalPlayTime;
 }
 
 void AGameGameMode::StartPlay()
@@ -26,6 +35,11 @@ void AGameGameMode::BeginPlay()
 
 	// Begin dialogue manager instance
 	DialogueManagerInstance->BeginPlay();
+
+	// Set total play time to value in saved game slot
+	// TODO: Consider how loading saved data is applied to the game state. 
+	const TObjectPtr<USaveManager> SaveManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager() };
+	TotalPlayTime = SaveManager->GetSaveGameObject()->GetTotalPlayTime();
 }
 
 void AGameGameMode::Tick(float DeltaSeconds)
@@ -67,6 +81,7 @@ void AGameGameMode::OnSecondElapsed(bool GamePaused)
 {
 	// Update total time game played
 	TotalPlayTime.IncrementSecond();
+	OnTotalPlayTimeChanged.Broadcast(TotalPlayTime);
 
 	OnGameSecondElapsed.Broadcast(GamePaused);
 }

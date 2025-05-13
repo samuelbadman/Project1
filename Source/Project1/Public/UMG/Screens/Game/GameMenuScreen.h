@@ -14,6 +14,7 @@ class UProject1ButtonBase;
 class UButtonMenuComponent;
 class UTextBlock;
 class UGameMenuScreenUIInput;
+struct FPlayTime;
 
 /**
  *
@@ -34,6 +35,7 @@ private:
 	TObjectPtr<UGameMenuScreenUIInput> GameMenuScreenUIInput;
 	TObjectPtr<AGameHUD> GameHUD;
 	TObjectPtr<AGameGameMode> GameGameMode;
+	FDelegateHandle TotalPlayTimeChangedDelegateHandle;
 	FDelegateHandle QuitDelegateHandle;
 	FDelegateHandle ConfirmDelegateHandle;
 	FDelegateHandle NavigateDelegateHandle;
@@ -60,7 +62,7 @@ private:
 	void RemoveScreenInputBindings();
 
 	UFUNCTION()
-	void OnGameModeGameSecondElapsed(bool GamePaused);
+	void OnTotalPlayTimeChanged(const FPlayTime& NewPlayTime);
 
 	void UpdateTotalPlayTimeText();
 };

@@ -3,21 +3,32 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayTime.generated.h"
 
 /**
  * 
  */
-class PlayTime
+USTRUCT()
+struct FPlayTime
 {
+	GENERATED_BODY()
+
 private:
+	// Marked as UPROPERTY as the FPlayTime struct is used in a save game object to save to disk in a save game slot
+	UPROPERTY()
 	uint64 Hours;
+
+	// Marked as UPROPERTY as the FPlayTime struct is used in a save game object to save to disk in a save game slot
+	UPROPERTY()
 	uint8 Minutes;
+
+	// Marked as UPROPERTY as the FPlayTime struct is used in a save game object to save to disk in a save game slot
+	UPROPERTY()
 	uint8 Seconds;
 
 public:
-	PlayTime();
-	PlayTime(const uint64 InHours, const uint8 InMinutes, const uint8 InSeconds);
-	virtual ~PlayTime();
+	FPlayTime();
+	FPlayTime(const uint64 InHours, const uint8 InMinutes, const uint8 InSeconds);
 
 	// Increments the play time by a second
 	void IncrementSecond();

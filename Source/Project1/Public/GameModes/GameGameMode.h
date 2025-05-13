@@ -9,7 +9,8 @@
 
 class UDialogueManagerBase;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameSecondElapsedSignature, bool, GamePaused);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameSecondElapsedSignature, bool /*GamePaused*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnTotalPlayTimeChangedSignature, const FPlayTime& /*NewPlayTime*/);
 
 /**
  * 
@@ -20,8 +21,8 @@ class PROJECT1_API AGameGameMode : public AProject1GameModeBase
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(BlueprintAssignable)
 	FOnGameSecondElapsedSignature OnGameSecondElapsed{};
+	FOnTotalPlayTimeChangedSignature OnTotalPlayTimeChanged{};
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Dialogue")
@@ -34,13 +35,15 @@ private:
 	float ElapsedDeltaSeconds{ 0.0f };
 
 	// Total play time
-	PlayTime TotalPlayTime{};
+	FPlayTime TotalPlayTime{};
 
 public:
 	AGameGameMode();
 
+	void SetTotalPlayTime(const FPlayTime& InTotalPlayTime);
+
 	FORCEINLINE UDialogueManagerBase* GetDialogueManager() const { return DialogueManagerInstance; }
-	FORCEINLINE const PlayTime& GetTotalPlayTime() const { return TotalPlayTime; }
+	FORCEINLINE const FPlayTime& GetTotalPlayTime() const { return TotalPlayTime; }
 
 private:
 	void StartPlay() override;

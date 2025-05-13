@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "Classes/PlayTime.h"
 #include "Project1SaveGame.generated.h"
 
 /**
@@ -20,9 +21,15 @@ private:
 	UPROPERTY()
 	FName OpenLevelName;
 
+	UPROPERTY()
+	FPlayTime TotalPlayTime;
+
 public:
 	UProject1SaveGame();
 
 	void SetOpenLevelName(const FName& Name);
 	FORCEINLINE const FName& GetOpenLevelName() const { return OpenLevelName; }
+
+	void SetTotalPlayTime(const FPlayTime& InPlayTime);
+	FORCEINLINE const FPlayTime& GetTotalPlayTime() const { return TotalPlayTime; }
 };

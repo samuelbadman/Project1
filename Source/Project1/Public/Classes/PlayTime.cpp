@@ -3,23 +3,19 @@
 
 #include "PlayTime.h"
 
-PlayTime::PlayTime()
+FPlayTime::FPlayTime()
 	: Hours(0),
 	Minutes(0),
 	Seconds(0)
 {
 }
 
-PlayTime::PlayTime(const uint64 InHours, const uint8 InMinutes, const uint8 InSeconds)
+FPlayTime::FPlayTime(const uint64 InHours, const uint8 InMinutes, const uint8 InSeconds)
 {
 	SetTime(InHours, InMinutes, InSeconds);
 }
 
-PlayTime::~PlayTime()
-{
-}
-
-void PlayTime::IncrementSecond()
+void FPlayTime::IncrementSecond()
 {
 	++Seconds;
 
@@ -36,7 +32,7 @@ void PlayTime::IncrementSecond()
 	}
 }
 
-void PlayTime::SetTime(const uint64 NewHours, const uint8 NewMinutes, const uint8 NewSeconds)
+void FPlayTime::SetTime(const uint64 NewHours, const uint8 NewMinutes, const uint8 NewSeconds)
 {
 	// Don't allow the play time minutes or seconds to be set to 60 or higher
 	static constexpr uint8 MaxMinutes{ 60 };
@@ -50,7 +46,7 @@ void PlayTime::SetTime(const uint64 NewHours, const uint8 NewMinutes, const uint
 	Seconds = NewSeconds;
 }
 
-FString PlayTime::ToString() const
+FString FPlayTime::ToString() const
 {
 	// Build display string
 	FString DisplayString(TEXT(""));

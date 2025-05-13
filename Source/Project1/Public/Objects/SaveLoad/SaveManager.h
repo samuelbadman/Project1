@@ -35,10 +35,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SaveManager")
 	void LoadGame(const FString& SaveSlotName, const bool Async);
 
+	FORCEINLINE TObjectPtr<const UProject1SaveGame> GetSaveGameObject() const { return SaveGameObject; }
+
 private:
 	void OnGameSaved(const FString& SaveSlotName, const int32 SaveUserIndex, bool SaveSuccess);
 	void OnGameLoaded(const FString& SaveSlotName, const int32 SaveUserIndex, USaveGame* LoadedSaveGame);
 
 	// Sets the data inside the save game object that will be saved to disk when saving the game
 	void WriteSaveGameObjectSaveData();
+
+	// Updates the game state with the loaded data
+	void HandleLoadedSaveGameObjectData();
 };

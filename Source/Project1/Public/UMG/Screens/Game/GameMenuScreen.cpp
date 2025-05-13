@@ -20,6 +20,7 @@ UGameMenuScreen::UGameMenuScreen()
 	GameMenuScreenUIInput(nullptr),
 	GameHUD(nullptr),
 	GameGameMode(nullptr),
+	TotalPlayTimeChangedDelegateHandle({}),
 	ConfirmDelegateHandle({}),
 	NavigateDelegateHandle({}),
 	CancelDelegateHandle({})
@@ -37,7 +38,7 @@ void UGameMenuScreen::NativeOnPushedToLayerStack()
 	UpdateTotalPlayTimeText();
 
 	// Bind to game second elapsed event in game mode
-	GameGameMode->OnGameSecondElapsed.AddDynamic(this, &UGameMenuScreen::OnGameModeGameSecondElapsed);
+	TotalPlayTimeChangedDelegateHandle = GameGameMode->OnTotalPlayTimeChanged.AddUObject(this, &UGameMenuScreen::OnTotalPlayTimeChanged);
 
 	AddScreenInputBindings();
 	GameHUD->SetGameHUDScreenShown(false);
@@ -45,7 +46,8 @@ void UGameMenuScreen::NativeOnPushedToLayerStack()
 
 void UGameMenuScreen::NativeOnPoppedFromLayerStack()
 {
-	GameGameMode->OnGameSecondElapsed.RemoveDynamic(this, &UGameMenuScreen::OnGameModeGameSecondElapsed);
+	GameGameMode->OnTotalPlayTimeChanged.Remove(TotalPlayTimeChangedDelegateHandle);
+	TotalPlayTimeChangedDelegateHandle.Reset();
 
 	RemoveScreenInputBindings();
 	GameHUD->SetGameHUDScreenShown(true);
@@ -120,7 +122,7 @@ void UGameMenuScreen::RemoveScreenInputBindings()
 	GameMenuScreenUIInput->Remove(PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
-void UGameMenuScreen::OnGameModeGameSecondElapsed(bool GamePaused)
+void UGameMenuScreen::OnTotalPlayTimeChanged(const FPlayTime& NewPlayTime)
 {
 	UpdateTotalPlayTimeText();
 }
@@ -128,7 +130,7 @@ void UGameMenuScreen::OnGameModeGameSecondElapsed(bool GamePaused)
 void UGameMenuScreen::UpdateTotalPlayTimeText()
 {
 	const TObjectPtr<UTextBlock> TotalPlayTimeTextBlock{ GetTotalPlayTimeTextBlock() };
-	const PlayTime& TotalPlayTime{ GameGameMode->GetTotalPlayTime() };
+	const FPlayTime& TotalPlayTime{ GameGameMode->GetTotalPlayTime() };
 
 	// Update text in widget
 	TotalPlayTimeTextBlock->SetText(FText::FromString(TotalPlayTime.ToString()));

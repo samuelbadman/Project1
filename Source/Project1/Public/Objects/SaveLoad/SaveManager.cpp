@@ -3,7 +3,8 @@
 
 #include "SaveManager.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameSave/Project1SaveGame.h"
+#include "SaveGame/Project1SaveGame.h"
+#include "GameModes/GameGameMode.h"
 
 USaveManager::USaveManager()
 	: SaveGameObject(nullptr)
@@ -21,6 +22,7 @@ void USaveManager::SaveGame(const FString& SaveSlotName, const bool Async)
 	// Check the save game object is valid. Cannot save the game without a valid save game object
 	if (!IsValid(SaveGameObject))
 	{
+		UE_LOG(LogTemp, Error, TEXT("Attempting to save game with invalid save game object. Aborted."));
 		return;
 	}
 
@@ -69,9 +71,7 @@ void USaveManager::OnGameLoaded(const FString& SaveSlotName, const int32 SaveUse
 
 		// Retrieve loaded save game object
 		SaveGameObject = CastChecked<UProject1SaveGame>(LoadedSaveGame);
-
-		// Handle loaded save game object and update game state
-		UGameplayStatics::OpenLevel(this, SaveGameObject->GetOpenLevelName());
+		HandleLoadedSaveGameObjectData();
 	}
 }
 
@@ -80,4 +80,15 @@ void USaveManager::WriteSaveGameObjectSaveData()
 	// This is where the game state is saved. Gather data that needs to be saved and set in save game object. TODO: This does not have to be done all in one go. Consider
 	// creating functionality to save only specific data
 	SaveGameObject->SetOpenLevelName(FName(UGameplayStatics::GetCurrentLevelName(this)));
+	SaveGameObject->SetTotalPlayTime(CastChecked<AGameGameMode>(UGameplayStatics::GetGameMode(this))->GetTotalPlayTime());
+}
+
+void USaveManager::HandleLoadedSaveGameObjectData()
+{
+	// Handle loaded save game object and update game state
+	// TODO: Currently handling the loaded save game state is currently done by individual objects as this functions opens a new map which recreates most other game objects. 
+	// Is this the best way to handle loaded game data?
+
+	// Open the level
+	UGameplayStatics::OpenLevel(this, SaveGameObject->GetOpenLevelName());
 }
