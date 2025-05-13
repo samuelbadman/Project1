@@ -66,7 +66,7 @@ void AGameGameMode::TickUnpaused(float DeltaSeconds)
 void AGameGameMode::OnSecondElapsed(bool GamePaused)
 {
 	// Update total time game played
-	TotalPlayTime.AddSecond();
+	TotalPlayTime.IncrementSecond();
 
 	OnGameSecondElapsed.Broadcast(GamePaused);
 }

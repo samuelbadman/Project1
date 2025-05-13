@@ -10,11 +10,16 @@ PlayTime::PlayTime()
 {
 }
 
+PlayTime::PlayTime(const uint64 InHours, const uint8 InMinutes, const uint8 InSeconds)
+{
+	SetTime(InHours, InMinutes, InSeconds);
+}
+
 PlayTime::~PlayTime()
 {
 }
 
-void PlayTime::AddSecond()
+void PlayTime::IncrementSecond()
 {
 	++Seconds;
 
@@ -29,6 +34,20 @@ void PlayTime::AddSecond()
 			Minutes = 0;
 		}
 	}
+}
+
+void PlayTime::SetTime(const uint64 NewHours, const uint8 NewMinutes, const uint8 NewSeconds)
+{
+	// Don't allow the play time minutes or seconds to be set to 60 or higher
+	static constexpr uint8 MaxMinutes{ 60 };
+	static constexpr uint8 MaxSeconds{ 60 };
+
+	check(NewMinutes < MaxMinutes);
+	check(NewSeconds < MaxSeconds);
+
+	Hours = NewHours;
+	Minutes = NewMinutes;
+	Seconds = NewSeconds;
 }
 
 FString PlayTime::ToString() const
