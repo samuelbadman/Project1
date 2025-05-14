@@ -5,7 +5,6 @@
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
 #include "Interfaces/Interactable.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "Actors/Player/PlayerInteractCollision.h"
 #include "FunctionLibraries/Project1MathLibrary.h"
 
@@ -15,7 +14,7 @@ void UPlayerInteractComponent::OnPossessPawn(TObjectPtr<APawn> Pawn)
 	InteractingPawn = Pawn;
 
 	// Get pawn as character
-	TObjectPtr<ACharacter> Character{ CastChecked<ACharacter>(Pawn) };
+	const TObjectPtr<ACharacter> Character{ CastChecked<ACharacter>(Pawn) };
 
 	// Get root collision shape component from character
 	const TObjectPtr<UCapsuleComponent> PlayerMovementCollision{ Character->GetCapsuleComponent() };
@@ -88,7 +87,7 @@ void UPlayerInteractComponent::OnPawnCollisionBeginOverlap(
 	const FHitResult& SweepResult)
 {
 	// Is the overlapping actor interactable?
-	if (UKismetSystemLibrary::DoesImplementInterface(OtherActor, UInteractable::StaticClass()))
+	if (OtherActor->Implements<UInteractable>())
 	{
 		// Add interactable to player interactable overlapped list
 		OverlappedInteractables.Add(OtherActor);
@@ -113,7 +112,7 @@ void UPlayerInteractComponent::OnPawnCollisionEndOverlap(
 	UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
-	if (UKismetSystemLibrary::DoesImplementInterface(OtherActor, UInteractable::StaticClass()))
+	if (OtherActor->Implements<UInteractable>())
 	{
 		// If the actor being removed is the current overlapped interactable target
 		const bool RemovedTargetOverlappedInteractable{ OtherActor == OverlappedInteractables[TargetOverlappedInteractableIndex] };

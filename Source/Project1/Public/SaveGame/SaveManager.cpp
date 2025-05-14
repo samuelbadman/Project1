@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "SaveGame/Project1SaveGame.h"
 #include "GameModes/GameGameMode.h"
+#include "EngineUtils.h"
 
 USaveManager::USaveManager()
 	: SaveGameObject(nullptr)
@@ -26,8 +27,8 @@ void USaveManager::SaveGame(const FString& SaveSlotName, const bool Async)
 		return;
 	}
 
-	// Set data inside save game object
-	WriteSaveGameObjectSaveData();
+	// Write save game data
+	WriteSaveGameData();
 
 	// Write data to disk
 	if (Async)
@@ -58,6 +59,24 @@ void USaveManager::LoadGame(const FString& SaveSlotName, const bool Async)
 	}
 }
 
+void USaveManager::ApplyLoadedGameData()
+{
+	// Apply loaded data to all actors in the world
+	for (FActorIterator It(GetWorld()); It; ++It)
+	{
+		// Get actor referenced by iterator
+		const TObjectPtr<AActor> Actor{ *It };
+
+		// Only care about actors marked as savable
+		if (!Actor->Implements<USavableObjectInterface>())
+		{
+			continue;
+		}
+
+		ISavableObjectInterface::Execute_Load(Actor);
+	}
+}
+
 void USaveManager::OnGameSaved(const FString& SaveSlotName, const int32 SaveUserIndex, bool SaveSuccess)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Saved game."));
@@ -71,24 +90,29 @@ void USaveManager::OnGameLoaded(const FString& SaveSlotName, const int32 SaveUse
 
 		// Retrieve loaded save game object
 		SaveGameObject = CastChecked<UProject1SaveGame>(LoadedSaveGame);
-		HandleLoadedSaveGameObjectData();
+
+		// Open saved level name
+		UGameplayStatics::OpenLevel(this, SaveGameObject->LevelName);
 	}
 }
 
-void USaveManager::WriteSaveGameObjectSaveData()
+void USaveManager::WriteSaveGameData()
 {
-	// This is where the game state is saved. Gather data that needs to be saved and set in save game object. TODO: This does not have to be done all in one go. Consider
-	// creating functionality to save only specific data
-	SaveGameObject->SetOpenLevelName(FName(UGameplayStatics::GetCurrentLevelName(this)));
-	SaveGameObject->SetTotalPlayTime(CastChecked<AGameGameMode>(UGameplayStatics::GetGameMode(this))->GetTotalPlayTime());
-}
+	// Save the name of the currently open level
+	SaveGameObject->LevelName = FName(UGameplayStatics::GetCurrentLevelName(this));
 
-void USaveManager::HandleLoadedSaveGameObjectData()
-{
-	// Handle loaded save game object and update game state
-	// TODO: Currently handling the loaded save game state is currently done by individual objects as this functions opens a new map which recreates most other game objects. 
-	// Is this the best way to handle loaded game data?
+	// Save all actors in the world
+	for (FActorIterator It(GetWorld()); It; ++It)
+	{
+		// Get actor referenced by iterator
+		const TObjectPtr<AActor> Actor{ *It };
 
-	// Open the level
-	UGameplayStatics::OpenLevel(this, SaveGameObject->GetOpenLevelName());
+		// Only care about actors marked as savable
+		if (!Actor->Implements<USavableObjectInterface>())
+		{
+			continue;
+		}
+
+		ISavableObjectInterface::Execute_Save(Actor);
+	}
 }

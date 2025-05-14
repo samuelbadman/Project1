@@ -4,9 +4,9 @@
 #include "GameGameMode.h"
 #include "Objects/Dialogue/DialogueManagerBase.h"
 #include "Kismet/GameplayStatics.h"
-
 #include "GameInstances/Project1GameInstanceBase.h"
-#include "Objects/SaveLoad/SaveManager.h"
+#include "SaveGame/SaveDataStructures/GameModeSaveData.h"
+#include "SaveGame/SaveManager.h"
 #include "SaveGame/Project1SaveGame.h"
 
 AGameGameMode::AGameGameMode()
@@ -20,10 +20,34 @@ void AGameGameMode::SetTotalPlayTime(const FPlayTime& InTotalPlayTime)
 	TotalPlayTime = InTotalPlayTime;
 }
 
+void AGameGameMode::Save_Implementation()
+{
+	const TObjectPtr<USaveManager> SaveManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager() };
+	const TObjectPtr<UProject1SaveGame> SaveGame{ SaveManager->GetSaveGameObject() };
+
+	FGameModeSaveData SaveData{};
+	SaveData.TotalPlayTime = TotalPlayTime;
+
+	SaveGame->GameModeSaveData = SaveData;
+}
+
+void AGameGameMode::Load_Implementation()
+{
+	const TObjectPtr<USaveManager> SaveManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager() };
+	const TObjectPtr<UProject1SaveGame> SaveGame{ SaveManager->GetSaveGameObject() };
+
+	TotalPlayTime = SaveGame->GameModeSaveData.TotalPlayTime;
+	OnTotalPlayTimeChanged.Broadcast(TotalPlayTime);
+}
+
 void AGameGameMode::StartPlay()
 {
 	// Create dialogue manager instance before beginning play on actors to ensure that dialogue manager instance is valid during actor begin play
 	CreateDialogueManager();
+
+	// Apply loaded game data to game state
+	const TObjectPtr<USaveManager> SaveManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager() };
+	SaveManager->ApplyLoadedGameData();
 
 	// Parent call calls begin play on actors
 	Super::StartPlay();
@@ -35,11 +59,6 @@ void AGameGameMode::BeginPlay()
 
 	// Begin dialogue manager instance
 	DialogueManagerInstance->BeginPlay();
-
-	// Set total play time to value in saved game slot
-	// TODO: Consider how loading saved data is applied to the game state. 
-	const TObjectPtr<USaveManager> SaveManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager() };
-	TotalPlayTime = SaveManager->GetSaveGameObject()->GetTotalPlayTime();
 }
 
 void AGameGameMode::Tick(float DeltaSeconds)

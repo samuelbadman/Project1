@@ -7,21 +7,6 @@
 AProject1ActorBase::AProject1ActorBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 }
-
-// Called when the game starts or when spawned
-void AProject1ActorBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AProject1ActorBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

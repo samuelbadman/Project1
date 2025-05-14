@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
-#include "Classes/PlayTime.h"
+#include "SaveGame/SaveDataStructures/GameModeSaveData.h"
 #include "Project1SaveGame.generated.h"
 
 /**
@@ -15,21 +15,12 @@ class UProject1SaveGame : public USaveGame
 {
 	GENERATED_BODY()
 	
-private:
-	// NOTE: All variables being saved/loaded in the save game object MUST be marked UPROPERTY()
-
-	UPROPERTY()
-	FName OpenLevelName;
-
-	UPROPERTY()
-	FPlayTime TotalPlayTime;
+	// NOTE: All variables (including those inside structures!) being saved/loaded in the save game object MUST be marked UPROPERTY()
 
 public:
-	UProject1SaveGame();
+	UPROPERTY()
+	FName LevelName{ NAME_None };
 
-	void SetOpenLevelName(const FName& Name);
-	FORCEINLINE const FName& GetOpenLevelName() const { return OpenLevelName; }
-
-	void SetTotalPlayTime(const FPlayTime& InPlayTime);
-	FORCEINLINE const FPlayTime& GetTotalPlayTime() const { return TotalPlayTime; }
+	UPROPERTY()
+	FGameModeSaveData GameModeSaveData{};
 };

@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameModes/Project1GameModeBase.h"
-#include "Classes/PlayTime.h"
+#include "Interfaces/SavableObjectInterface.h"
+#include "Structures/PlayTime.h"
 #include "GameGameMode.generated.h"
 
 class UDialogueManagerBase;
@@ -16,7 +17,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnTotalPlayTimeChangedSignature, const FPla
  * 
  */
 UCLASS()
-class PROJECT1_API AGameGameMode : public AProject1GameModeBase
+class PROJECT1_API AGameGameMode : public AProject1GameModeBase, public ISavableObjectInterface
 {
 	GENERATED_BODY()
 	
@@ -46,6 +47,9 @@ public:
 	FORCEINLINE const FPlayTime& GetTotalPlayTime() const { return TotalPlayTime; }
 
 private:
+	void Save_Implementation() override;
+	void Load_Implementation() override;
+
 	void StartPlay() override;
 	void BeginPlay() override;
 	void Tick(float DeltaSeconds) override;

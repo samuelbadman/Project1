@@ -3,7 +3,7 @@
 
 #include "Project1GameInstanceBase.h"
 #include "GameFramework/GameUserSettings.h"
-#include "Objects/SaveLoad/SaveManager.h"
+#include "SaveGame/SaveManager.h"
 
 UProject1GameInstanceBase::UProject1GameInstanceBase()
 {
