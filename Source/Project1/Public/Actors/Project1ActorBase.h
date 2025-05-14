@@ -14,4 +14,7 @@ class PROJECT1_API AProject1ActorBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AProject1ActorBase();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Project1ActorBase")
+	FString GetUniqueName() const;
 };

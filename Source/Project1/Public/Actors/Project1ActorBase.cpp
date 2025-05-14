@@ -10,3 +10,8 @@ AProject1ActorBase::AProject1ActorBase()
 	PrimaryActorTick.bCanEverTick = false;
 
 }
+
+FString AProject1ActorBase::GetUniqueName() const
+{
+	return GetName();
+}

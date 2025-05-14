@@ -4,11 +4,11 @@
 #include "Structures/PlayTime.h"
 #include "GameModeSaveData.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FGameModeSaveData
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FPlayTime TotalPlayTime{};
 };

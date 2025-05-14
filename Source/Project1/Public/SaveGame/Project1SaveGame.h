@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "SaveGame/SaveDataStructures/GameModeSaveData.h"
+#include "SaveGame/SaveDataStructures/PickupSaveData.h"
 #include "Project1SaveGame.generated.h"
 
 /**
@@ -21,6 +22,9 @@ public:
 	UPROPERTY()
 	FName LevelName{ NAME_None };
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite, Category = "Project1SaveGame")
 	FGameModeSaveData GameModeSaveData{};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Project1SaveGame")
+	TMap<FName, FPickupSaveData> StaticPickupSaveData{};
 };
