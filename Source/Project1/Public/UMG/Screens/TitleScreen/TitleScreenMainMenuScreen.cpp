@@ -9,6 +9,9 @@
 #include "Objects/UserWidgetComponents/ButtonMenuComponent.h"
 #include "Components/ActorComponents/UIInputComponent.h"
 #include "Objects/UIInput/Inputs/MainMenuScreenUIInput.h"
+#include "GameInstances/Project1GameInstanceBase.h"
+#include "SaveGame/SaveManager.h"
+#include "UMG/Components/Buttons/Project1ButtonBase.h"
 
 UTitleScreenMainMenuScreen::UTitleScreenMainMenuScreen()
 {
@@ -27,6 +30,29 @@ void UTitleScreenMainMenuScreen::NativeOnPushedToLayerStack()
 		&UTitleScreenMainMenuScreen::OnConfirmTriggered);
 	MainMenuUINavigateTriggeredDelegateHandle = MainMenuScreenUIInput->NavigateTriggered.AddUObject(this, 
 		&UTitleScreenMainMenuScreen::OnNavigateTriggered);
+
+	// Check if there is no save game data present on disk
+	if (!CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager()->IsAnySaveDataPresent())
+	{
+		// No save game data present
+		GetContinueButton()->SetVisibility(ESlateVisibility::Collapsed);
+
+		const TObjectPtr<UProject1ButtonBase> FirstMenuButton{ GetFirstMenuButtonWithoutContinue() };
+		const TObjectPtr<UProject1ButtonBase> LastMenuButton{ GetLastMenuButton() };
+
+		FirstMenuButton->SetNavigationWidget(EWidgetNavigationDirection::Up, LastMenuButton);
+		LastMenuButton->SetNavigationWidget(EWidgetNavigationDirection::Down, FirstMenuButton);
+
+		ButtonMenuComponent->FocusButton(FirstMenuButton);
+	}
+	else
+	{
+		// Save game data is present
+		const TObjectPtr<UProject1ButtonBase> ContinueButton{ GetContinueButton() };
+		ButtonMenuComponent->RegisterMenuButtons(TArray<UProject1ButtonBase*>{ ContinueButton }, true);
+
+		ButtonMenuComponent->FocusButton(ContinueButton);
+	}
 }
 
 void UTitleScreenMainMenuScreen::NativeOnPoppedFromLayerStack()

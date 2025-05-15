@@ -20,6 +20,8 @@ class USaveManager : public UProject1ObjectBase
 private:
 	static constexpr int32 UserIndex{ 0 };
 
+	static const FString SaveSlot1Name;
+
 	UPROPERTY()
 	TObjectPtr<UProject1SaveGame> SaveGameObject;
 
@@ -38,7 +40,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SaveManager")
 	FORCEINLINE UProject1SaveGame* GetSaveGameObject() const { return SaveGameObject; }
 
+	UFUNCTION(BlueprintCallable, Category = "SaveManager")
+	const FString& GetSaveSlot1Name() const;
+
 	void ApplyLoadedGameData();
+	bool IsAnySaveDataPresent() const;
 
 private:
 	void OnGameSaved(const FString& SaveSlotName, const int32 SaveUserIndex, bool SaveSuccess);

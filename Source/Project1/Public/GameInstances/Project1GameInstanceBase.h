@@ -26,7 +26,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool TestSetting3Value = false;
 	UPROPERTY(BlueprintReadWrite)
-	FString TestSettingValue4{ "Value3" };
+	FString TestSettingValue4{ TEXT("Value3") };
 
 private:
 	UPROPERTY()

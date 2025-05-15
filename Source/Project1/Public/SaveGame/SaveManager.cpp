@@ -7,6 +7,8 @@
 #include "GameModes/GameGameMode.h"
 #include "EngineUtils.h"
 
+const FString USaveManager::SaveSlot1Name = TEXT("SaveSlot1");
+
 USaveManager::USaveManager()
 	: SaveGameObject(nullptr)
 {
@@ -59,6 +61,11 @@ void USaveManager::LoadGame(const FString& SaveSlotName, const bool Async)
 	}
 }
 
+const FString& USaveManager::GetSaveSlot1Name() const
+{
+	return SaveSlot1Name;
+}
+
 void USaveManager::ApplyLoadedGameData()
 {
 	// Apply loaded data to all actors in the world
@@ -75,6 +82,11 @@ void USaveManager::ApplyLoadedGameData()
 
 		ISavableObjectInterface::Execute_Load(Actor);
 	}
+}
+
+bool USaveManager::IsAnySaveDataPresent() const
+{
+	return UGameplayStatics::DoesSaveGameExist(SaveSlot1Name, UserIndex);
 }
 
 void USaveManager::OnGameSaved(const FString& SaveSlotName, const int32 SaveUserIndex, bool SaveSuccess)

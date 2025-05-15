@@ -11,6 +11,7 @@ struct FInputActionValue;
 class UScrollBox;
 class UButtonMenuComponent;
 class UMainMenuScreenUIInput;
+class UProject1ButtonBase;
 
 /**
  *
@@ -38,6 +39,15 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	UScrollBox* GetScrollBox();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	UProject1ButtonBase* GetContinueButton();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	UProject1ButtonBase* GetFirstMenuButtonWithoutContinue();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	UProject1ButtonBase* GetLastMenuButton();
 
 private:
 	void NativeOnPushedToLayerStack() override;

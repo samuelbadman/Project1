@@ -14,7 +14,7 @@ UButtonMenuComponent::UButtonMenuComponent()
 
 void UButtonMenuComponent::RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, bool ActivateButtonMouseInput)
 {
-	RegisteredButtons = Buttons;
+	RegisteredButtons.Append(&Buttons[0], Buttons.Num());
 
 	for (const TObjectPtr<UProject1ButtonBase>& Button : RegisteredButtons)
 	{
