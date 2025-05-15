@@ -25,16 +25,28 @@ void UTitleScreenMainMenuScreen::NativeOnPushedToLayerStack()
 
 	MainMenuScreenUIInput->Add(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 
+	// Load meta save game data if present otherwise create a new meta save game.
+	const TObjectPtr<USaveManager> SaveManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager() };
+
+	if (SaveManager->IsMetaSaveDataPresent())
+	{
+		SaveManager->LoadMetaData(false);
+	}
+	else
+	{
+		SaveManager->CreateNewMetaSaveGame();
+	}
+
 	// Register events
 	MainMenuUIConfirmTriggeredDelegateHandle = MainMenuScreenUIInput->ConfirmTriggered.AddUObject(this,
 		&UTitleScreenMainMenuScreen::OnConfirmTriggered);
 	MainMenuUINavigateTriggeredDelegateHandle = MainMenuScreenUIInput->NavigateTriggered.AddUObject(this, 
 		&UTitleScreenMainMenuScreen::OnNavigateTriggered);
 
-	// Check if there is no save game data present on disk
-	if (!CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager()->IsAnySaveDataPresent())
+	// Check if there is no game save game data present on disk
+	if (!SaveManager->IsAnyGameSaveDataPresent())
 	{
-		// No save game data present
+		// No game save game data present
 		GetContinueButton()->SetVisibility(ESlateVisibility::Collapsed);
 
 		const TObjectPtr<UProject1ButtonBase> FirstMenuButton{ GetFirstMenuButtonWithoutContinue() };
@@ -42,16 +54,12 @@ void UTitleScreenMainMenuScreen::NativeOnPushedToLayerStack()
 
 		FirstMenuButton->SetNavigationWidget(EWidgetNavigationDirection::Up, LastMenuButton);
 		LastMenuButton->SetNavigationWidget(EWidgetNavigationDirection::Down, FirstMenuButton);
-
-		ButtonMenuComponent->FocusButton(FirstMenuButton);
 	}
 	else
 	{
-		// Save game data is present
+		// Game save game data is present
 		const TObjectPtr<UProject1ButtonBase> ContinueButton{ GetContinueButton() };
 		ButtonMenuComponent->RegisterMenuButtons(TArray<UProject1ButtonBase*>{ ContinueButton }, true);
-
-		ButtonMenuComponent->FocusButton(ContinueButton);
 	}
 }
 

@@ -8,6 +8,7 @@
 
 class USaveGame;
 class UProject1SaveGame;
+class UMetaSaveGame;
 
 /**
  * 
@@ -20,16 +21,20 @@ class USaveManager : public UProject1ObjectBase
 private:
 	static constexpr int32 UserIndex{ 0 };
 
+	static const FString MetaSaveSlotName;
 	static const FString SaveSlot1Name;
 
 	UPROPERTY()
-	TObjectPtr<UProject1SaveGame> SaveGameObject;
+	TObjectPtr<UMetaSaveGame> MetaSaveGameObject;
+
+	UPROPERTY()
+	TObjectPtr<UProject1SaveGame> GameSaveGameObject;
 
 public:
 	USaveManager();
 
 	UFUNCTION(BlueprintCallable, Category = "SaveManager")
-	void CreateNewSaveGame();
+	void CreateNewGameSaveGame();
 
 	UFUNCTION(BlueprintCallable, Category = "SaveManager")
 	void SaveGame(const FString& SaveSlotName, const bool Async);
@@ -38,17 +43,27 @@ public:
 	void LoadGame(const FString& SaveSlotName, const bool Async);
 
 	UFUNCTION(BlueprintCallable, Category = "SaveManager")
-	FORCEINLINE UProject1SaveGame* GetSaveGameObject() const { return SaveGameObject; }
+	FORCEINLINE UProject1SaveGame* GetGameSaveGameObject() const { return GameSaveGameObject; }
+
+	UFUNCTION(BlueprintCallable, Category = "SaveManager")
+	FORCEINLINE UMetaSaveGame* GetMetaSaveGameObject() const { return MetaSaveGameObject; }
 
 	UFUNCTION(BlueprintCallable, Category = "SaveManager")
 	const FString& GetSaveSlot1Name() const;
 
 	void ApplyLoadedGameData();
-	bool IsAnySaveDataPresent() const;
+	bool IsAnyGameSaveDataPresent() const;
+
+	void CreateNewMetaSaveGame();
+	bool IsMetaSaveDataPresent() const;
+	void LoadMetaData(bool Async);
 
 private:
 	void OnGameSaved(const FString& SaveSlotName, const int32 SaveUserIndex, bool SaveSuccess);
 	void OnGameLoaded(const FString& SaveSlotName, const int32 SaveUserIndex, USaveGame* LoadedSaveGame);
+	void OnMetaSaved(const FString& SaveSlotName, const int32 SaveUserIndex, bool SaveSuccess);
+	void OnMetaLoaded(const FString& SaveSlotName, const int32 SaveUserIndex, USaveGame* LoadedSaveGame);
 
-	void WriteSaveGameData();
+	void WriteMetaSaveGameData(const FString& SaveSlotName);
+	void WriteGameSaveGameData();
 };

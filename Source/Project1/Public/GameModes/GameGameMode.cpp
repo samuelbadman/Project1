@@ -7,7 +7,7 @@
 #include "GameInstances/Project1GameInstanceBase.h"
 #include "SaveGame/SaveDataStructures/GameModeSaveData.h"
 #include "SaveGame/SaveManager.h"
-#include "SaveGame/Project1SaveGame.h"
+#include "SaveGame/SaveGameObjects/Project1SaveGame.h"
 
 AGameGameMode::AGameGameMode()
 {
@@ -23,7 +23,7 @@ void AGameGameMode::SetTotalPlayTime(const FPlayTime& InTotalPlayTime)
 void AGameGameMode::Save_Implementation()
 {
 	const TObjectPtr<USaveManager> SaveManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager() };
-	const TObjectPtr<UProject1SaveGame> SaveGame{ SaveManager->GetSaveGameObject() };
+	const TObjectPtr<UProject1SaveGame> SaveGame{ SaveManager->GetGameSaveGameObject() };
 
 	FGameModeSaveData SaveData{};
 	SaveData.TotalPlayTime = TotalPlayTime;
@@ -34,7 +34,7 @@ void AGameGameMode::Save_Implementation()
 void AGameGameMode::Load_Implementation()
 {
 	const TObjectPtr<USaveManager> SaveManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager() };
-	const TObjectPtr<UProject1SaveGame> SaveGame{ SaveManager->GetSaveGameObject() };
+	const TObjectPtr<UProject1SaveGame> SaveGame{ SaveManager->GetGameSaveGameObject() };
 
 	TotalPlayTime = SaveGame->GameModeSaveData.TotalPlayTime;
 	OnTotalPlayTimeChanged.Broadcast(TotalPlayTime);
