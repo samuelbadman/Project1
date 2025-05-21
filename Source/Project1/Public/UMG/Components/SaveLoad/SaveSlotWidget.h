@@ -6,7 +6,9 @@
 #include "UMG/Project1UserWidgetBase.h"
 #include "SaveSlotWidget.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSaveSlotSelectedSignature);
+class UProject1ButtonBase;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSaveSlotSelectedSignature, USaveSlotWidget*, SaveSlot);
 
 /**
  * 
@@ -19,4 +21,15 @@ class USaveSlotWidget : public UProject1UserWidgetBase
 public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnSaveSlotSelectedSignature OnSaveSlotSelectedDelegate{};
+
+private:
+	FName UniqueSaveSlotName{NAME_None};
+
+public:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "SaveSlotWidget")
+	UProject1ButtonBase* GetBackingButton() const;
+
+	void SetUniqueSaveSlotName(const FName& Name);
+	UFUNCTION(BlueprintCallable, Category = "SaveSlotWidget")
+	const FName& GetUniqueSaveSlotName() const { return UniqueSaveSlotName; }
 };

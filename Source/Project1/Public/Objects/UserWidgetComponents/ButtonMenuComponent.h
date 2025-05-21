@@ -26,10 +26,14 @@ private:
 
 	TArray<TObjectPtr<UProject1ButtonBase>> RegisteredButtons;
 	TObjectPtr<UProject1ButtonBase> FocusedButton;
+	int32 FocusedButtonIndex;
 
 public:
 	UButtonMenuComponent();
 
+	// Registers menu buttons with the component. Subsequent calls of this function will append buttons to the component keeping any previously registered buttons.
+	// When navigating the menu using an index offset, the order buttons appear in the array being registered in is important as this is the order the buttons will
+	// be navigated in
 	UFUNCTION(BlueprintCallable, Category = "ButtonMenuComponent")
 	void RegisterMenuButtons(const TArray<UProject1ButtonBase*>& Buttons, bool ActivateButtonMouseInput);
 
@@ -45,6 +49,8 @@ public:
 
 	// Returns the widget navigated to if there is one otherwise, returns null. Null is a valid return value as this means that there was no navigation
 	TObjectPtr<UProject1ButtonBase> NavigateMenu(const EWidgetNavigationDirection Direction);
+	// Returns the widget navigated to if there is one otherwise, returns null. Null is a valid return value as this means that there was no navigation
+	TObjectPtr<UProject1ButtonBase> NavigateMenu(int32 Amount, bool Wrap);
 	void PressFocusedButton();
 
 	UFUNCTION(BlueprintCallable, Category = "ButtonMenuComponent")

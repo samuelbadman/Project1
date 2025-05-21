@@ -9,7 +9,7 @@
 #include "Project1SaveGame.generated.h"
 
 /**
- * 
+ * Save game data created by the player to save the state of a game session. Multiple project 1 save game files can exist on disk.
  */
 UCLASS()
 class UProject1SaveGame : public USaveGame

@@ -2,3 +2,8 @@
 
 
 #include "SaveSlotWidget.h"
+
+void USaveSlotWidget::SetUniqueSaveSlotName(const FName& Name)
+{
+	UniqueSaveSlotName = Name;
+}

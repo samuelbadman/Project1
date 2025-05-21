@@ -9,11 +9,13 @@
 #include "EngineUtils.h"
 
 const FString USaveManager::MetaSaveSlotName = TEXT("Meta");
-const FString USaveManager::SaveSlot1Name = TEXT("SaveSlot1");
+const FString USaveManager::GameSaveSlotName = TEXT("GameSave");
 
 USaveManager::USaveManager()
 	: MetaSaveGameObject(nullptr),
-	GameSaveGameObject(nullptr)
+	GameSaveGameObject(nullptr),
+	AvailableSaveSlotIds({}),
+	UsedSaveSlotIds()
 {
 }
 
@@ -69,11 +71,6 @@ void USaveManager::LoadGame(const FString& SaveSlotName, const bool Async)
 	}
 }
 
-const FString& USaveManager::GetSaveSlot1Name() const
-{
-	return SaveSlot1Name;
-}
-
 void USaveManager::ApplyLoadedGameData()
 {
 	// Apply loaded data to all actors in the world
@@ -94,7 +91,9 @@ void USaveManager::ApplyLoadedGameData()
 
 bool USaveManager::IsAnyGameSaveDataPresent() const
 {
-	return UGameplayStatics::DoesSaveGameExist(SaveSlot1Name, UserIndex);
+	// TODO: Use used unique names from save slot name generator to check for existing save data
+	//return UGameplayStatics::DoesSaveGameExist(SaveSlot1Name, UserIndex);
+	return false;
 }
 
 void USaveManager::CreateNewMetaSaveGame()
@@ -109,8 +108,13 @@ bool USaveManager::IsMetaSaveDataPresent() const
 	return UGameplayStatics::DoesSaveGameExist(MetaSaveSlotName, UserIndex);
 }
 
-void USaveManager::LoadMetaData(bool Async)
+bool USaveManager::LoadMetaData(bool Async)
 {
+	if (!UGameplayStatics::DoesSaveGameExist(MetaSaveSlotName, UserIndex))
+	{
+		return false;
+	}
+
 	if (Async)
 	{
 		FAsyncLoadGameFromSlotDelegate AsyncDelegate{};
@@ -122,6 +126,13 @@ void USaveManager::LoadMetaData(bool Async)
 		const TObjectPtr<USaveGame> LoadedSave{ UGameplayStatics::LoadGameFromSlot(MetaSaveSlotName, UserIndex) };
 		OnMetaLoaded(MetaSaveSlotName, UserIndex, LoadedSave);
 	}
+
+	return true;
+}
+
+FName USaveManager::GetNewUniqueSaveSlotName()
+{
+	return ConstructSaveSlotName(TakeAvailableSaveSlotId());
 }
 
 void USaveManager::OnGameSaved(const FString& SaveSlotName, const int32 SaveUserIndex, bool SaveSuccess)
@@ -156,11 +167,32 @@ void USaveManager::OnMetaLoaded(const FString& SaveSlotName, const int32 SaveUse
 
 		// Retrieve loaded save game object
 		MetaSaveGameObject = CastChecked<UMetaSaveGame>(LoadedSaveGame);
+
+		// Update available and used save game ids
+		InitializeSaveSlotIds();
+
+		const TArray<FSaveSlotSaveData>& SaveSlots{ MetaSaveGameObject->GameSaveSlots };
+		for (const FSaveSlotSaveData& SlotData : SaveSlots)
+		{
+			AvailableSaveSlotIds.Remove(SlotData.ID);
+			UsedSaveSlotIds.Add(SlotData.ID);
+		}
 	}
 }
 
 void USaveManager::WriteMetaSaveGameData(const FString& SaveSlotName)
 {
+	// Save created save slot info
+	const int32 NumSaveSlots{ UsedSaveSlotIds.Num() };
+	MetaSaveGameObject->GameSaveSlots.SetNum(NumSaveSlots);
+
+	for (int32 i = 0; i < NumSaveSlots; ++i)
+	{
+		MetaSaveGameObject->GameSaveSlots[i].ID = UsedSaveSlotIds[i];
+		MetaSaveGameObject->GameSaveSlots[i].UniqueSlotName = ConstructSaveSlotName(UsedSaveSlotIds[i]);
+	}
+
+	// Save last used game save slot name
 	MetaSaveGameObject->LastGameSaveSlotNameUsed = FName(SaveSlotName);
 }
 
@@ -183,4 +215,30 @@ void USaveManager::WriteGameSaveGameData()
 
 		ISavableObjectInterface::Execute_Save(Actor);
 	}
+}
+
+void USaveManager::InitializeSaveSlotIds()
+{
+	AvailableSaveSlotIds.SetNumUninitialized(MaximumSaveSlotCount, EAllowShrinking::Yes);
+	UsedSaveSlotIds.Empty();
+
+	for (int32 i = 0; i < MaximumSaveSlotCount; ++i)
+	{
+		AvailableSaveSlotIds[i] = i;
+	}
+}
+
+int32 USaveManager::TakeAvailableSaveSlotId()
+{
+	const int32 Id{ AvailableSaveSlotIds.Last() };
+	UsedSaveSlotIds.Push(Id);
+	AvailableSaveSlotIds.Remove(Id);
+	return Id;
+}
+
+FName USaveManager::ConstructSaveSlotName(const int32 Id) const
+{
+	FString Name{ GameSaveSlotName };
+	Name.AppendInt(Id);
+	return FName(Name);
 }

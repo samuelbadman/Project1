@@ -25,28 +25,22 @@ void UTitleScreenMainMenuScreen::NativeOnPushedToLayerStack()
 
 	MainMenuScreenUIInput->Add(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
 
-	// Load meta save game data if present otherwise create a new meta save game.
-	const TObjectPtr<USaveManager> SaveManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager() };
-
-	if (SaveManager->IsMetaSaveDataPresent())
-	{
-		SaveManager->LoadMetaData(false);
-	}
-	else
-	{
-		SaveManager->CreateNewMetaSaveGame();
-	}
-
 	// Register events
 	MainMenuUIConfirmTriggeredDelegateHandle = MainMenuScreenUIInput->ConfirmTriggered.AddUObject(this,
 		&UTitleScreenMainMenuScreen::OnConfirmTriggered);
 	MainMenuUINavigateTriggeredDelegateHandle = MainMenuScreenUIInput->NavigateTriggered.AddUObject(this, 
 		&UTitleScreenMainMenuScreen::OnNavigateTriggered);
 
-	// Check if there is no game save game data present on disk
-	if (!SaveManager->IsAnyGameSaveDataPresent())
+	// Check if there is game save game data present on disk
+	if (Cast<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager()->IsAnyGameSaveDataPresent())
 	{
-		// No game save game data present
+		// Game save game data is present. Register continue button
+		const TObjectPtr<UProject1ButtonBase> ContinueButton{ GetContinueButton() };
+		ButtonMenuComponent->RegisterMenuButtons(TArray<UProject1ButtonBase*>{ ContinueButton }, true);
+	}
+	else
+	{
+		// No game save game data present. Collapse the continue button and update menu button navigation
 		GetContinueButton()->SetVisibility(ESlateVisibility::Collapsed);
 
 		const TObjectPtr<UProject1ButtonBase> FirstMenuButton{ GetFirstMenuButtonWithoutContinue() };
@@ -54,12 +48,6 @@ void UTitleScreenMainMenuScreen::NativeOnPushedToLayerStack()
 
 		FirstMenuButton->SetNavigationWidget(EWidgetNavigationDirection::Up, LastMenuButton);
 		LastMenuButton->SetNavigationWidget(EWidgetNavigationDirection::Down, FirstMenuButton);
-	}
-	else
-	{
-		// Game save game data is present
-		const TObjectPtr<UProject1ButtonBase> ContinueButton{ GetContinueButton() };
-		ButtonMenuComponent->RegisterMenuButtons(TArray<UProject1ButtonBase*>{ ContinueButton }, true);
 	}
 }
 

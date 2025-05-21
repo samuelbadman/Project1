@@ -20,15 +20,19 @@ class USaveManager : public UProject1ObjectBase
 	
 private:
 	static constexpr int32 UserIndex{ 0 };
+	static constexpr int32 MaximumSaveSlotCount{ TNumericLimits<uint8>::Max() };
 
 	static const FString MetaSaveSlotName;
-	static const FString SaveSlot1Name;
+	static const FString GameSaveSlotName;
 
 	UPROPERTY()
 	TObjectPtr<UMetaSaveGame> MetaSaveGameObject;
 
 	UPROPERTY()
 	TObjectPtr<UProject1SaveGame> GameSaveGameObject;
+
+	TArray<int32> AvailableSaveSlotIds;
+	TArray<int32> UsedSaveSlotIds;
 
 public:
 	USaveManager();
@@ -49,14 +53,16 @@ public:
 	FORCEINLINE UMetaSaveGame* GetMetaSaveGameObject() const { return MetaSaveGameObject; }
 
 	UFUNCTION(BlueprintCallable, Category = "SaveManager")
-	const FString& GetSaveSlot1Name() const;
+	FName GetNewUniqueSaveSlotName();
 
 	void ApplyLoadedGameData();
 	bool IsAnyGameSaveDataPresent() const;
+	void InitializeSaveSlotIds();
 
 	void CreateNewMetaSaveGame();
 	bool IsMetaSaveDataPresent() const;
-	void LoadMetaData(bool Async);
+	// Returns true if meta data is present and can be loaded otherwise, returns false meaning that meta data is not present on disk and could not be loaded
+	bool LoadMetaData(bool Async);
 
 private:
 	void OnGameSaved(const FString& SaveSlotName, const int32 SaveUserIndex, bool SaveSuccess);
@@ -66,4 +72,7 @@ private:
 
 	void WriteMetaSaveGameData(const FString& SaveSlotName);
 	void WriteGameSaveGameData();
+
+	int32 TakeAvailableSaveSlotId();
+	FName ConstructSaveSlotName(const int32 Id) const;
 };

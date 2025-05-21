@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "SaveGame/SaveDataStructures/SaveSlotSaveData.h"
 #include "MetaSaveGame.generated.h"
 
 /**
- * 
+ * Meta save game data is created every time the game is saved by the player into any project 1 save slot. Only one meta save game file exists on disk
  */
 UCLASS()
 class UMetaSaveGame : public USaveGame
@@ -19,4 +20,7 @@ class UMetaSaveGame : public USaveGame
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "MetaSaveGame")
 	FName LastGameSaveSlotNameUsed{ NAME_None };
+
+	UPROPERTY(BlueprintReadWrite, Category = "MetaSaveGame")
+	TArray<FSaveSlotSaveData> GameSaveSlots{};
 };
