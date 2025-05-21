@@ -91,9 +91,16 @@ void USaveManager::ApplyLoadedGameData()
 
 bool USaveManager::IsAnyGameSaveDataPresent() const
 {
-	// TODO: Use used unique names from save slot name generator to check for existing save data
-	//return UGameplayStatics::DoesSaveGameExist(SaveSlot1Name, UserIndex);
-	return false;
+	return !UsedSaveSlotIds.IsEmpty();
+
+	//for (int32 Id : UsedSaveSlotIds)
+	//{
+	//	if (UGameplayStatics::DoesSaveGameExist(ConstructSaveSlotName(Id).ToString(), UserIndex))
+	//	{
+	//		return true;
+	//	}
+	//}
+	//return false;
 }
 
 void USaveManager::CreateNewMetaSaveGame()
