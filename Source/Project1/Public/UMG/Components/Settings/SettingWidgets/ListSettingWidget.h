@@ -19,6 +19,10 @@ class PROJECT1_API UListSettingWidget : public USettingUserWidgetBase
 	GENERATED_BODY()
 
 private:
+	// TODO: Should this be in the base class? If it is, making the assumption every setting will have a label text
+	UPROPERTY(EditAnywhere)
+	FString SettingLabel;
+
 	UPROPERTY(EditAnywhere)
 	TArray<FText> SettingValueLabels;
 
@@ -30,6 +34,9 @@ private:
 
 public:
 	UListSettingWidget();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "ListSettingWidget")
+	UTextBlock* GetSettingLabelTextBlock();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ListSettingWidget")
 	UTextBlock* GetSettingValueLabelTextBlock();
@@ -48,6 +55,7 @@ public:
 	const FText& GetSettingValueLabel(int32 SettingValueIndex) const;
 
 private:
+	void NativePreConstruct() override;
 	ESettingInputResult ProcessNavigationInput(const FVector2D& NavigationInput) override;
 	bool HasSettingValueChanged() const override;
 

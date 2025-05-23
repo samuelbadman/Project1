@@ -6,7 +6,8 @@
 #include "FunctionLibraries/Project1MathLibrary.h"
 
 UListSettingWidget::UListSettingWidget()
-	: SettingValueLabels({}),
+	: SettingLabel(TEXT("Default Label")),
+	SettingValueLabels({}),
 	CurrentSettingValueIndex(INDEX_NONE),
 	DefaultSettingValueIndex(CurrentSettingValueIndex)
 {
@@ -38,6 +39,17 @@ void UListSettingWidget::ScrollSettingValue(int32 Increment)
 const FText& UListSettingWidget::GetSettingValueLabel(int32 SettingValueIndex) const
 {
 	return SettingValueLabels[SettingValueIndex];
+}
+
+void UListSettingWidget::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	// Update setting label text
+	if (UTextBlock* SettingLabelTextBlock = GetSettingLabelTextBlock())
+	{
+		SettingLabelTextBlock->SetText(FText::FromString(SettingLabel + TEXT(":")));
+	}
 }
 
 ESettingInputResult UListSettingWidget::ProcessNavigationInput(const FVector2D& NavigationInput)
