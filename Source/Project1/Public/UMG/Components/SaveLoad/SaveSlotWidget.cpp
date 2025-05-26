@@ -2,8 +2,12 @@
 
 
 #include "SaveSlotWidget.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameInstances/Project1GameInstanceBase.h"
+#include "SaveGame/SaveManager.h"
 
-void USaveSlotWidget::SetUniqueSaveSlotName(const FName& Name)
+FName USaveSlotWidget::GetUniqueSaveSlotName() const
 {
-	UniqueSaveSlotName = Name;
+	const FSaveSlot* const SaveSlot{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager()->GetSaveSlotData(SaveSlotDataId) };
+	return (SaveSlot) ? SaveSlot->UniqueName : NAME_None;
 }

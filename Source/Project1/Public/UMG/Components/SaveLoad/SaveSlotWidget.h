@@ -23,13 +23,16 @@ public:
 	FOnSaveSlotSelectedSignature OnSaveSlotSelectedDelegate{};
 
 private:
-	FName UniqueSaveSlotName{NAME_None};
+	// Id used to reference the data for the save slot stored inside the game instance's save manager object
+	int32 SaveSlotDataId{ -1 };
 
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "SaveSlotWidget")
 	UProject1ButtonBase* GetBackingButton() const;
 
-	void SetUniqueSaveSlotName(const FName& Name);
+	void SetSaveSlotDataId(const int32 Id) { SaveSlotDataId = Id; }
+
+	// Returns a copy of the FName. Cannot return a reference as the save slot name might be unretrievable if save SaveSlotDataId is invalid
 	UFUNCTION(BlueprintCallable, Category = "SaveSlotWidget")
-	const FName& GetUniqueSaveSlotName() const { return UniqueSaveSlotName; }
+	FName GetUniqueSaveSlotName() const;
 };

@@ -62,7 +62,7 @@ public:
 
 	// Creates a new save slot widget, initializes it and adds it to the save slot widget container. Returns the newly created save slot widget
 	UFUNCTION(BlueprintCallable, Category = "SaveLoadScreen")
-	USaveSlotWidget* CreateNewSaveSlot();
+	USaveSlotWidget* CreateNewSaveSlotDataAndWidget();
 
 	UFUNCTION(BlueprintCallable, Category = "SaveLoadScreen")
 	void CloseScreen();

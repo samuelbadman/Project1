@@ -10,6 +10,17 @@ class USaveGame;
 class UProject1SaveGame;
 class UMetaSaveGame;
 
+USTRUCT(BlueprintType)
+struct FSaveSlot
+{
+	GENERATED_BODY()
+
+	// NOTE: This struct is basically a copy of save slot save data. Could it just use that struct instead of creating a new one here?
+
+	int32 Id{ 0 };
+	FName UniqueName{ NAME_None };
+};
+
 /**
  * 
  */
@@ -31,8 +42,11 @@ private:
 	UPROPERTY()
 	TObjectPtr<UProject1SaveGame> GameSaveGameObject;
 
+	// Array of free available Ids not in use by an existing save slot
 	TArray<int32> AvailableSaveSlotIds;
-	TArray<int32> UsedSaveSlotIds;
+
+	// Map Key: save slot Id, Value: save slot data struct
+	TMap<int32, FSaveSlot> SaveSlots;
 
 public:
 	USaveManager();
@@ -52,8 +66,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SaveManager")
 	FORCEINLINE UMetaSaveGame* GetMetaSaveGameObject() const { return MetaSaveGameObject; }
 
-	UFUNCTION(BlueprintCallable, Category = "SaveManager")
-	FName GetNewUniqueSaveSlotName();
+	int32 CreateNewSaveSlot();
+	// Returns a pointer to the save slot data at the id. Returned pointer is null when there is no data at the Id. The pointer is only valid until the next change of the save 
+	// manager's internal save slot map's keys
+	const FSaveSlot* GetSaveSlotData(const int32 Id) const;
 
 	void ApplyLoadedGameData();
 	bool IsAnyGameSaveDataPresent() const;
@@ -74,5 +90,6 @@ private:
 	void WriteGameSaveGameData();
 
 	int32 TakeAvailableSaveSlotId();
+	// TOOD: void ReturnAvailableSaveSlotId(int32 Id)
 	FName ConstructSaveSlotName(const int32 Id) const;
 };

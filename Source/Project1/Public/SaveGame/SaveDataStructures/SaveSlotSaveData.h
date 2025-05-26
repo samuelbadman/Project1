@@ -11,7 +11,7 @@ struct FSaveSlotSaveData
 
 	// Unique id
 	UPROPERTY(BlueprintReadOnly)
-	int32 ID{ 0 };
+	int32 Id{ 0 };
 
 	// Unique name
 	UPROPERTY(BlueprintReadOnly)

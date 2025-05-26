@@ -3,6 +3,7 @@
 
 #include "SaveManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "SaveGame/SaveGameObjects/MetaSaveGame.h"
 #include "SaveGame/SaveGameObjects/Project1SaveGame.h"
 #include "GameModes/GameGameMode.h"
@@ -15,7 +16,7 @@ USaveManager::USaveManager()
 	: MetaSaveGameObject(nullptr),
 	GameSaveGameObject(nullptr),
 	AvailableSaveSlotIds({}),
-	UsedSaveSlotIds()
+	SaveSlots({})
 {
 }
 
@@ -91,7 +92,7 @@ void USaveManager::ApplyLoadedGameData()
 
 bool USaveManager::IsAnyGameSaveDataPresent() const
 {
-	return !UsedSaveSlotIds.IsEmpty();
+	return !SaveSlots.IsEmpty();
 
 	//for (int32 Id : UsedSaveSlotIds)
 	//{
@@ -137,14 +138,33 @@ bool USaveManager::LoadMetaData(bool Async)
 	return true;
 }
 
-FName USaveManager::GetNewUniqueSaveSlotName()
+int32 USaveManager::CreateNewSaveSlot()
 {
-	return ConstructSaveSlotName(TakeAvailableSaveSlotId());
+	// Get new unique save slot id
+	const int32 NewSlotId{ TakeAvailableSaveSlotId() };
+
+	// Create new save slot data and add it to the save slot map
+	SaveSlots.Emplace(NewSlotId, FSaveSlot
+		{
+			.Id = NewSlotId,
+			.UniqueName = ConstructSaveSlotName(NewSlotId)
+		}
+	);
+
+	// Return the id of the new save slot used to reference the save slot from client code
+	return NewSlotId;
+}
+
+const FSaveSlot* USaveManager::GetSaveSlotData(const int32 Id) const
+{
+	return SaveSlots.Find(Id);
 }
 
 void USaveManager::OnGameSaved(const FString& SaveSlotName, const int32 SaveUserIndex, bool SaveSuccess)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Saved game."));
+
+	// TODO: Update save slot display data
 }
 
 void USaveManager::OnGameLoaded(const FString& SaveSlotName, const int32 SaveUserIndex, USaveGame* LoadedSaveGame)
@@ -178,11 +198,11 @@ void USaveManager::OnMetaLoaded(const FString& SaveSlotName, const int32 SaveUse
 		// Update available and used save game ids
 		InitializeSaveSlotIds();
 
-		const TArray<FSaveSlotSaveData>& SaveSlots{ MetaSaveGameObject->GameSaveSlots };
-		for (const FSaveSlotSaveData& SlotData : SaveSlots)
+		const TArray<FSaveSlotSaveData>& LoadedSaveSlots{ MetaSaveGameObject->GameSaveSlots };
+		for (const FSaveSlotSaveData& SlotData : LoadedSaveSlots)
 		{
-			AvailableSaveSlotIds.Remove(SlotData.ID);
-			UsedSaveSlotIds.Add(SlotData.ID);
+			AvailableSaveSlotIds.Remove(SlotData.Id);
+			SaveSlots.Emplace(SlotData.Id, FSaveSlot{ .Id = SlotData.Id });
 		}
 	}
 }
@@ -190,13 +210,23 @@ void USaveManager::OnMetaLoaded(const FString& SaveSlotName, const int32 SaveUse
 void USaveManager::WriteMetaSaveGameData(const FString& SaveSlotName)
 {
 	// Save created save slot info
-	const int32 NumSaveSlots{ UsedSaveSlotIds.Num() };
-	MetaSaveGameObject->GameSaveSlots.SetNum(NumSaveSlots);
+	const int32 NumSaveSlots{ SaveSlots.Num() };
+	MetaSaveGameObject->GameSaveSlots.Empty(NumSaveSlots);
 
-	for (int32 i = 0; i < NumSaveSlots; ++i)
+	// Get current local time on this machine
+	const FDateTime DateTime{ UKismetMathLibrary::Now() };
+
+	// This needs to be for each save slot id key in the map
+	// For each slot we are adding a new slot to game save slots which is persistent. 
+	for (const TPair<int32, FSaveSlot>& Slot : SaveSlots)
 	{
-		MetaSaveGameObject->GameSaveSlots[i].ID = UsedSaveSlotIds[i];
-		MetaSaveGameObject->GameSaveSlots[i].UniqueSlotName = ConstructSaveSlotName(UsedSaveSlotIds[i]);
+		MetaSaveGameObject->GameSaveSlots.Emplace(FSaveSlotSaveData
+			{
+				.Id = Slot.Key,
+				.UniqueSlotName = ConstructSaveSlotName(Slot.Key)
+			});
+
+		// TODO: Need to save the slot display data into the above struct here too, such as the date/time saved, thumbnail, etc...
 	}
 
 	// Save last used game save slot name
@@ -227,7 +257,7 @@ void USaveManager::WriteGameSaveGameData()
 void USaveManager::InitializeSaveSlotIds()
 {
 	AvailableSaveSlotIds.SetNumUninitialized(MaximumSaveSlotCount, EAllowShrinking::Yes);
-	UsedSaveSlotIds.Empty();
+	SaveSlots.Empty();
 
 	for (int32 i = 0; i < MaximumSaveSlotCount; ++i)
 	{
@@ -238,7 +268,6 @@ void USaveManager::InitializeSaveSlotIds()
 int32 USaveManager::TakeAvailableSaveSlotId()
 {
 	const int32 Id{ AvailableSaveSlotIds.Last() };
-	UsedSaveSlotIds.Push(Id);
 	AvailableSaveSlotIds.Remove(Id);
 	return Id;
 }

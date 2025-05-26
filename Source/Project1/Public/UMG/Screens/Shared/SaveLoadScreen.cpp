@@ -68,7 +68,7 @@ TArray<USaveSlotWidget*> USaveLoadScreen::CreateExistingSaveSlotWidgets()
 		const TObjectPtr<USaveSlotWidget> SaveSlotWidget{ CreateAndAddSaveSlotWidget(SaveSlotWidgetParent, LoadedSaveSlotWidgetClass) };
 
 		// Set data for save slot widget
-		SaveSlotWidget->SetUniqueSaveSlotName(SaveSlotData.UniqueSlotName);
+		SaveSlotWidget->SetSaveSlotDataId(SaveSlotData.Id);
 
 		// Bind function to save slot selected delegate
 		SaveSlotWidget->OnSaveSlotSelectedDelegate.AddDynamic(this, &USaveLoadScreen::OnSaveSlotSelected);
@@ -80,13 +80,13 @@ TArray<USaveSlotWidget*> USaveLoadScreen::CreateExistingSaveSlotWidgets()
 	return Result;
 }
 
-USaveSlotWidget* USaveLoadScreen::CreateNewSaveSlot()
+USaveSlotWidget* USaveLoadScreen::CreateNewSaveSlotDataAndWidget()
 {
 	// Create new save slot widget and add it to the save slot container widget
 	const TObjectPtr<USaveSlotWidget> SaveSlotWidget{ CreateAndAddSaveSlotWidget(GetSaveSlotWidgetContainer(), SaveSlotWidgetClass.LoadSynchronous()) };
 
-	// Get a new unique slot name from the save manager
-	SaveSlotWidget->SetUniqueSaveSlotName(CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager()->GetNewUniqueSaveSlotName());
+	// Create a new save slot data within the save manager for the save slot widget and set the widget's unique id to the id value returned from the save manager
+	SaveSlotWidget->SetSaveSlotDataId(CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager()->CreateNewSaveSlot());
 
 	// Return the new save slot widget
 	return SaveSlotWidget;
