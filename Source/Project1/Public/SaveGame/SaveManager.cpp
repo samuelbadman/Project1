@@ -227,6 +227,7 @@ void USaveManager::WriteMetaSaveGameData(const FString& SaveSlotName)
 			});
 
 		// TODO: Need to save the slot display data into the above struct here too, such as the date/time saved, thumbnail, etc...
+		// TODO: Save slot display data should be stored in the FSaveSlot struct and updated whenever the slot is saved to
 	}
 
 	// Save last used game save slot name
