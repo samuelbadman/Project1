@@ -36,6 +36,11 @@ void AGameGameMode::Load_Implementation()
 	const TObjectPtr<USaveManager> SaveManager{ CastChecked<UProject1GameInstanceBase>(UGameplayStatics::GetGameInstance(this))->GetSaveManager() };
 	const TObjectPtr<UProject1SaveGame> SaveGame{ SaveManager->GetGameSaveGameObject() };
 
+	if (!IsValid(SaveGame))
+	{
+		return;
+	}
+
 	TotalPlayTime = SaveGame->GameModeSaveData.TotalPlayTime;
 	OnTotalPlayTimeChanged.Broadcast(TotalPlayTime);
 }
