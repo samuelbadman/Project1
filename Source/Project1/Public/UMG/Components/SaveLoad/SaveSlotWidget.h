@@ -30,6 +30,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "SaveSlotWidget")
 	UProject1ButtonBase* GetBackingButton() const;
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "SaveSlotWidget")
+	void SetLastSavedTimeDateText(const FName& Text) const;
+
 	void SetSaveSlotDataId(const int32 Id) { SaveSlotDataId = Id; }
 
 	// Returns a copy of the FName. Cannot return a reference as the save slot name might be unretrievable if save SaveSlotDataId is invalid

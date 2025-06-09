@@ -35,6 +35,16 @@ void USaveManager::SaveGame(const FString& SaveSlotName, const bool Async)
 		return;
 	}
 
+	// Update save slot data that stores information about the save
+	// Get the slot data that was saved into
+	FSaveSlot* const SlotDataSavedTo{ GetExistingSaveSlotFromName(SaveSlotName) };
+
+	// Update saved time and date info for slot saved into
+	// Get current local time on this machine
+	const FDateTime Now{ UKismetMathLibrary::Now() };
+
+	UpdateTimeDateSavedDataForSlot(*SlotDataSavedTo, Now);
+
 	// Write save game data
 	WriteMetaSaveGameData(SaveSlotName);
 	WriteGameSaveGameData();
@@ -164,7 +174,8 @@ void USaveManager::OnGameSaved(const FString& SaveSlotName, const int32 SaveUser
 {
 	UE_LOG(LogTemp, Warning, TEXT("Saved game."));
 
-	// TODO: Update save slot display data
+	// TODO: Notify slot data has changed, such as time date saved
+
 }
 
 void USaveManager::OnGameLoaded(const FString& SaveSlotName, const int32 SaveUserIndex, USaveGame* LoadedSaveGame)
@@ -192,17 +203,29 @@ void USaveManager::OnMetaLoaded(const FString& SaveSlotName, const int32 SaveUse
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Loaded meta save game."));
 
-		// Retrieve loaded save game object
+		// Retrieve loaded meta save game object
 		MetaSaveGameObject = CastChecked<UMetaSaveGame>(LoadedSaveGame);
+
+		// Clear existing save slot data if there is any
+		if (!SaveSlots.IsEmpty())
+		{
+			SaveSlots.Empty();
+		}
 
 		// Update available and used save game ids
 		InitializeSaveSlotIds();
 
+		// For each saved slot in the meta save game data, create new save slot data in the save manager
 		const TArray<FSaveSlotSaveData>& LoadedSaveSlots{ MetaSaveGameObject->GameSaveSlots };
 		for (const FSaveSlotSaveData& SlotData : LoadedSaveSlots)
 		{
 			AvailableSaveSlotIds.Remove(SlotData.Id);
-			SaveSlots.Emplace(SlotData.Id, FSaveSlot{ .Id = SlotData.Id });
+			SaveSlots.Emplace(SlotData.Id, FSaveSlot
+				{
+					.Id = SlotData.Id, 
+					.UniqueName = SlotData.UniqueSlotName, 
+					.TimeDateSaved = SlotData.TimeDateSaved
+				});
 		}
 	}
 }
@@ -213,21 +236,17 @@ void USaveManager::WriteMetaSaveGameData(const FString& SaveSlotName)
 	const int32 NumSaveSlots{ SaveSlots.Num() };
 	MetaSaveGameObject->GameSaveSlots.Empty(NumSaveSlots);
 
-	// Get current local time on this machine
-	const FDateTime DateTime{ UKismetMathLibrary::Now() };
-
 	// This needs to be for each save slot id key in the map
 	// For each slot we are adding a new slot to game save slots which is persistent. 
+	// NOTE: Iterating over a map here
 	for (const TPair<int32, FSaveSlot>& Slot : SaveSlots)
 	{
 		MetaSaveGameObject->GameSaveSlots.Emplace(FSaveSlotSaveData
 			{
 				.Id = Slot.Key,
-				.UniqueSlotName = ConstructSaveSlotName(Slot.Key)
+				.UniqueSlotName = ConstructSaveSlotName(Slot.Key),
+				.TimeDateSaved = Slot.Value.TimeDateSaved
 			});
-
-		// TODO: Need to save the slot display data into the above struct here too, such as the date/time saved, thumbnail, etc...
-		// TODO: Save slot display data should be stored in the FSaveSlot struct and updated whenever the slot is saved to
 	}
 
 	// Save last used game save slot name
@@ -278,4 +297,30 @@ FName USaveManager::ConstructSaveSlotName(const int32 Id) const
 	FString Name{ GameSaveSlotName };
 	Name.AppendInt(Id);
 	return FName(Name);
+}
+
+FSaveSlot* USaveManager::GetExistingSaveSlotFromName(const FString& SaveSlotName)
+{
+	// Find the save slot data structure with the supplied save slot name
+	// NOTE: Iterating over map
+	for (const TPair<int32, FSaveSlot>& Slot : SaveSlots)
+	{
+		if (Slot.Value.UniqueName.ToString() == SaveSlotName)
+		{
+			return SaveSlots.Find(Slot.Key);
+		}
+	}
+
+	// No save slot exists with the supplied save slot name
+	return nullptr;
+}
+
+void USaveManager::UpdateTimeDateSavedDataForSlot(FSaveSlot& SaveSlotData, const FDateTime& Now)
+{
+	// Build date time string in required format
+	FStringBuilderBase DateTimeStringBuilder{};
+	Now.ToString(TEXT("%d/%m/%Y-%H:%M:%S"), DateTimeStringBuilder);
+
+	// Update data struct
+	SaveSlotData.TimeDateSaved = FName(DateTimeStringBuilder.ToString());
 }

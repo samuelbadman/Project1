@@ -69,6 +69,7 @@ TArray<USaveSlotWidget*> USaveLoadScreen::CreateExistingSaveSlotWidgets()
 
 		// Set data for save slot widget
 		SaveSlotWidget->SetSaveSlotDataId(SaveSlotData.Id);
+		SaveSlotWidget->SetLastSavedTimeDateText(SaveSlotData.TimeDateSaved);
 
 		// Bind function to save slot selected delegate
 		SaveSlotWidget->OnSaveSlotSelectedDelegate.AddDynamic(this, &USaveLoadScreen::OnSaveSlotSelected);
@@ -155,13 +156,11 @@ void USaveLoadScreen::OnNavigateInputTriggered(const FInputActionValue& Value)
 {
 	if (CanReceiveInput())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Save load screen Navigate input triggered: %s"), *Value.Get<FVector2D>().ToString()));
-
 		// The button menu is laid out in the widget vertically so, use the Y input axis to navigate the button menu
 		const TObjectPtr<UProject1ButtonBase> NavigatedButton{ ButtonMenuComponent->NavigateMenu(-Value.Get<FVector2D>().Y, true) };
 		if (IsValid(NavigatedButton))
 		{
-			GetSaveSlotWidgetScrollBox()->ScrollWidgetIntoView(NavigatedButton);
+			GetSaveSlotWidgetScrollBox()->ScrollWidgetIntoView(StaticCast<UWidget*>(NavigatedButton));
 		}
 	}
 }
@@ -192,12 +191,14 @@ void USaveLoadScreen::OnSaveSlotSelected(USaveSlotWidget* SaveSlot)
 	// If in save mode
 	if (bInSaveMode)
 	{
+		// Save to slot
 		SaveManager->SaveGame(SaveSlotName, false);
 		// TODO: Play sound/show notification to inform the player the game has been saved
 		CloseScreen();
 	}
 	else
 	{
+		// Load from slot
 		SaveManager->LoadGame(SaveSlotName, false);
 	}
 }

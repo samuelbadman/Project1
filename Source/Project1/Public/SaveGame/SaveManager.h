@@ -10,15 +10,18 @@ class USaveGame;
 class UProject1SaveGame;
 class UMetaSaveGame;
 
+// Callback for on slot data changed. Bound to when slot widgets are created
+
 USTRUCT(BlueprintType)
 struct FSaveSlot
 {
 	GENERATED_BODY()
 
-	// NOTE: This struct is basically a copy of save slot save data. Could it just use that struct instead of creating a new one here?
+	// NOTE: This struct is basically a copy of save slot save data structure. Could it just use that struct instead of creating a new one here?
 
 	int32 Id{ 0 };
 	FName UniqueName{ NAME_None };
+	FName TimeDateSaved{ NAME_None };
 };
 
 /**
@@ -45,7 +48,7 @@ private:
 	// Array of free available Ids not in use by an existing save slot
 	TArray<int32> AvailableSaveSlotIds;
 
-	// Map Key: save slot Id, Value: save slot data struct
+	// Map Key: save slot id, Value: save slot data struct. Stores save slot data mapped to its unique id
 	TMap<int32, FSaveSlot> SaveSlots;
 
 public:
@@ -90,6 +93,9 @@ private:
 	void WriteGameSaveGameData();
 
 	int32 TakeAvailableSaveSlotId();
-	// TOOD: void ReturnAvailableSaveSlotId(int32 Id)
+	// TODO: void ReturnAvailableSaveSlotId(int32 Id)
 	FName ConstructSaveSlotName(const int32 Id) const;
+	// Returned pointer only valid until next change to save slots map
+	FSaveSlot* GetExistingSaveSlotFromName(const FString& SaveSlotName);
+	void UpdateTimeDateSavedDataForSlot(FSaveSlot& SaveSlotData, const FDateTime& Now);
 };
