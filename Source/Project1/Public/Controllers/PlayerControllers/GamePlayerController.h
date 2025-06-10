@@ -135,6 +135,7 @@ private:
 	void OnPossess(APawn* aPawn) override;
 	void BeginPlay() override;
 
+	// NOTE: Interact input is triggered inside the interact prompt screen user widget
 	void OnLookAbsoluteTriggered(const FInputActionValue& Value);
 	void OnLookAnalogTriggered(const FInputActionValue& Value);
 	void OnResetLookTriggered(const FInputActionValue& Value);

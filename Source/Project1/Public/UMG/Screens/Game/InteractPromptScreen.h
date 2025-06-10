@@ -8,8 +8,9 @@
 
 class AGamePlayerController;
 class UPlayerInteractComponent;
-struct FInputActionValue;
 class UInteractPromptScreenUIInput;
+class ULongPressInteractManager;
+struct FInputActionValue;
 
 /**
  *
@@ -23,6 +24,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	FGameplayTag UIInputKey{};
 
+	// Marked UPROPERTY as the long press interact manager object is owned by the interact prompt screen and should not be deleted by garbage collection 
+	// until the owning interact prompt screen is deleted
+	UPROPERTY()
+	TObjectPtr<ULongPressInteractManager> LongPressInteractManager{ nullptr };
+
 	TObjectPtr<AGamePlayerController> GamePlayerController{ nullptr };
 	TObjectPtr<UInteractPromptScreenUIInput> InteractPromptScreenUIInput{ nullptr };
 	TObjectPtr<UPlayerInteractComponent> PlayerInteractComponent{ nullptr };
@@ -32,10 +38,16 @@ private:
 	FDelegateHandle OnEndInteractablePlayerOverlapDelegateHandle{};
 	FDelegateHandle OnTargetInteractableChangedDelegateHandle{};
 
+	FDelegateHandle OnInteractStartedDelegateHandle{};
 	FDelegateHandle OnInteractTriggeredDelegateHandle{};
+	FDelegateHandle OnInteractCompletedDelegateHandle{};
 	FDelegateHandle OnSwitchActionTriggeredDelegateHandle{};
 
+	TObjectPtr<AActor> TargetInteractable{ nullptr };
+
 public:
+	UInteractPromptScreen();
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ShowSwitchActionPrompt(bool Show);
 
@@ -52,6 +64,10 @@ private:
 	void OnInteractableEndPlayerOverlap(TWeakObjectPtr<AActor> Interactable, int32 NumOverlappedInteractables);
 	void OnTargetInteractableChanged(TWeakObjectPtr<AActor> NewTargetInteractable);
 
+	void OnInteractStarted(const FInputActionValue& Value);
 	void OnInteractTriggered(const FInputActionValue& Value);
+	void OnInteractCompleted(const FInputActionValue& Value);
 	void OnSwitchActionTriggered(const FInputActionValue& Value);
+
+	void OnLongPressInteractTicked(float PercentComplete);
 };
