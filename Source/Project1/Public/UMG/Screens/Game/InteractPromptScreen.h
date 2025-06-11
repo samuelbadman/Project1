@@ -46,7 +46,7 @@ private:
 
 	TObjectPtr<AActor> TargetInteractable{ nullptr };
 
-	TObjectPtr<UProgressBar> LongPressInteractProgressBar{ nullptr };
+	TObjectPtr<UProgressBar> InteractProgressBar{ nullptr };
 
 public:
 	UInteractPromptScreen();
@@ -58,7 +58,7 @@ public:
 	void SetInteractActionText(const FText& Text);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	UProgressBar* GetLongPressInteractProgressBar();
+	UProgressBar* GetInteractProgressBar();
 
 private:
 	void NativeOnPushedToLayerStack() override;
@@ -75,11 +75,12 @@ private:
 	void OnInteractCompleted(const FInputActionValue& Value);
 	void OnSwitchActionTriggered(const FInputActionValue& Value);
 
-	void OnLongPressInteractStarted();
-	void OnLongPressInteractTicked(float PercentComplete);
-	void OnLongPressInteractCanceled();
-	void OnLongPressInteractComplete();
+	// Hold interact type events bound to delegates in the hold interact manager object owned by this class
+	void OnHoldInteractStarted();
+	void OnHoldInteractTicked(float PercentComplete);
+	void OnHoldInteractCanceled();
+	void OnHoldInteractComplete();
 
 	void UpdateInteractPromptUIForNewTargetInteractable(const TObjectPtr<AActor> NewTargetInteractable);
-	void ClearLongPressInteractProgressBarProgress();
+	void ClearInteractProgressBarProgress();
 };
