@@ -11,29 +11,30 @@
 #include "InputActionValue.h"
 #include "Objects/UIInput/Inputs/InteractPromptScreenUIInput.h"
 #include "Components/ActorComponents/UIInputComponent.h"
-#include "Objects/Interact/LongPressInteractManager.h"
+#include "Objects/Interact/HoldInteractManager.h"
 #include "Components/ProgressBar.h"
+#include "Structures/InteractableDescription.h"
 
 UInteractPromptScreen::UInteractPromptScreen()
 {
-	// Create the long press interact manager object
-	LongPressInteractManager = CreateDefaultSubobject<ULongPressInteractManager>(FName(TEXT("LongPressInteractManager")));
+	// Create the hold interact manager object
+	HoldInteractManager = CreateDefaultSubobject<UHoldInteractManager>(FName(TEXT("HoldInteractManager")));
 }
 
 void UInteractPromptScreen::NativeOnPushedToLayerStack()
 {
 	// The interact prompt is persistent as long as the game primary layout widget is around. It is on its own widget layer and is always on top of its widget layer
 
-	// Initialize the long press interact manager object
-	LongPressInteractManager->Initialize();
+	// Initialize the hold interact manager object
+	HoldInteractManager->Initialize();
 
-	// Bind to long press interact manager delegate events
-	LongPressInteractManager->OnLongPressInteractStartedDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractStarted);
-	LongPressInteractManager->OnLongPressInteractTickedDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractTicked);
-	LongPressInteractManager->OnLongPressInteractCanceledDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractCanceled);
-	LongPressInteractManager->OnLongPressInteractCompleteDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractComplete);
+	// Bind to hold interact manager delegate events
+	HoldInteractManager->OnHoldInteractStartedDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractStarted);
+	HoldInteractManager->OnHoldInteractTickedDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractTicked);
+	HoldInteractManager->OnHoldInteractCanceledDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractCanceled);
+	HoldInteractManager->OnHoldInteractCompleteDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractComplete);
 
-	// Get the long press interact progress bar
+	// Get the hold interact progress bar
 	InteractProgressBar = GetInteractProgressBar();
 
 	// Get player controller
@@ -80,7 +81,7 @@ void UInteractPromptScreen::NativeOnCollapsed()
 
 void UInteractPromptScreen::NativeOnPoppedFromLayerStack()
 {
-	LongPressInteractManager->OnLongPressInteractTickedDelegate.Unbind();
+	HoldInteractManager->OnHoldInteractTickedDelegate.Unbind();
 
 	PlayerInteractComponent->OnBeginInteractableOverlapDelegate.Remove(OnBeginInteractablePlayerOverlapDelegateHandle);
 	OnBeginInteractablePlayerOverlapDelegateHandle.Reset();
@@ -130,20 +131,24 @@ void UInteractPromptScreen::OnInteractableEndPlayerOverlap(TWeakObjectPtr<AActor
 
 void UInteractPromptScreen::OnTargetInteractableChanged(TWeakObjectPtr<AActor> NewTargetInteractable)
 {
-	// Target interactable cannot change if currently in a long press interaction
-	if (LongPressInteractManager->IsInLongPressInteract())
+	// Target interactable cannot change if currently in a hold interaction
+	if (HoldInteractManager->IsInHoldInteract())
 	{
 		return;
 	}
 
+	// Get new target interactable interactable description
+	FInteractableDescription NewTargetInteractableDesc;
+	IInteractable::Execute_GetInteractableDescription(NewTargetInteractable.Get(), NewTargetInteractableDesc);
+
 	// Update interact prompt UI for new target interactable
-	UpdateInteractPromptUIForNewTargetInteractable(NewTargetInteractable.Get());
+	UpdateInteractPromptUIForNewTargetInteractable(NewTargetInteractableDesc);
 
 	// Update target interactable
 	TargetInteractable = PlayerInteractComponent->GetTargetInteractable();
 
 	// Update the interact action text in the interact prompt UI
-	SetInteractActionText(IInteractable::Execute_GetInteractActionText(NewTargetInteractable.Get()));
+	SetInteractActionText(NewTargetInteractableDesc.InteractActionText);
 }
 
 void UInteractPromptScreen::OnInteractStarted(const FInputActionValue& Value)
@@ -154,16 +159,24 @@ void UInteractPromptScreen::OnInteractStarted(const FInputActionValue& Value)
 		return;
 	}
 
-	// Does the target interactable require a long or single press interact?
-	if (IInteractable::Execute_IsLongPressInteract(TargetInteractable))
+	// Do the appropriate procedure for starting the interaction type of the target interactable
+	FInteractableDescription TargetInteractableDesc;
+	IInteractable::Execute_GetInteractableDescription(TargetInteractable, TargetInteractableDesc);
+
+	switch (TargetInteractableDesc.InteractionType)
 	{
-		// Starting a long press interact
-		LongPressInteractManager->StartLongPressInteract(GamePlayerController->GetPawn(), TargetInteractable);
-	}
-	else
-	{
+	case EInteractableInteractionType::Press:
 		// Starting a single press interact. Interact with the interactable
 		IInteractable::Execute_OnInteractedWith(TargetInteractable, GamePlayerController->GetPawn());
+		break;
+
+	case EInteractableInteractionType::Hold:
+		// Starting a hold interact
+		HoldInteractManager->StartHoldInteract(GamePlayerController->GetPawn(), TargetInteractable);
+		break;
+
+	case EInteractableInteractionType::Mash:
+		break;
 	}
 }
 
@@ -175,11 +188,11 @@ void UInteractPromptScreen::OnInteractTriggered(const FInputActionValue& Value)
 		return;
 	}
 
-	// Only want to use triggered events for long press interactions when in a long press interaction. 
+	// Only want to use triggered events for hold interactions when in a hold interaction. 
 	// Single press interactions only need to be fired once when the input starts and use the started event
-	if (LongPressInteractManager->IsInLongPressInteract())
+	if (HoldInteractManager->IsInHoldInteract())
 	{
-		LongPressInteractManager->TickLongPressInteract(GamePlayerController->GetPawn());
+		HoldInteractManager->TickHoldInteract(GamePlayerController->GetPawn());
 	}
 }
 
@@ -191,10 +204,10 @@ void UInteractPromptScreen::OnInteractCompleted(const FInputActionValue& Value)
 		return;
 	}
 
-	// If the player is in a long press interact, notify the long press interact manager that the interact input has completed (been released)
-	if (LongPressInteractManager->IsInLongPressInteract())
+	// If the player is in a hold interact, notify the hold interact manager that the interact input has completed (been released)
+	if (HoldInteractManager->IsInHoldInteract())
 	{
-		LongPressInteractManager->OnInteractInputCompleted(GamePlayerController->GetPawn(), TargetInteractable);
+		HoldInteractManager->OnInteractInputCompleted(GamePlayerController->GetPawn(), TargetInteractable);
 	}
 }
 
@@ -206,8 +219,8 @@ void UInteractPromptScreen::OnSwitchActionTriggered(const FInputActionValue& Val
 		return;
 	}
 
-	// Cannot switch interact actions when in a long press interact
-	if (LongPressInteractManager->IsInLongPressInteract())
+	// Cannot switch interact actions when in a hold interact
+	if (HoldInteractManager->IsInHoldInteract())
 	{
 		return;
 	}
@@ -226,7 +239,7 @@ void UInteractPromptScreen::OnHoldInteractTicked(float PercentComplete)
 {
 	// TODO: Use this event to update a UI progress bar in the interact prompt screen UMG widget
 
-	// Update long press interact progress bar percent
+	// Update hold interact progress bar percent
 	// NOTE: Dividing by 100.0 here as the progress bar percent needs to be in the range 0.0 - 1.0. PercentComplete is in the range 0.0 - 100.0
 	InteractProgressBar->SetPercent(PercentComplete / 100.0f);
 }
@@ -241,18 +254,21 @@ void UInteractPromptScreen::OnHoldInteractComplete()
 	ClearInteractProgressBarProgress();
 }
 
-void UInteractPromptScreen::UpdateInteractPromptUIForNewTargetInteractable(const TObjectPtr<AActor> NewTargetInteractable)
+void UInteractPromptScreen::UpdateInteractPromptUIForNewTargetInteractable(const FInteractableDescription& NewTargetInteractableDesc)
 {
 	// TODO: Switch input prompt to reresent the key needs to be held instead of just pressed
 
-	// Show long press interact progress UI if the new target interactable is a long press interaction
-	if (IInteractable::Execute_IsLongPressInteract(NewTargetInteractable))
+	// Show interact progress UI if the new target interactable is a hold or mash interaction otherwise, hide the progress UI for a press interaction
+	switch (NewTargetInteractableDesc.InteractionType)
 	{
-		InteractProgressBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	}
-	else
-	{
+	case EInteractableInteractionType::Press:
 		InteractProgressBar->SetVisibility(ESlateVisibility::Collapsed);
+		break;
+
+	case EInteractableInteractionType::Hold:
+	case EInteractableInteractionType::Mash:
+		InteractProgressBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		break;
 	}
 }
 

@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "Interactable.generated.h"
 
+struct FInteractableDescription;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UInteractable : public UInterface
@@ -23,14 +25,16 @@ class PROJECT1_API IInteractable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
-	FText GetInteractActionText();
+	void GetInteractableDescription(FInteractableDescription& OutInteractableDescription);
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
-	bool IsLongPressInteract();
+	//UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
+	//FText GetInteractActionText();
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
-	float GetLongPressInteractDuration();
+	//UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
+	//bool IsLongPressInteract();
 
+	//UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
+	//float GetLongPressInteractDuration();
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
 	void OnPlayerInteractBeginOverlap();
@@ -41,22 +45,21 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
 	void OnInteractedWith(AActor* Interactor);
 
-
-	// Called when a long press interact is started
+	// Called when a hold interact is started
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
-	void OnLongPressInteractStarted(AActor* Interactor);
+	void OnHoldInteractStarted(AActor* Interactor);
 
-	// Called each frame the long press interact is updated/progressed/ticked
+	// Called each frame the hold interact is updated/progressed/ticked
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
-	void OnLongPressInteractTicked(AActor* Interactor, float DeltaTime, float PercentComplete);
+	void OnHoldInteractTicked(AActor* Interactor, float DeltaTime, float PercentComplete);
 
-	// Called when the long press interact is completed.
-	// NOTE: This event is here in case an interactable wants to handle specifically completing a long press interact. The OnInteractedWith event will be called when a long press 
+	// Called when the hold interact is completed.
+	// NOTE: This event is here in case an interactable wants to handle specifically completing a hold interact. The OnInteractedWith event will be called when a hold
 	// interact is completed as well as this event
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
-	void OnLongPressInteractCompleted(AActor* Interactor);
+	void OnHoldInteractCompleted(AActor* Interactor);
 
-	// Called when the interactor stops the long press interaction without completing the interaction
+	// Called when the interactor stops the hold interaction without completing the interaction
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
-	void OnLongPressInteractCanceled(AActor* Interactor, float PercentComplete);
+	void OnHoldInteractCanceled(AActor* Interactor, float PercentComplete);
 };

@@ -9,9 +9,10 @@
 class AGamePlayerController;
 class UPlayerInteractComponent;
 class UInteractPromptScreenUIInput;
-class ULongPressInteractManager;
+class UHoldInteractManager;
 class UProgressBar;
 struct FInputActionValue;
+struct FInteractableDescription;
 
 /**
  *
@@ -25,10 +26,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	FGameplayTag UIInputKey{};
 
-	// Marked UPROPERTY as the long press interact manager object is owned by the interact prompt screen and should not be deleted by garbage collection 
+	// Marked UPROPERTY as the hold interact manager object is owned by the interact prompt screen and should not be deleted by garbage collection 
 	// until the owning interact prompt screen is deleted
 	UPROPERTY()
-	TObjectPtr<ULongPressInteractManager> LongPressInteractManager{ nullptr };
+	TObjectPtr<UHoldInteractManager> HoldInteractManager{ nullptr };
 
 	TObjectPtr<AGamePlayerController> GamePlayerController{ nullptr };
 	TObjectPtr<UInteractPromptScreenUIInput> InteractPromptScreenUIInput{ nullptr };
@@ -81,6 +82,6 @@ private:
 	void OnHoldInteractCanceled();
 	void OnHoldInteractComplete();
 
-	void UpdateInteractPromptUIForNewTargetInteractable(const TObjectPtr<AActor> NewTargetInteractable);
+	void UpdateInteractPromptUIForNewTargetInteractable(const FInteractableDescription& NewTargetInteractableDesc);
 	void ClearInteractProgressBarProgress();
 };
