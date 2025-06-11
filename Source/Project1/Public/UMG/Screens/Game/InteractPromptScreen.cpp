@@ -11,30 +11,34 @@
 #include "InputActionValue.h"
 #include "Objects/UIInput/Inputs/InteractPromptScreenUIInput.h"
 #include "Components/ActorComponents/UIInputComponent.h"
-#include "Objects/Interact/HoldInteractManager.h"
+#include "Objects/Interact/PressInteractionManager.h"
+#include "Objects/Interact/HoldInteractionManager.h"
+#include "Objects/Interact/MashInteractionManager.h"
 #include "Components/ProgressBar.h"
 #include "Structures/InteractableDescription.h"
 
 UInteractPromptScreen::UInteractPromptScreen()
 {
+	// Create the press interact manager object
+	PressInteractionManager = CreateDefaultSubobject<UPressInteractionManager>(FName(TEXT("PressInteractManager")));
+
 	// Create the hold interact manager object
-	HoldInteractManager = CreateDefaultSubobject<UHoldInteractManager>(FName(TEXT("HoldInteractManager")));
+	HoldInteractionManager = CreateDefaultSubobject<UHoldInteractionManager>(FName(TEXT("HoldInteractManager")));
+
+	// Create the mash interact manager object
+	MashInteractionManager = CreateDefaultSubobject<UMashInteractionManager>(FName(TEXT("MashInteractManager")));
 }
 
 void UInteractPromptScreen::NativeOnPushedToLayerStack()
 {
 	// The interact prompt is persistent as long as the game primary layout widget is around. It is on its own widget layer and is always on top of its widget layer
+	
+	// Setup interact manager objects
+	SetupPressInteractManager();
+	SetupHoldInteractManager();
+	SetupMashInteractManager();
 
-	// Initialize the hold interact manager object
-	HoldInteractManager->Initialize();
-
-	// Bind to hold interact manager delegate events
-	HoldInteractManager->OnHoldInteractStartedDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractStarted);
-	HoldInteractManager->OnHoldInteractTickedDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractTicked);
-	HoldInteractManager->OnHoldInteractCanceledDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractCanceled);
-	HoldInteractManager->OnHoldInteractCompleteDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractComplete);
-
-	// Get the hold interact progress bar
+	// Save a reference to the interact progress bar
 	InteractProgressBar = GetInteractProgressBar();
 
 	// Get player controller
@@ -81,8 +85,25 @@ void UInteractPromptScreen::NativeOnCollapsed()
 
 void UInteractPromptScreen::NativeOnPoppedFromLayerStack()
 {
-	HoldInteractManager->OnHoldInteractTickedDelegate.Unbind();
+	// Cleanup press interact manager
+	PressInteractionManager->OnInteractionStartedDelegate.Unbind();
+	PressInteractionManager->OnInteractionTickedDelegate.Unbind();
+	PressInteractionManager->OnInteractionCanceledDelegate.Unbind();
+	PressInteractionManager->OnInteractionCompleteDelegate.Unbind();
 
+	// Cleanup hold interact manager
+	HoldInteractionManager->OnInteractionStartedDelegate.Unbind();
+	HoldInteractionManager->OnInteractionTickedDelegate.Unbind();
+	HoldInteractionManager->OnInteractionCanceledDelegate.Unbind();
+	HoldInteractionManager->OnInteractionCompleteDelegate.Unbind();
+
+	// Cleanup mash interact manager
+	MashInteractionManager->OnInteractionStartedDelegate.Unbind();
+	MashInteractionManager->OnInteractionTickedDelegate.Unbind();
+	MashInteractionManager->OnInteractionCanceledDelegate.Unbind();
+	MashInteractionManager->OnInteractionCompleteDelegate.Unbind();
+
+	// Cleanup UI input
 	PlayerInteractComponent->OnBeginInteractableOverlapDelegate.Remove(OnBeginInteractablePlayerOverlapDelegateHandle);
 	OnBeginInteractablePlayerOverlapDelegateHandle.Reset();
 
@@ -132,7 +153,7 @@ void UInteractPromptScreen::OnInteractableEndPlayerOverlap(TWeakObjectPtr<AActor
 void UInteractPromptScreen::OnTargetInteractableChanged(TWeakObjectPtr<AActor> NewTargetInteractable)
 {
 	// Target interactable cannot change if currently in a hold interaction
-	if (HoldInteractManager->IsInHoldInteract())
+	if (HoldInteractionManager->IsInHoldInteract())
 	{
 		return;
 	}
@@ -163,19 +184,23 @@ void UInteractPromptScreen::OnInteractStarted(const FInputActionValue& Value)
 	FInteractableDescription TargetInteractableDesc;
 	IInteractable::Execute_GetInteractableDescription(TargetInteractable, TargetInteractableDesc);
 
+	const TObjectPtr<AActor> Interactor{ GamePlayerController->GetPawn() };
+
 	switch (TargetInteractableDesc.InteractionType)
 	{
 	case EInteractableInteractionType::Press:
-		// Starting a single press interact. Interact with the interactable
-		IInteractable::Execute_OnInteractedWith(TargetInteractable, GamePlayerController->GetPawn());
+		// Starting a press interact
+		PressInteractionManager->StartInteraction(TargetInteractable, Interactor);
 		break;
 
 	case EInteractableInteractionType::Hold:
 		// Starting a hold interact
-		HoldInteractManager->StartHoldInteract(GamePlayerController->GetPawn(), TargetInteractable);
+		HoldInteractionManager->StartInteraction(TargetInteractable, Interactor);
 		break;
 
 	case EInteractableInteractionType::Mash:
+		// Starting a mash interact
+
 		break;
 	}
 }
@@ -189,10 +214,10 @@ void UInteractPromptScreen::OnInteractTriggered(const FInputActionValue& Value)
 	}
 
 	// Only want to use triggered events for hold interactions when in a hold interaction. 
-	// Single press interactions only need to be fired once when the input starts and use the started event
-	if (HoldInteractManager->IsInHoldInteract())
+	// Press or mash interactions only need to be fired once when the input starts and use the started event
+	if (HoldInteractionManager->IsInHoldInteract())
 	{
-		HoldInteractManager->TickHoldInteract(GamePlayerController->GetPawn());
+		HoldInteractionManager->TickInteraction(TargetInteractable, GamePlayerController->GetPawn());
 	}
 }
 
@@ -205,9 +230,9 @@ void UInteractPromptScreen::OnInteractCompleted(const FInputActionValue& Value)
 	}
 
 	// If the player is in a hold interact, notify the hold interact manager that the interact input has completed (been released)
-	if (HoldInteractManager->IsInHoldInteract())
+	if (HoldInteractionManager->IsInHoldInteract())
 	{
-		HoldInteractManager->OnInteractInputCompleted(GamePlayerController->GetPawn(), TargetInteractable);
+		HoldInteractionManager->OnInteractInputCompleted(GamePlayerController->GetPawn(), TargetInteractable);
 	}
 }
 
@@ -220,7 +245,7 @@ void UInteractPromptScreen::OnSwitchActionTriggered(const FInputActionValue& Val
 	}
 
 	// Cannot switch interact actions when in a hold interact
-	if (HoldInteractManager->IsInHoldInteract())
+	if (HoldInteractionManager->IsInHoldInteract())
 	{
 		return;
 	}
@@ -231,11 +256,27 @@ void UInteractPromptScreen::OnSwitchActionTriggered(const FInputActionValue& Val
 	}
 }
 
-void UInteractPromptScreen::OnHoldInteractStarted()
+void UInteractPromptScreen::OnPressInteractionStarted()
 {
 }
 
-void UInteractPromptScreen::OnHoldInteractTicked(float PercentComplete)
+void UInteractPromptScreen::OnPressInteractionTicked(float PercentComplete)
+{
+}
+
+void UInteractPromptScreen::OnPressInteractionCanceled()
+{
+}
+
+void UInteractPromptScreen::OnPressInteractionComplete()
+{
+}
+
+void UInteractPromptScreen::OnHoldInteractionStarted()
+{
+}
+
+void UInteractPromptScreen::OnHoldInteractionTicked(float PercentComplete)
 {
 	// TODO: Use this event to update a UI progress bar in the interact prompt screen UMG widget
 
@@ -244,14 +285,66 @@ void UInteractPromptScreen::OnHoldInteractTicked(float PercentComplete)
 	InteractProgressBar->SetPercent(PercentComplete / 100.0f);
 }
 
-void UInteractPromptScreen::OnHoldInteractCanceled()
+void UInteractPromptScreen::OnHoldInteractionCanceled()
 {
 	ClearInteractProgressBarProgress();
 }
 
-void UInteractPromptScreen::OnHoldInteractComplete()
+void UInteractPromptScreen::OnHoldInteractionComplete()
 {
 	ClearInteractProgressBarProgress();
+}
+
+void UInteractPromptScreen::OnMashInteractionStarted()
+{
+}
+
+void UInteractPromptScreen::OnMashInteractionTicked(float PercentComplete)
+{
+}
+
+void UInteractPromptScreen::OnMashInteractionCanceled()
+{
+}
+
+void UInteractPromptScreen::OnMashInteractionComplete()
+{
+}
+
+void UInteractPromptScreen::SetupPressInteractManager()
+{
+	// Initialize the press interact manager object
+	PressInteractionManager->Initialize();
+
+	// Bind to hold interact manager delegate events
+	PressInteractionManager->OnInteractionStartedDelegate.BindUObject(this, &UInteractPromptScreen::OnPressInteractionStarted);
+	PressInteractionManager->OnInteractionTickedDelegate.BindUObject(this, &UInteractPromptScreen::OnPressInteractionTicked);
+	PressInteractionManager->OnInteractionCanceledDelegate.BindUObject(this, &UInteractPromptScreen::OnPressInteractionCanceled);
+	PressInteractionManager->OnInteractionCompleteDelegate.BindUObject(this, &UInteractPromptScreen::OnPressInteractionComplete);
+}
+
+void UInteractPromptScreen::SetupHoldInteractManager()
+{
+	// Initialize the hold interact manager object
+	HoldInteractionManager->Initialize();
+
+	// Bind to hold interact manager delegate events
+	HoldInteractionManager->OnInteractionStartedDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractionStarted);
+	HoldInteractionManager->OnInteractionTickedDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractionTicked);
+	HoldInteractionManager->OnInteractionCanceledDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractionCanceled);
+	HoldInteractionManager->OnInteractionCompleteDelegate.BindUObject(this, &UInteractPromptScreen::OnHoldInteractionComplete);
+}
+
+void UInteractPromptScreen::SetupMashInteractManager()
+{
+	// Initialize the mash interact manager object
+	MashInteractionManager->Initialize();
+
+	// Bind to hold interact manager delegate events
+	MashInteractionManager->OnInteractionStartedDelegate.BindUObject(this, &UInteractPromptScreen::OnMashInteractionStarted);
+	MashInteractionManager->OnInteractionTickedDelegate.BindUObject(this, &UInteractPromptScreen::OnMashInteractionTicked);
+	MashInteractionManager->OnInteractionCanceledDelegate.BindUObject(this, &UInteractPromptScreen::OnMashInteractionCanceled);
+	MashInteractionManager->OnInteractionCompleteDelegate.BindUObject(this, &UInteractPromptScreen::OnMashInteractionComplete);
 }
 
 void UInteractPromptScreen::UpdateInteractPromptUIForNewTargetInteractable(const FInteractableDescription& NewTargetInteractableDesc)

@@ -9,7 +9,9 @@
 class AGamePlayerController;
 class UPlayerInteractComponent;
 class UInteractPromptScreenUIInput;
-class UHoldInteractManager;
+class UPressInteractionManager;
+class UHoldInteractionManager;
+class UMashInteractionManager;
 class UProgressBar;
 struct FInputActionValue;
 struct FInteractableDescription;
@@ -26,10 +28,20 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	FGameplayTag UIInputKey{};
 
-	// Marked UPROPERTY as the hold interact manager object is owned by the interact prompt screen and should not be deleted by garbage collection 
+	// Marked UPROPERTY as the press interaction manager object is owned by the interact prompt screen and should not be deleted by garbage collection 
 	// until the owning interact prompt screen is deleted
 	UPROPERTY()
-	TObjectPtr<UHoldInteractManager> HoldInteractManager{ nullptr };
+	TObjectPtr<UPressInteractionManager> PressInteractionManager{ nullptr };
+
+	// Marked UPROPERTY as the hold interaction manager object is owned by the interact prompt screen and should not be deleted by garbage collection 
+	// until the owning interact prompt screen is deleted
+	UPROPERTY()
+	TObjectPtr<UHoldInteractionManager> HoldInteractionManager{ nullptr };
+
+	// Marked UPROPERTY as the mash interaction manager object is owned by the interact prompt screen and should not be deleted by garbage collection 
+	// until the owning interact prompt screen is deleted
+	UPROPERTY()
+	TObjectPtr<UMashInteractionManager> MashInteractionManager{ nullptr };
 
 	TObjectPtr<AGamePlayerController> GamePlayerController{ nullptr };
 	TObjectPtr<UInteractPromptScreenUIInput> InteractPromptScreenUIInput{ nullptr };
@@ -76,12 +88,27 @@ private:
 	void OnInteractCompleted(const FInputActionValue& Value);
 	void OnSwitchActionTriggered(const FInputActionValue& Value);
 
-	// Hold interact type events bound to delegates in the hold interact manager object owned by this class
-	void OnHoldInteractStarted();
-	void OnHoldInteractTicked(float PercentComplete);
-	void OnHoldInteractCanceled();
-	void OnHoldInteractComplete();
+	// Press interaction type events bound to delegates in the hold interaction manager object owned by this class
+	void OnPressInteractionStarted();
+	void OnPressInteractionTicked(float PercentComplete);
+	void OnPressInteractionCanceled();
+	void OnPressInteractionComplete();
 
+	// Hold interaction type events bound to delegates in the hold interaction manager object owned by this class
+	void OnHoldInteractionStarted();
+	void OnHoldInteractionTicked(float PercentComplete);
+	void OnHoldInteractionCanceled();
+	void OnHoldInteractionComplete();
+
+	// Mash interaction type events bound to delegates in the hold interaction manager object owned by this class
+	void OnMashInteractionStarted();
+	void OnMashInteractionTicked(float PercentComplete);
+	void OnMashInteractionCanceled();
+	void OnMashInteractionComplete();
+
+	void SetupPressInteractManager();
+	void SetupHoldInteractManager();
+	void SetupMashInteractManager();
 	void UpdateInteractPromptUIForNewTargetInteractable(const FInteractableDescription& NewTargetInteractableDesc);
 	void ClearInteractProgressBarProgress();
 };
