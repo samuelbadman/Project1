@@ -12,6 +12,7 @@
 #include "Objects/UIInput/Inputs/InteractPromptScreenUIInput.h"
 #include "Components/ActorComponents/UIInputComponent.h"
 #include "Objects/Interact/LongPressInteractManager.h"
+#include "Components/ProgressBar.h"
 
 UInteractPromptScreen::UInteractPromptScreen()
 {
@@ -26,8 +27,14 @@ void UInteractPromptScreen::NativeOnPushedToLayerStack()
 	// Initialize the long press interact manager object
 	LongPressInteractManager->Initialize();
 
-	// Bind to long press interact manager interact ticked delegate
+	// Bind to long press interact manager delegate events
+	LongPressInteractManager->OnLongPressInteractStartedDelegate.BindUObject(this, &UInteractPromptScreen::OnLongPressInteractStarted);
 	LongPressInteractManager->OnLongPressInteractTickedDelegate.BindUObject(this, &UInteractPromptScreen::OnLongPressInteractTicked);
+	LongPressInteractManager->OnLongPressInteractCanceledDelegate.BindUObject(this, &UInteractPromptScreen::OnLongPressInteractCanceled);
+	LongPressInteractManager->OnLongPressInteractCompleteDelegate.BindUObject(this, &UInteractPromptScreen::OnLongPressInteractComplete);
+
+	// Get the long press interact progress bar
+	LongPressInteractProgressBar = GetLongPressInteractProgressBar();
 
 	// Get player controller
 	GamePlayerController = Cast<AGamePlayerController>(UGameplayStatics::GetPlayerController(this, 0));
@@ -129,7 +136,8 @@ void UInteractPromptScreen::OnTargetInteractableChanged(TWeakObjectPtr<AActor> N
 		return;
 	}
 
-	// TODO: Can use this event to check here if the new target interactable is a long press one and update UI accordingly
+	// Update interact prompt UI for new target interactable
+	UpdateInteractPromptUIForNewTargetInteractable(NewTargetInteractable.Get());
 
 	// Update target interactable
 	TargetInteractable = PlayerInteractComponent->GetTargetInteractable();
@@ -210,7 +218,45 @@ void UInteractPromptScreen::OnSwitchActionTriggered(const FInputActionValue& Val
 	}
 }
 
+void UInteractPromptScreen::OnLongPressInteractStarted()
+{
+}
+
 void UInteractPromptScreen::OnLongPressInteractTicked(float PercentComplete)
 {
 	// TODO: Use this event to update a UI progress bar in the interact prompt screen UMG widget
+
+	// Update long press interact progress bar percent
+	// NOTE: Dividing by 100.0 here as the progress bar percent needs to be in the range 0.0 - 1.0. PercentComplete is in the range 0.0 - 100.0
+	LongPressInteractProgressBar->SetPercent(PercentComplete / 100.0f);
+}
+
+void UInteractPromptScreen::OnLongPressInteractCanceled()
+{
+	ClearLongPressInteractProgressBarProgress();
+}
+
+void UInteractPromptScreen::OnLongPressInteractComplete()
+{
+	ClearLongPressInteractProgressBarProgress();
+}
+
+void UInteractPromptScreen::UpdateInteractPromptUIForNewTargetInteractable(const TObjectPtr<AActor> NewTargetInteractable)
+{
+	// TODO: Switch input prompt to reresent the key needs to be held instead of just pressed
+
+	// Show long press interact progress UI if the new target interactable is a long press interaction
+	if (IInteractable::Execute_IsLongPressInteract(NewTargetInteractable))
+	{
+		LongPressInteractProgressBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else
+	{
+		LongPressInteractProgressBar->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
+void UInteractPromptScreen::ClearLongPressInteractProgressBarProgress()
+{
+	LongPressInteractProgressBar->SetPercent(0.0f);
 }

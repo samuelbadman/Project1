@@ -18,6 +18,7 @@ void ULongPressInteractManager::StartLongPressInteract(TObjectPtr<AActor> Intera
 
 	// Start the long press interact
 	IInteractable::Execute_OnLongPressInteractStarted(Interactable, Interactor);
+	OnLongPressInteractStartedDelegate.ExecuteIfBound();
 }
 
 void ULongPressInteractManager::TickLongPressInteract(TObjectPtr<AActor> Interactor)
@@ -27,8 +28,6 @@ void ULongPressInteractManager::TickLongPressInteract(TObjectPtr<AActor> Interac
 
 	// Progress current long press interact state
 	LongPressInteractState.ElapsedDuration += DeltaTime;
-
-	// TODO: Update player feedback systems with new long press interact progress
 
 	// Notify object being interacted with it has ticked
 	const float PercentComplete{ LongPressInteractState.CalculatePercentComplete() };
@@ -48,16 +47,13 @@ void ULongPressInteractManager::OnInteractInputCompleted(TObjectPtr<AActor> Inte
 	// Is the long press interact complete? 
 	if (LongPressInteractState.IsComplete())
 	{
-		// Complete the long press interact. Reset the long press interact state is done inside CompleteLongPressInteractState
+		// Complete the long press interact
 		CompleteLongPressInteractState(Interactor);
 	}
 	else
 	{
 		// Cancel the long press interact
-		IInteractable::Execute_OnLongPressInteractCanceled(LongPressInteractState.Interactable, Interactor, LongPressInteractState.CalculatePercentComplete());
-
-		// Reset the long press interact state
-		ResetLongPressInteractState();
+		CancelLongPressInteractState(Interactor);
 	}
 }
 
@@ -79,8 +75,20 @@ void ULongPressInteractManager::CompleteLongPressInteractState(const TObjectPtr<
 
 	// Complete the interaction and reset the interact state
 	IInteractable::Execute_OnLongPressInteractCompleted(LongPressInteractState.Interactable, Interactor);
+	OnLongPressInteractCompleteDelegate.ExecuteIfBound();
+
+	// Reset the long press interact state
 	ResetLongPressInteractState();
 
 	// Notify the interactable it has been interacted with
 	IInteractable::Execute_OnInteractedWith(Interactable, Interactor);
+}
+
+void ULongPressInteractManager::CancelLongPressInteractState(const TObjectPtr<AActor> Interactor)
+{
+	IInteractable::Execute_OnLongPressInteractCanceled(LongPressInteractState.Interactable, Interactor, LongPressInteractState.CalculatePercentComplete());
+	OnLongPressInteractCanceledDelegate.ExecuteIfBound();
+
+	// Reset the long press interact state
+	ResetLongPressInteractState();
 }

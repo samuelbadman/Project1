@@ -6,7 +6,10 @@
 #include "Objects/Project1ObjectBase.h"
 #include "LongPressInteractManager.generated.h"
 
+DECLARE_DELEGATE(FOnLongPressInteractStarted);
 DECLARE_DELEGATE_OneParam(FOnLongPressInteractTickedDelegate, float /* PercentComplete */);
+DECLARE_DELEGATE(FOnLongPressInteractCanceled);
+DECLARE_DELEGATE(FOnLongPressInteractComplete);
 
 struct FLongPressInteractState
 {
@@ -34,7 +37,10 @@ class ULongPressInteractManager : public UProject1ObjectBase
 	GENERATED_BODY()
 	
 public:
+	FOnLongPressInteractStarted OnLongPressInteractStartedDelegate{};
 	FOnLongPressInteractTickedDelegate OnLongPressInteractTickedDelegate{};
+	FOnLongPressInteractCanceled OnLongPressInteractCanceledDelegate{};
+	FOnLongPressInteractComplete OnLongPressInteractCompleteDelegate{};
 
 private:
 	TObjectPtr<UWorld> World{ nullptr };
@@ -50,4 +56,5 @@ public:
 private:
 	void ResetLongPressInteractState();
 	void CompleteLongPressInteractState(const TObjectPtr<AActor> Interactor);
+	void CancelLongPressInteractState(const TObjectPtr<AActor> Interactor);
 };

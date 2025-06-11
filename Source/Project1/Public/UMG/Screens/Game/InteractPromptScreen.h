@@ -10,6 +10,7 @@ class AGamePlayerController;
 class UPlayerInteractComponent;
 class UInteractPromptScreenUIInput;
 class ULongPressInteractManager;
+class UProgressBar;
 struct FInputActionValue;
 
 /**
@@ -45,6 +46,8 @@ private:
 
 	TObjectPtr<AActor> TargetInteractable{ nullptr };
 
+	TObjectPtr<UProgressBar> LongPressInteractProgressBar{ nullptr };
+
 public:
 	UInteractPromptScreen();
 
@@ -53,6 +56,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetInteractActionText(const FText& Text);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	UProgressBar* GetLongPressInteractProgressBar();
 
 private:
 	void NativeOnPushedToLayerStack() override;
@@ -69,5 +75,11 @@ private:
 	void OnInteractCompleted(const FInputActionValue& Value);
 	void OnSwitchActionTriggered(const FInputActionValue& Value);
 
+	void OnLongPressInteractStarted();
 	void OnLongPressInteractTicked(float PercentComplete);
+	void OnLongPressInteractCanceled();
+	void OnLongPressInteractComplete();
+
+	void UpdateInteractPromptUIForNewTargetInteractable(const TObjectPtr<AActor> NewTargetInteractable);
+	void ClearLongPressInteractProgressBarProgress();
 };
