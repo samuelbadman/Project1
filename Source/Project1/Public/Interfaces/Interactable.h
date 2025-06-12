@@ -41,4 +41,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
 	void OnInteractionCompleted(AActor* Interactor);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
+	void OnInteractionCanceled(AActor* Interactor, float CompletionPercent);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
+	void OnInteractionCompletionPercentChanged(AActor* Interactor, float CompletionPercent);
 };

@@ -57,6 +57,8 @@ private:
 	// Current interaction callback delegate handles
 	FDelegateHandle OnInteractionStartedDelegateHandle{};
 	FDelegateHandle OnInteractionCompletedDelegateHandle{};
+	FDelegateHandle OnInteractionCanceledDelegateHandle{};
+	FDelegateHandle OnInteractionCompletionPercentChangedDelegateHandle{};
 
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
@@ -87,8 +89,11 @@ private:
 
 	void OnCurrentInteractionStarted(UInteractionBase* Interaction);
 	void OnCurrentInteractionCompleted(UInteractionBase* Interaction);
+	void OnCurrentInteractionCanceled(UInteractionBase* Interaction);
+	void OnCurrentInteractionCompletionPercentChanged(UInteractionBase* Interaction);
 
 	void UpdateUIForNewTargetInteractable(bool ShowInteractProgressBar);
+	void SetInteractProgressBarProgress(float Percent);
 	void ClearInteractProgressBarProgress();
 	void BindInteractionEvents(UInteractionBase* Interaction);
 	void UnBindInteractionEvents(UInteractionBase* Interaction);

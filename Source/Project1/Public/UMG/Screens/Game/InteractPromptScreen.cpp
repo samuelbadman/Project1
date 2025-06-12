@@ -20,13 +20,19 @@ void UInteractPromptScreen::NativeTick(const FGeometry& MyGeometry, float InDelt
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	// Tick the current interaction if there is one
+	if (IsValid(CurrentInteraction))
+	{
+		CurrentInteraction->Tick(InDeltaTime);
+	}
+
 	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, FString::Printf(TEXT("Interact prompt tick")));
 }
 
 void UInteractPromptScreen::NativeOnPushedToLayerStack()
 {
 	// The interact prompt is persistent as long as the game primary layout widget is around. It is on its own widget layer and is always on top of its widget layer
-	
+
 	// Save a reference to the interact progress bar
 	InteractProgressBar = GetInteractProgressBar();
 
@@ -139,7 +145,8 @@ void UInteractPromptScreen::OnTargetInteractableChanged(TWeakObjectPtr<AActor> N
 	IInteractable::Execute_GetInteractableDescription(NewTargetInteractablePtr, TargetInteractableReference.TargetInteractableDescription);
 
 	// Update interact prompt UI for new target interactable
-	UpdateUIForNewTargetInteractable(false);
+	UpdateUIForNewTargetInteractable(TargetInteractableReference.TargetInteractableDescription.InteractionType == EInteractionType::Hold ||
+		TargetInteractableReference.TargetInteractableDescription.InteractionType == EInteractionType::Tap);
 
 	// Update the interact action text in the interact prompt UI
 	SetInteractActionText(FText::FromString(TargetInteractableReference.TargetInteractableDescription.InteractActionText.ToString()));
@@ -168,6 +175,24 @@ void UInteractPromptScreen::OnInteractStarted(const FInputActionValue& Value)
 		// Create new interaction and set as current interaction
 		SetNewCurrentInteraction(TargetInteractableReference.TargetInteractableDescription.InteractionType);
 
+		// Initialize the new interaction
+		FInteractionDescription InteractionDesc{};
+
+		switch (TargetInteractableReference.TargetInteractableDescription.InteractionType)
+		{
+		case EInteractionType::Hold:
+			InteractionDesc.HoldDurationSeconds = TargetInteractableReference.TargetInteractableDescription.HoldInteractionDurationSeconds;
+			break;
+
+		case EInteractionType::Tap:
+			break;
+
+		default:
+			break;
+		}
+
+		CurrentInteraction->Initialize(InteractionDesc);
+
 		// Pass the current interaction the input event
 		CurrentInteraction->OnInteractInputPressed();
 	}
@@ -187,7 +212,7 @@ void UInteractPromptScreen::OnInteractTriggered(const FInputActionValue& Value)
 	// Pass the interact input held event to the current interaction if there is one
 	if (IsValid(CurrentInteraction))
 	{
-		CurrentInteraction->OnInteractInputHeld();
+		CurrentInteraction->OnInteractInputHeld(GetWorld()->GetDeltaSeconds());
 	}
 }
 
@@ -245,12 +270,34 @@ void UInteractPromptScreen::OnCurrentInteractionCompleted(UInteractionBase* Inte
 	IInteractable::Execute_OnInteractionCompleted(TargetInteractableReference.TargetInteractable, GamePlayerController->GetPawn());
 
 	ClearCurrentInteraction();
+	ClearInteractProgressBarProgress();
+}
+
+void UInteractPromptScreen::OnCurrentInteractionCanceled(UInteractionBase* Interaction)
+{
+	IInteractable::Execute_OnInteractionCanceled(TargetInteractableReference.TargetInteractable, GamePlayerController->GetPawn(), CurrentInteraction->GetCompletionPercent());
+
+	ClearCurrentInteraction();
+	ClearInteractProgressBarProgress();
+}
+
+void UInteractPromptScreen::OnCurrentInteractionCompletionPercentChanged(UInteractionBase* Interaction)
+{
+	const float NewCompletionPercent{ CurrentInteraction->GetCompletionPercent() };
+
+	IInteractable::Execute_OnInteractionCompletionPercentChanged(TargetInteractableReference.TargetInteractable,
+		GamePlayerController->GetPawn(), NewCompletionPercent);
+
+	SetInteractProgressBarProgress(NewCompletionPercent);
 }
 
 void UInteractPromptScreen::BindInteractionEvents(UInteractionBase* Interaction)
 {
 	OnInteractionStartedDelegateHandle = Interaction->OnInteractionStartedDelegate.AddUObject(this, &UInteractPromptScreen::OnCurrentInteractionStarted);
 	OnInteractionCompletedDelegateHandle = Interaction->OnInteractionCompletedDelegate.AddUObject(this, &UInteractPromptScreen::OnCurrentInteractionCompleted);
+	OnInteractionCanceledDelegateHandle = Interaction->OnInteractionCanceledDelegate.AddUObject(this, &UInteractPromptScreen::OnCurrentInteractionCanceled);
+	OnInteractionCompletionPercentChangedDelegateHandle = Interaction->OnInteractionCompletionPercentChangedDelegate.AddUObject(this, 
+		&UInteractPromptScreen::OnCurrentInteractionCompletionPercentChanged);
 }
 
 void UInteractPromptScreen::UnBindInteractionEvents(UInteractionBase* Interaction)
@@ -260,6 +307,12 @@ void UInteractPromptScreen::UnBindInteractionEvents(UInteractionBase* Interactio
 
 	Interaction->OnInteractionCompletedDelegate.Remove(OnInteractionCompletedDelegateHandle);
 	OnInteractionCompletedDelegateHandle.Reset();
+
+	Interaction->OnInteractionCanceledDelegate.Remove(OnInteractionCanceledDelegateHandle);
+	OnInteractionCanceledDelegateHandle.Reset();
+
+	Interaction->OnInteractionCompletionPercentChangedDelegate.Remove(OnInteractionCompletionPercentChangedDelegateHandle);
+	OnInteractionCompletionPercentChangedDelegateHandle.Reset();
 }
 
 void UInteractPromptScreen::SetNewCurrentInteraction(EInteractionType InteractionType)
@@ -284,7 +337,12 @@ void UInteractPromptScreen::UpdateUIForNewTargetInteractable(bool ShowInteractPr
 	InteractProgressBar->SetVisibility((ShowInteractProgressBar) ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 }
 
+void UInteractPromptScreen::SetInteractProgressBarProgress(float Percent)
+{
+	InteractProgressBar->SetPercent(Percent);
+}
+
 void UInteractPromptScreen::ClearInteractProgressBarProgress()
 {
-	InteractProgressBar->SetPercent(0.0f);
+	SetInteractProgressBarProgress(0.0f);
 }

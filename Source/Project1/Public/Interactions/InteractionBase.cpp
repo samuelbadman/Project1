@@ -3,25 +3,24 @@
 
 #include "InteractionBase.h"
 
-void UInteractionBase::BeginDestroy()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Cyan, FString::Printf(TEXT("Destroying interaction: %s"), *GetName()));
-
-	Super::BeginDestroy();
-}
-
 bool UInteractionBase::IsComplete() const
 {
-	return CompletionPercent >= PercentComplete;
+	return CompletionPercent >= MaxPercentComplete;
 }
 
 void UInteractionBase::SetCompletionPercent(float Percent)
 {
-	CompletionPercent = FMath::Clamp(Percent, 0.0f, 1.0f);
+	CompletionPercent = FMath::Clamp(Percent, MinPercentComplete, MaxPercentComplete);
+	OnInteractionCompletionPercentChangedDelegate.Broadcast(this);
+}
+
+void UInteractionBase::ClearCompletionPercent()
+{
+	SetCompletionPercent(MinPercentComplete);
 }
 
 void UInteractionBase::CompleteInteraction()
 {
-	SetCompletionPercent(1.0f);
+	SetCompletionPercent(MaxPercentComplete);
 	OnInteractionCompletedDelegate.Broadcast(this);
 }
