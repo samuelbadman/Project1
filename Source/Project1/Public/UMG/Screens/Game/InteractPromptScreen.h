@@ -4,14 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "UMG/Screens/ScreenUserWidgetBase.h"
+#include "Structures/InteractableDescription.h"
 #include "InteractPromptScreen.generated.h"
 
 class AGamePlayerController;
 class UPlayerInteractComponent;
 class UInteractPromptScreenUIInput;
 class UProgressBar;
+class UInteractionBase;
 struct FInputActionValue;
 struct FInteractableDescription;
+
+struct FTargetInteractableReference
+{
+	TObjectPtr<AActor> TargetInteractable{ nullptr };
+	FInteractableDescription TargetInteractableDescription{};
+};
 
 /**
  * The interact prompt screen is a part of the game's interaction system allowing the player to interact with interactable objects in the game world.
@@ -40,6 +48,15 @@ private:
 	FDelegateHandle OnSwitchActionTriggeredDelegateHandle{};
 
 	TObjectPtr<UProgressBar> InteractProgressBar{ nullptr };
+	FTargetInteractableReference TargetInteractableReference{};
+
+	// Marked UPROPERTY for garbage collection
+	UPROPERTY()
+	TObjectPtr<UInteractionBase> CurrentInteraction{ nullptr };
+
+	// Current interaction callback delegate handles
+	FDelegateHandle OnInteractionStartedDelegateHandle{};
+	FDelegateHandle OnInteractionCompletedDelegateHandle{};
 
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
@@ -68,6 +85,13 @@ private:
 	void OnInteractCompleted(const FInputActionValue& Value);
 	void OnSwitchActionTriggered(const FInputActionValue& Value);
 
+	void OnCurrentInteractionStarted(UInteractionBase* Interaction);
+	void OnCurrentInteractionCompleted(UInteractionBase* Interaction);
+
 	void UpdateUIForNewTargetInteractable(bool ShowInteractProgressBar);
 	void ClearInteractProgressBarProgress();
+	void BindInteractionEvents(UInteractionBase* Interaction);
+	void UnBindInteractionEvents(UInteractionBase* Interaction);
+	void SetNewCurrentInteraction(EInteractionType InteractionType);
+	void ClearCurrentInteraction();
 };

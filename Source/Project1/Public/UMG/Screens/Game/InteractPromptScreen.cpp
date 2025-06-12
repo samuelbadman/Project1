@@ -12,6 +12,9 @@
 #include "Objects/UIInput/Inputs/InteractPromptScreenUIInput.h"
 #include "Components/ActorComponents/UIInputComponent.h"
 #include "Components/ProgressBar.h"
+#include "Structures/InteractableDescription.h"
+#include "FunctionLibraries/Project1GameplayLibrary.h"
+#include "Interactions/InteractionBase.h"
 
 void UInteractPromptScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -53,7 +56,7 @@ void UInteractPromptScreen::NativeOnPushedToLayerStack()
 			PlayerInteractComponent->OnTargetInteractableChangedDelegate.AddUObject(this, &UInteractPromptScreen::OnTargetInteractableChanged);
 
 		// Register to interact screen UI input events
-		OnInteractStartedDelegateHandle = InteractPromptScreenUIInput->InteractStarted.AddUObject(this, &UInteractPromptScreen::OnInteractStarted);
+		OnInteractionStartedDelegateHandle = InteractPromptScreenUIInput->InteractStarted.AddUObject(this, &UInteractPromptScreen::OnInteractStarted);
 		OnInteractTriggeredDelegateHandle = InteractPromptScreenUIInput->InteractTriggered.AddUObject(this, &UInteractPromptScreen::OnInteractTriggered);
 		OnInteractCompletedDelegateHandle = InteractPromptScreenUIInput->InteractCompleted.AddUObject(this, &UInteractPromptScreen::OnInteractCompleted);
 		OnSwitchActionTriggeredDelegateHandle = InteractPromptScreenUIInput->SwitchActionTriggered.AddUObject(this, &UInteractPromptScreen::OnSwitchActionTriggered);
@@ -122,14 +125,24 @@ void UInteractPromptScreen::OnInteractableEndPlayerOverlap(TWeakObjectPtr<AActor
 void UInteractPromptScreen::OnTargetInteractableChanged(TWeakObjectPtr<AActor> NewTargetInteractable)
 {
 	// Don't allow interactable change if the player is currently in an interaction
+	if ((IsValid(CurrentInteraction)) && (!CurrentInteraction->IsComplete()))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, FString::Printf(TEXT("Target interactable changed but not allowed")));
+		return;
+	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Target interactable changed")));
+
+	// Update target interactable pointer and description
+	const TObjectPtr<AActor> NewTargetInteractablePtr{ NewTargetInteractable.Get() };
+	TargetInteractableReference.TargetInteractable = NewTargetInteractablePtr;
+	IInteractable::Execute_GetInteractableDescription(NewTargetInteractablePtr, TargetInteractableReference.TargetInteractableDescription);
 
 	// Update interact prompt UI for new target interactable
 	UpdateUIForNewTargetInteractable(false);
 
 	// Update the interact action text in the interact prompt UI
-	SetInteractActionText(FText::FromString(TEXT("")));
+	SetInteractActionText(FText::FromString(TargetInteractableReference.TargetInteractableDescription.InteractActionText.ToString()));
 }
 
 void UInteractPromptScreen::OnInteractStarted(const FInputActionValue& Value)
@@ -142,6 +155,22 @@ void UInteractPromptScreen::OnInteractStarted(const FInputActionValue& Value)
 
 	// The interact input has been pressed
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Interact input pressed")));
+
+	// Pass interact input pressed event to current interaction if there is one
+	if (IsValid(CurrentInteraction))
+	{
+		// Pass the current interaction the input event
+		CurrentInteraction->OnInteractInputPressed();
+	}
+	// Otherwise, create a new interaction, set it as the current interactionand pass it the interact input pressed event
+	else
+	{
+		// Create new interaction and set as current interaction
+		SetNewCurrentInteraction(TargetInteractableReference.TargetInteractableDescription.InteractionType);
+
+		// Pass the current interaction the input event
+		CurrentInteraction->OnInteractInputPressed();
+	}
 }
 
 void UInteractPromptScreen::OnInteractTriggered(const FInputActionValue& Value)
@@ -154,6 +183,12 @@ void UInteractPromptScreen::OnInteractTriggered(const FInputActionValue& Value)
 
 	// The interact input is being held down
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Interact input held down")));
+
+	// Pass the interact input held event to the current interaction if there is one
+	if (IsValid(CurrentInteraction))
+	{
+		CurrentInteraction->OnInteractInputHeld();
+	}
 }
 
 void UInteractPromptScreen::OnInteractCompleted(const FInputActionValue& Value)
@@ -166,6 +201,12 @@ void UInteractPromptScreen::OnInteractCompleted(const FInputActionValue& Value)
 
 	// The interact input has been released
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Interact input released")));
+
+	// Pass the interact input released event to the current interaction if there is one
+	if (IsValid(CurrentInteraction))
+	{
+		CurrentInteraction->OnInteractInputReleased();
+	}
 }
 
 void UInteractPromptScreen::OnSwitchActionTriggered(const FInputActionValue& Value)
@@ -176,14 +217,64 @@ void UInteractPromptScreen::OnSwitchActionTriggered(const FInputActionValue& Val
 		return;
 	}
 
-	// Cannot switch interact actions when in an interaction
-
+	// Cannot switch interact actions when in a current in-progress interaction
+	if (IsValid(CurrentInteraction))
+	{
+		return;
+	}
 
 	// Switch interact action
 	if (PlayerInteractComponent->GetNumOverlappedInteractables() > 1)
 	{
 		PlayerInteractComponent->IncrementTargetInteractableIndex(StaticCast<int32>(Value.Get<float>()));
 	}
+}
+
+void UInteractPromptScreen::OnCurrentInteractionStarted(UInteractionBase* Interaction)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Cyan, TEXT("Interaction started"));
+
+	IInteractable::Execute_OnInteractionStarted(TargetInteractableReference.TargetInteractable, GamePlayerController->GetPawn());
+}
+
+void UInteractPromptScreen::OnCurrentInteractionCompleted(UInteractionBase* Interaction)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Cyan, TEXT("Interaction completed"));
+
+	IInteractable::Execute_OnInteractedWith(TargetInteractableReference.TargetInteractable, GamePlayerController->GetPawn());
+	IInteractable::Execute_OnInteractionCompleted(TargetInteractableReference.TargetInteractable, GamePlayerController->GetPawn());
+
+	ClearCurrentInteraction();
+}
+
+void UInteractPromptScreen::BindInteractionEvents(UInteractionBase* Interaction)
+{
+	OnInteractionStartedDelegateHandle = Interaction->OnInteractionStartedDelegate.AddUObject(this, &UInteractPromptScreen::OnCurrentInteractionStarted);
+	OnInteractionCompletedDelegateHandle = Interaction->OnInteractionCompletedDelegate.AddUObject(this, &UInteractPromptScreen::OnCurrentInteractionCompleted);
+}
+
+void UInteractPromptScreen::UnBindInteractionEvents(UInteractionBase* Interaction)
+{
+	Interaction->OnInteractionStartedDelegate.Remove(OnInteractionStartedDelegateHandle);
+	OnInteractionStartedDelegateHandle.Reset();
+
+	Interaction->OnInteractionCompletedDelegate.Remove(OnInteractionCompletedDelegateHandle);
+	OnInteractionCompletedDelegateHandle.Reset();
+}
+
+void UInteractPromptScreen::SetNewCurrentInteraction(EInteractionType InteractionType)
+{
+	// Create the correct interaction type object for the target interactable's interaction type and set it as the current interaction
+	CurrentInteraction = UProject1GameplayLibrary::CreateInteraction(InteractionType, this);
+
+	// Bind to new interaction delegates
+	BindInteractionEvents(CurrentInteraction);
+}
+
+void UInteractPromptScreen::ClearCurrentInteraction()
+{
+	UnBindInteractionEvents(CurrentInteraction);
+	CurrentInteraction = nullptr;
 }
 
 void UInteractPromptScreen::UpdateUIForNewTargetInteractable(bool ShowInteractProgressBar)
