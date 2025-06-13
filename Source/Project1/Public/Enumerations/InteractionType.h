@@ -5,5 +5,6 @@ enum class EInteractionType : uint8
 {
 	SinglePress,
 	Hold,
-	Tap
+	Tap,
+	Undefined_Max
 };

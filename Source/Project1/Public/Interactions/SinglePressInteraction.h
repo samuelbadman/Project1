@@ -16,4 +16,5 @@ class USinglePressInteraction : public UInteractionBase
 	
 public:
 	virtual void OnInteractInputPressed() override;
+	virtual EInteractionType GetType() const override { return EInteractionType::SinglePress; }
 };

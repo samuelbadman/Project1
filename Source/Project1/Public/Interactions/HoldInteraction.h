@@ -19,6 +19,8 @@ private:
 	float ElapsedSeconds{ 0.0f };
 
 public:
+	virtual EInteractionType GetType() const override { return EInteractionType::Hold; }
+
 	// Sets the total seconds the interact input needs to be held for
 	void SetHoldDurationSeconds(float Seconds) { HoldDurationSeconds = Seconds; }
 

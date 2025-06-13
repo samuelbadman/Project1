@@ -31,6 +31,9 @@ public:
 	void OnPlayerInteractEndOverlap();
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
+	void OnBecomeTargetedInteractable(AActor* Interactor);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")
 	void GetInteractableDescription(FInteractableDescription& OutDescription);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Interactable")

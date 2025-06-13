@@ -25,8 +25,6 @@ void UInteractPromptScreen::NativeTick(const FGeometry& MyGeometry, float InDelt
 	{
 		CurrentInteraction->Tick(InDeltaTime);
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, FString::Printf(TEXT("Interact prompt tick")));
 }
 
 void UInteractPromptScreen::NativeOnPushedToLayerStack()
@@ -71,11 +69,13 @@ void UInteractPromptScreen::NativeOnPushedToLayerStack()
 
 void UInteractPromptScreen::NativeOnShown()
 {
+	// Add UI input mapping context
 	InteractPromptScreenUIInput->Add(GamePlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
 void UInteractPromptScreen::NativeOnCollapsed()
 {
+	// Remove UI input mapping context
 	InteractPromptScreenUIInput->Remove(GamePlayerController->GetEnhancedInputLocalPlayerSubsystem());
 }
 
@@ -133,11 +133,10 @@ void UInteractPromptScreen::OnTargetInteractableChanged(TWeakObjectPtr<AActor> N
 	// Don't allow interactable change if the player is currently in an interaction
 	if ((IsValid(CurrentInteraction)) && (!CurrentInteraction->IsComplete()))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, FString::Printf(TEXT("Target interactable changed but not allowed")));
+		// NOTE: This assumes interactables that have a duration such as hold and tap are not placed near to each other and the player cannot move away whilst in an interaction
+		// with a duration
 		return;
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Target interactable changed")));
 
 	// Update target interactable pointer and description
 	const TObjectPtr<AActor> NewTargetInteractablePtr{ NewTargetInteractable.Get() };
@@ -150,6 +149,9 @@ void UInteractPromptScreen::OnTargetInteractableChanged(TWeakObjectPtr<AActor> N
 
 	// Update the interact action text in the interact prompt UI
 	SetInteractActionText(FText::FromString(TargetInteractableReference.TargetInteractableDescription.InteractActionText.ToString()));
+
+	// Notify the interactable it has become targeted for interaction by the player
+	IInteractable::Execute_OnBecomeTargetedInteractable(NewTargetInteractablePtr, GamePlayerController->GetPawn());
 }
 
 void UInteractPromptScreen::OnInteractStarted(const FInputActionValue& Value)
@@ -161,7 +163,6 @@ void UInteractPromptScreen::OnInteractStarted(const FInputActionValue& Value)
 	}
 
 	// The interact input has been pressed
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Interact input pressed")));
 
 	// Pass interact input pressed event to current interaction if there is one
 	if (IsValid(CurrentInteraction))
@@ -185,6 +186,9 @@ void UInteractPromptScreen::OnInteractStarted(const FInputActionValue& Value)
 			break;
 
 		case EInteractionType::Tap:
+			InteractionDesc.TapIncrementAmount = TargetInteractableReference.TargetInteractableDescription.TapInteractionPercentCompleteIncrementAmount;
+			InteractionDesc.TapIncrementAmountCurveModifier = TargetInteractableReference.TargetInteractableDescription.TapInteractionIncrementAmountCurveModifier;
+			InteractionDesc.TapDecayRate = TargetInteractableReference.TargetInteractableDescription.TapInteractionDecayRate;
 			break;
 
 		default:
@@ -207,7 +211,6 @@ void UInteractPromptScreen::OnInteractTriggered(const FInputActionValue& Value)
 	}
 
 	// The interact input is being held down
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Interact input held down")));
 
 	// Pass the interact input held event to the current interaction if there is one
 	if (IsValid(CurrentInteraction))
@@ -225,7 +228,6 @@ void UInteractPromptScreen::OnInteractCompleted(const FInputActionValue& Value)
 	}
 
 	// The interact input has been released
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Interact input released")));
 
 	// Pass the interact input released event to the current interaction if there is one
 	if (IsValid(CurrentInteraction))
@@ -257,28 +259,22 @@ void UInteractPromptScreen::OnSwitchActionTriggered(const FInputActionValue& Val
 
 void UInteractPromptScreen::OnCurrentInteractionStarted(UInteractionBase* Interaction)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Cyan, TEXT("Interaction started"));
-
 	IInteractable::Execute_OnInteractionStarted(TargetInteractableReference.TargetInteractable, GamePlayerController->GetPawn());
 }
 
 void UInteractPromptScreen::OnCurrentInteractionCompleted(UInteractionBase* Interaction)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Cyan, TEXT("Interaction completed"));
-
 	IInteractable::Execute_OnInteractedWith(TargetInteractableReference.TargetInteractable, GamePlayerController->GetPawn());
 	IInteractable::Execute_OnInteractionCompleted(TargetInteractableReference.TargetInteractable, GamePlayerController->GetPawn());
 
-	ClearCurrentInteraction();
-	ClearInteractProgressBarProgress();
+	RemoveCurrentInteractionAndProgress();
 }
 
 void UInteractPromptScreen::OnCurrentInteractionCanceled(UInteractionBase* Interaction)
 {
 	IInteractable::Execute_OnInteractionCanceled(TargetInteractableReference.TargetInteractable, GamePlayerController->GetPawn(), CurrentInteraction->GetCompletionPercent());
 
-	ClearCurrentInteraction();
-	ClearInteractProgressBarProgress();
+	RemoveCurrentInteractionAndProgress();
 }
 
 void UInteractPromptScreen::OnCurrentInteractionCompletionPercentChanged(UInteractionBase* Interaction)
@@ -328,6 +324,12 @@ void UInteractPromptScreen::ClearCurrentInteraction()
 {
 	UnBindInteractionEvents(CurrentInteraction);
 	CurrentInteraction = nullptr;
+}
+
+void UInteractPromptScreen::RemoveCurrentInteractionAndProgress()
+{
+	ClearCurrentInteraction();
+	ClearInteractProgressBarProgress();
 }
 
 void UInteractPromptScreen::UpdateUIForNewTargetInteractable(bool ShowInteractProgressBar)

@@ -99,4 +99,5 @@ private:
 	void UnBindInteractionEvents(UInteractionBase* Interaction);
 	void SetNewCurrentInteraction(EInteractionType InteractionType);
 	void ClearCurrentInteraction();
+	void RemoveCurrentInteractionAndProgress();
 };

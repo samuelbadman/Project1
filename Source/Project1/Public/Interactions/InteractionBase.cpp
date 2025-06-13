@@ -5,22 +5,22 @@
 
 bool UInteractionBase::IsComplete() const
 {
-	return CompletionPercent >= MaxPercentComplete;
+	return CompletionPercent >= MaxCompletionPercent;
 }
 
 void UInteractionBase::SetCompletionPercent(float Percent)
 {
-	CompletionPercent = FMath::Clamp(Percent, MinPercentComplete, MaxPercentComplete);
+	CompletionPercent = FMath::Clamp(Percent, MinCompletionPercent, MaxCompletionPercent);
 	OnInteractionCompletionPercentChangedDelegate.Broadcast(this);
 }
 
 void UInteractionBase::ClearCompletionPercent()
 {
-	SetCompletionPercent(MinPercentComplete);
+	SetCompletionPercent(MinCompletionPercent);
 }
 
 void UInteractionBase::CompleteInteraction()
 {
-	SetCompletionPercent(MaxPercentComplete);
+	SetCompletionPercent(MaxCompletionPercent);
 	OnInteractionCompletedDelegate.Broadcast(this);
 }
