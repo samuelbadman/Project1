@@ -5,7 +5,8 @@
 #include "Components/TextBlock.h"
 
 USettingUserWidgetBase::USettingUserWidgetBase()
-	: SettingDescriptionText(FText::FromString(TEXT("No description"))),
+	: SettingLabelText(FText::FromString(TEXT("Default setting label"))),
+	SettingDescriptionText(FText::FromString(TEXT("No description"))),
 	OnGetDefaultSettingValueDelegate({}),
 	OwningSettingsPage(nullptr)
 {
@@ -46,4 +47,15 @@ void USettingUserWidgetBase::InitializeSetting(TObjectPtr<USettingsPageWidget> O
 
 	// Notify blueprint to get current value of setting and update widget with value
 	OnGetDefaultSettingValueDelegate.Broadcast();
+}
+
+void USettingUserWidgetBase::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	// Update setting label text
+	if (UTextBlock* SettingLabelTextBlock = GetSettingLabelTextBlock())
+	{
+		SettingLabelTextBlock->SetText(FText::FromString(GetSettingLabel().ToString() + TEXT(":")));
+	}
 }

@@ -3,9 +3,11 @@
 
 #include "BinarySettingWidget.h"
 #include "Components/TextBlock.h"
+#include "Components/Spacer.h"
+#include "Components/HorizontalBoxSlot.h"
 
 UBinarySettingWidget::UBinarySettingWidget()
-	: SettingLabel(TEXT("Default Label")),
+	: LabelMargin(50.0, 0.0, 0.0, 0.0),
 	SettingValue1Label(TEXT("Default Value 1 Label")),
 	SettingValue2Label(TEXT("Default Value 2 Label")),
 	OnSettingValueChangedDelegate({}),
@@ -35,10 +37,10 @@ void UBinarySettingWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	// Update setting label text
-	if (UTextBlock* SettingLabelTextBlock = GetSettingLabelTextBlock())
+	// Update padding of spacer between label and spacer
+	if (const TObjectPtr<USpacer> Spacer = GetLabelSpacer())
 	{
-		SettingLabelTextBlock->SetText(FText::FromString(SettingLabel + TEXT(":")));
+		CastChecked<UHorizontalBoxSlot>(Spacer->Slot)->SetPadding(LabelMargin);
 	}
 
 	UpdateSettingValueLabel();

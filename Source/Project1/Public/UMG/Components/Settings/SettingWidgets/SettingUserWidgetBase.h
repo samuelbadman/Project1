@@ -26,6 +26,9 @@ class PROJECT1_API USettingUserWidgetBase : public UProject1UserWidgetBase
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditAnywhere)
+	FText SettingLabelText;
+
 	UPROPERTY(EditAnywhere, meta = (MultiLine = "true"))
 	FText SettingDescriptionText;
 
@@ -37,6 +40,9 @@ private:
 
 public:
 	USettingUserWidgetBase();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "BinarySettingWidget")
+	UTextBlock* GetSettingLabelTextBlock();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "SettingUserWidgetBase")
 	void OnSettingFocused();
@@ -56,6 +62,9 @@ public:
 	USettingsPageWidget* GetOwningSettingsPage() const { return OwningSettingsPage; }
 
 	UFUNCTION(BlueprintCallable, Category = "SettingUserWidgetBase")
+	const FText& GetSettingLabel() const { return SettingLabelText; }
+
+	UFUNCTION(BlueprintCallable, Category = "SettingUserWidgetBase")
 	const FText& GetSettingDescription() const { return SettingDescriptionText; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "SettingUserWidgetBase")
@@ -67,4 +76,7 @@ public:
 	virtual ESettingInputResult ProcessNavigationInput(const FVector2D& NavigationInput);
 
 	void InitializeSetting(TObjectPtr<USettingsPageWidget> OwningPage);
+
+protected:
+	virtual void NativePreConstruct() override;
 };

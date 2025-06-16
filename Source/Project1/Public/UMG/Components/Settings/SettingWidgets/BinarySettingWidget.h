@@ -6,6 +6,8 @@
 #include "SettingUserWidgetBase.h"
 #include "BinarySettingWidget.generated.h"
 
+class USpacer;
+
 UENUM()
 enum class EBinarySettingValue : uint8
 {
@@ -25,7 +27,7 @@ class PROJECT1_API UBinarySettingWidget : public USettingUserWidgetBase
 	
 private:
 	UPROPERTY(EditAnywhere)
-	FString SettingLabel;
+	FMargin LabelMargin;
 
 	UPROPERTY(EditAnywhere, meta = (DisplayName = "Setting Value 1 Label"))
 	FString SettingValue1Label;
@@ -43,10 +45,10 @@ public:
 	UBinarySettingWidget();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "BinarySettingWidget")
-	UTextBlock* GetSettingLabelTextBlock();
+	UTextBlock* GetSettingValueLabelTextBlock();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "BinarySettingWidget")
-	UTextBlock* GetSettingValueLabelTextBlock();
+	USpacer* GetLabelSpacer();
 
 	// Flips the current setting value. Value 1 becomes value 2 and value 2 becomes value 1
 	UFUNCTION(BlueprintCallable, Category = "BinarySettingWidget")

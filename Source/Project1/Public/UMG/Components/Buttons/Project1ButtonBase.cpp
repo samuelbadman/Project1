@@ -16,7 +16,11 @@ void UProject1ButtonBase::NativePreConstruct()
 	{
 		Border->SetBrush((IsHovered()) ? HoveredBrush : NormalBrush);
 
-		CastChecked<UBorderSlot>(Border->GetSlots()[0])->SetPadding(ContentPadding);
+		const TArray<UPanelSlot*>& BorderSlots{ Border->GetSlots() };
+		if (!BorderSlots.IsEmpty())
+		{
+			CastChecked<UBorderSlot>(Border->GetSlots()[0])->SetPadding(ContentPadding);
+		}
 
 		if (bLastMouseInputsActivated)
 		{

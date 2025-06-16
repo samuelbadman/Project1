@@ -3,10 +3,12 @@
 
 #include "ListSettingWidget.h"
 #include "Components/TextBlock.h"
+#include "Components/Spacer.h"
+#include "Components/HorizontalBoxSlot.h"
 #include "FunctionLibraries/Project1MathLibrary.h"
 
 UListSettingWidget::UListSettingWidget()
-	: SettingLabel(TEXT("Default Label")),
+	: LabelMargin(50.0, 0.0, 0.0, 0.0),
 	SettingValueLabels({}),
 	CurrentSettingValueIndex(INDEX_NONE),
 	DefaultSettingValueIndex(CurrentSettingValueIndex)
@@ -45,10 +47,10 @@ void UListSettingWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	// Update setting label text
-	if (UTextBlock* SettingLabelTextBlock = GetSettingLabelTextBlock())
+	// Update padding of spacer between label and spacer
+	if (const TObjectPtr<USpacer> Spacer = GetLabelSpacer())
 	{
-		SettingLabelTextBlock->SetText(FText::FromString(SettingLabel + TEXT(":")));
+		CastChecked<UHorizontalBoxSlot>(Spacer->Slot)->SetPadding(LabelMargin);
 	}
 }
 
