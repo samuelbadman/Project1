@@ -58,7 +58,12 @@ void UProject1ButtonBase::ActivateMouseInput()
 
 	OnMouseCursorVisibilityChangedDelegateHandle = Project1PlayerController->MouseCursorVisibilityChanged.AddUObject(this, &UProject1ButtonBase::OnMouseCursorVisibilityChanged);
 	OnMouseMovedDelegateHandle = Project1GameViewportClient->MouseMoved.AddUObject(this, &UProject1ButtonBase::OnMouseMoved);
-	OnInputKeyDelegateHandle = Project1GameViewportClient->OnInputKey.AddUObject(this, &UProject1ButtonBase::OnInputKey);
+
+	if (bEnableMouseClickEvents)
+	{
+		OnInputKeyDelegateHandle = Project1GameViewportClient->OnInputKey.AddUObject(this, &UProject1ButtonBase::OnInputKey);
+	}
+
 	bMouseInputsActivated = true;
 }
 
@@ -75,8 +80,12 @@ void UProject1ButtonBase::DeactivateMouseInput()
 	Project1GameViewportClient->MouseMoved.Remove(OnMouseMovedDelegateHandle);
 	OnMouseMovedDelegateHandle.Reset();
 
-	Project1GameViewportClient->OnInputKey.Remove(OnInputKeyDelegateHandle);
-	OnInputKeyDelegateHandle.Reset();
+	// bEnableMouseClickEvents is only changed in the editor and remains constant during game runtime. Input key delegate is only assigned when bEnableMouseClickEvents is true
+	if (bEnableMouseClickEvents)
+	{
+		Project1GameViewportClient->OnInputKey.Remove(OnInputKeyDelegateHandle);
+		OnInputKeyDelegateHandle.Reset();
+	}
 
 	bMouseInputsActivated = false;
 }
@@ -161,16 +170,34 @@ void UProject1ButtonBase::OnInputKey(const FInputKeyEventArgs& EventArgs)
 		return;
 	}
 
-	// Generate click event
-	if (((EventArgs.Event == EInputEvent::IE_Pressed) || (EventArgs.Event == EInputEvent::IE_DoubleClick)) &&
-		(EventArgs.Key == ClickKey))
+	// Generate click event, otherwise 
+	// Is the input the click key
+	if (EventArgs.Key == ClickKey)
 	{
-		FVector2D MousePosition;
-		if (Project1GameViewportClient->GetMousePosition(MousePosition))
+		// Was the click key pressed or double clicked
+		if (((EventArgs.Event == EInputEvent::IE_Pressed) || (EventArgs.Event == EInputEvent::IE_DoubleClick)))
 		{
-			if (IsMouseCursorOverWidgetGeometry(MousePosition))
+			// If the mouse cursor is over the button widget geometry
+			FVector2D MousePosition;
+			if (Project1GameViewportClient->GetMousePosition(MousePosition))
 			{
-				OnClicked.Broadcast(this);
+				if (IsMouseCursorOverWidgetGeometry(MousePosition))
+				{
+					// Generate click event
+					bClickInputHeld = true;
+					OnClicked.Broadcast(this);
+				}
+			}
+		}
+		// Else, was the click key released
+		else if (EventArgs.Event == EInputEvent::IE_Released)
+		{
+			// If the click input is being held down
+			if (bClickInputHeld)
+			{
+				// Generate released event
+				bClickInputHeld = false;
+				OnReleased.Broadcast(this);
 			}
 		}
 	}

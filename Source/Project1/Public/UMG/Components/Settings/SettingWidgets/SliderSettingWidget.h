@@ -7,6 +7,7 @@
 #include "SliderSettingWidget.generated.h"
 
 class USpacer;
+class UProject1ButtonBase;
 
 /**
  * 
@@ -26,6 +27,16 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "BinarySettingWidget")
 	USpacer* GetLabelSpacer();
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "BinarySettingWidget")
+	UProject1ButtonBase* GetSliderHeadButton();
+
 protected:
 	virtual void NativePreConstruct() override;
+	virtual void NativeOnInitialized() override;
+
+private:
+	UFUNCTION()
+	void OnSliderHeadButtonClicked(UProject1ButtonBase* ButtonClicked);
+	UFUNCTION()
+	void OnSliderHeadButtonReleased(UProject1ButtonBase* ButtonReleased);
 };

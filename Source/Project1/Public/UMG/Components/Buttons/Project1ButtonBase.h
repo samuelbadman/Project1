@@ -14,6 +14,7 @@ enum class EMouseCursorVisibility : uint8;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHoveredDelegate, UProject1ButtonBase*, ButtonHovered);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUnhoveredDelegate, UProject1ButtonBase*, ButtonUnhovered);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickedDelegate, UProject1ButtonBase*, ButtonClicked);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReleasedDelegate, UProject1ButtonBase*, ButtonReleased);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPressedDelegate, UProject1ButtonBase*, ButtonPressed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseCursorOverDelegate, UProject1ButtonBase*, ButtonOver);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMouseCursorLeftDelegate, UProject1ButtonBase*, ButtonLeft);
@@ -35,6 +36,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnClickedDelegate OnClicked{};
+
+	UPROPERTY(BlueprintAssignable)
+	FOnReleasedDelegate OnReleased{};
 
 	UPROPERTY(BlueprintAssignable)
 	FOnPressedDelegate OnPressed{};
@@ -62,6 +66,13 @@ private:
 	UPROPERTY(EditAnywhere)
 	FKey ClickKey{ EKeys::LeftMouseButton };
 
+	// When false, mouse click events will not be generated when this button has mouse inputs activated and is clicked. 
+	// When true, mouse click events are generated when this button has mouse inputs activated and is clicked.
+	// Useful for preventing the button below other buttons (at the back of the screen) from being clicked when two buttons are overlapping eachother on the screen and the top button 
+	// is clicked.
+	UPROPERTY(EditAnywhere)
+	bool bEnableMouseClickEvents{ true };
+
 	UPROPERTY(EditAnywhere)
 	FMargin ContentPadding{};
 
@@ -75,6 +86,8 @@ private:
 	bool bLastMouseInputsActivated{ false }; // Used to determine whether mouse inputs were activated when NativeDestruct was last called on the button
 	bool bHovered{ false };
 	bool bCursorOver{ false };
+
+	bool bClickInputHeld{ false };
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
