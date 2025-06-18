@@ -7,9 +7,11 @@
 #include "Components/SizeBox.h"
 #include "UMG/Components/Buttons/Project1ButtonBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "GameViewportClients/Project1GameViewportClientBase.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Controllers/PlayerControllers/Project1PlayerControllerBase.h"
 
 void USliderSettingWidget::SetDefaultSliderValue(float NewDefaultValue)
 {
@@ -37,9 +39,13 @@ void USliderSettingWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	// Save reference to the game viewport client
+	GameViewportClient = UGameplayStatics::GetGameInstance(this)->GetGameViewportClient();
+
 	// Save reference to the slider head button widget and its parent widget
 	SliderHeadButtonParentWidget = GetSliderHeadButtonParent();
 	SliderHeadButtonWidget = GetSliderHeadButton();
+	SliderBarPortionParentWidget = GetSliderBarPortionParent();
 
 	SliderHeadButtonWidget->OnClicked.AddDynamic(this, &USliderSettingWidget::OnSliderHeadButtonClicked);
 	SliderHeadButtonWidget->OnReleased.AddDynamic(this, &USliderSettingWidget::OnSliderHeadButtonReleased);
@@ -73,9 +79,10 @@ void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const
 	// NOTE: Mouse move inputs are absolute so, no need to account for frame delta time here
 
 	// Get the position of the slider head button parent widget in the viewport
-	const FGeometry& Geometry = SliderHeadButtonParentWidget->GetCachedGeometry();
-	FVector2D TopLeftPixel{}, TopLeftViewport{}; 
-	USlateBlueprintLibrary::LocalToViewport(GetWorld(), Geometry, FVector2D(0.0, 0.0), TopLeftPixel, TopLeftViewport);
+	const FGeometry& SliderHeadButtonParentWidgetGeometry = SliderHeadButtonParentWidget->GetCachedGeometry();
+	FVector2D SliderHeadButtonParentWidgetTopLeftPixel{}, SliderHeadButtonParentWidgetTopLeftViewport{}; 
+	USlateBlueprintLibrary::LocalToViewport(GetWorld(), SliderHeadButtonParentWidgetGeometry, FVector2D(0.0, 0.0),
+		SliderHeadButtonParentWidgetTopLeftPixel, SliderHeadButtonParentWidgetTopLeftViewport);
 
 	// Get mouse cursor position in the viewport scaled by DPI
 	double MouseXScaledByDPI, MouseYScaledByDPI;
@@ -85,38 +92,51 @@ void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const
 		// render translation offset to align the slider head button with the mouse cursor. An offset is added to align the center of the slider head button widget
 		// with the mouse cursor instead of the left edge of the widget
 		FWidgetTransform Transform{};
-		Transform.Translation.X = (MouseXScaledByDPI - (TopLeftViewport.X + StaticCast<double>(GetSliderHeadButtonHalfWidth())));
+		Transform.Translation.X = FMath::Clamp(
+			(MouseXScaledByDPI - (SliderHeadButtonParentWidgetTopLeftViewport.X + (GetSliderHeadButtonDimensions().X * 0.5))),
+			0.0,
+			StaticCast<double>(SliderBarSize)
+		);
 
 		SliderHeadButtonWidget->SetRenderTransform(Transform);
 
-		//SetSliderValue(SliderValue + StaticCast<float>(NewMousePosition.X - TopLeftPixel.X) );
+		// TODO: On slider value changed. Report new value here
+
+		// Keep mouse cursor on the same Y axis and inside slider bar X range
+		// Below is copied from project1 user widget base
+		const FGeometry& SliderBarPortionParentWidgetGeometry = SliderBarPortionParentWidget->GetCachedGeometry();
+		const FVector2D Size{ SliderBarPortionParentWidgetGeometry.GetAbsoluteSize() };
+
+		FVector2D SliderBarPortionParentWidgetTopLeftPixel{}, SliderBarPortionParentWidgetTopLeftViewport{};
+		USlateBlueprintLibrary::LocalToViewport(GetWorld(), SliderBarPortionParentWidgetGeometry, FVector2D(0.0, 0.0), 
+			SliderBarPortionParentWidgetTopLeftPixel, SliderBarPortionParentWidgetTopLeftViewport);
+
+		const FVector2D SliderBarPortionParentWidgetBottomRightPixel = FVector2D(SliderBarPortionParentWidgetTopLeftPixel.X + Size.X, 
+			SliderBarPortionParentWidgetTopLeftPixel.Y + Size.Y);
+
+		UGameplayStatics::GetPlayerController(this, 0)->SetMouseLocation(
+			FMath::Clamp(NewMousePosition.X, SliderBarPortionParentWidgetTopLeftPixel.X, SliderBarPortionParentWidgetBottomRightPixel.X),
+			SliderBarPortionParentWidgetTopLeftPixel.Y + (GetSliderHeadButtonDimensions().X * 0.5 * UWidgetLayoutLibrary::GetViewportScale(GameViewportClient))
+		);
 	}
 }
 
-void USliderSettingWidget::UpdateSliderHeadButtonParentWidgetRenderTranslationOffset() const
+float USliderSettingWidget::GetSliderValue() const
 {
-	FWidgetTransform Transform{};
-	Transform.Translation.X = CalculateSliderHeadButtonRenderTranslationXOffset();
+	// Get current render translation of the slider head button widget
+	const float RenderTranslation{ StaticCast<float>(SliderHeadButtonWidget->GetRenderTransform().Translation.X) };
 
-	SliderHeadButtonParentWidget->SetRenderTransform(Transform);
-}
-
-double USliderSettingWidget::CalculateSliderHeadButtonRenderTranslationXOffset() const
-{
-	// Find the percentage the slider value is between the min and max slider values
-	// Percentage = (Part/Whole) * 100%
-	const float Whole{ SliderMaxValue - SliderMinValue };
-	const float Part{ SliderValue - SliderMinValue };
-	const float Percentage{ (Part / Whole) };
-
-	// Return the offset as the found percent of the whole slider bar size minus half the width of the slider head button widget to put the center of the widget 
-	// on the end of the bar instead of the left edge of the widget
-	//return (SliderBarSize * Percentage) - (GetSliderHeadButtonWidth() * 0.5f);
-	return 0.0f;
+	// Map render translation value from the min and max render translation range to the min and max slider value range to obtain the current value of the slider
+	return UKismetMathLibrary::MapRangeClamped(RenderTranslation, 0.0f, SliderBarSize, SliderMinValue, SliderMaxValue);
 }
 
 void USliderSettingWidget::SetSliderValue(float NewValue)
 {
 	SliderValue = FMath::Clamp(NewValue, SliderMinValue, SliderMaxValue);
-	//UpdateSliderHeadButtonParentWidgetRenderTranslationOffset();
+
+	// Update the slider head button render translation to match new value
+	// Map slider value to render translation range set render translation of the slider head button widget
+	FWidgetTransform Transform{};
+	Transform.Translation.X = StaticCast<double>(UKismetMathLibrary::MapRangeClamped(NewValue, SliderMinValue, SliderMaxValue, 0.0f, SliderBarSize));
+	SliderHeadButtonWidget->SetRenderTransform(Transform);
 }

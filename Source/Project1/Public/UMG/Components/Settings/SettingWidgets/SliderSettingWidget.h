@@ -33,8 +33,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	float SliderMaxValue{ 100.0f };
 
+	TObjectPtr<UGameViewportClient> GameViewportClient{ nullptr };
 	TObjectPtr<UWidget> SliderHeadButtonParentWidget{ nullptr };
 	TObjectPtr<UProject1ButtonBase> SliderHeadButtonWidget{ nullptr };
+	TObjectPtr<UPanelWidget> SliderBarPortionParentWidget{ nullptr };
 	FDelegateHandle MouseMovedDelegateHandle{};
 
 	float SliderValue{ 0.0f };
@@ -48,7 +50,10 @@ public:
 	UProject1ButtonBase* GetSliderHeadButton();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "SliderSettingWidget")
-	float GetSliderHeadButtonHalfWidth() const;
+	UPanelWidget* GetSliderBarPortionParent() const;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "SliderSettingWidget")
+	FVector2D GetSliderHeadButtonDimensions() const;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "SliderSettingWidget")
 	UWidget* GetSliderHeadButtonParent();
@@ -59,6 +64,10 @@ public:
 	// Changes the value of the slider
 	UFUNCTION(BlueprintCallable, Category = "SliderSettingWidget")
 	void SetSliderValue(float NewValue);
+
+	// Returns the current value the slider bar is set to
+	UFUNCTION(BlueprintCallable, Category = "SliderSettingWidget")
+	float GetSliderValue() const;
 
 	// Sets the default value of the slider widget. The default value should be set when the slider widget is initialized and is used to know whether the value of the slider has been
 	// changed
@@ -77,7 +86,4 @@ private:
 	void OnSliderHeadButtonReleased(UProject1ButtonBase* ButtonReleased);
 
 	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
-
-	void UpdateSliderHeadButtonParentWidgetRenderTranslationOffset() const;
-	double CalculateSliderHeadButtonRenderTranslationXOffset() const;
 };
