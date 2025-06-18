@@ -286,6 +286,7 @@ void AGamePlayerCameraManager::UpdateCameraCollision()
 			return;
 		}
 		// Probe found a collision. Move camera component in front of collision along probe vector, overriding player camera relative X offset
+		// TODO: Alternatively, slightly fade out or apply a transparency dithering effect to the object in between the camera and the trace start point
 		PlayerCameraActor->SetCameraComponentWorldLocation(ProbeHitResult.Location);
 
 		// Debug

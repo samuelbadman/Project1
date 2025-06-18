@@ -7,6 +7,7 @@
 #include "SliderSettingWidget.generated.h"
 
 class USpacer;
+class USizeBox;
 class UProject1ButtonBase;
 
 /**
@@ -23,20 +24,60 @@ private:
 	UPROPERTY(EditAnywhere)
 	FMargin LabelMargin{ 50.0, 0.0, 0.0, 0.0 };
 
+	UPROPERTY(EditAnywhere)
+	float SliderBarSize{ 100.0f };
+
+	UPROPERTY(EditAnywhere)
+	float SliderMinValue{ 0.0f };
+
+	UPROPERTY(EditAnywhere)
+	float SliderMaxValue{ 100.0f };
+
+	TObjectPtr<UWidget> SliderHeadButtonParentWidget{ nullptr };
+	TObjectPtr<UProject1ButtonBase> SliderHeadButtonWidget{ nullptr };
+	FDelegateHandle MouseMovedDelegateHandle{};
+
+	float SliderValue{ 0.0f };
+	float DefaultSliderValue{ 0.0f };
+
 public:
-	UFUNCTION(BlueprintImplementableEvent, Category = "BinarySettingWidget")
+	UFUNCTION(BlueprintImplementableEvent, Category = "SliderSettingWidget")
 	USpacer* GetLabelSpacer();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "BinarySettingWidget")
+	UFUNCTION(BlueprintImplementableEvent, Category = "SliderSettingWidget")
 	UProject1ButtonBase* GetSliderHeadButton();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "SliderSettingWidget")
+	float GetSliderHeadButtonHalfWidth() const;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "SliderSettingWidget")
+	UWidget* GetSliderHeadButtonParent();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "SliderSettingWidget")
+	USizeBox* GetSliderBarSizeBox();
+
+	// Changes the value of the slider
+	UFUNCTION(BlueprintCallable, Category = "SliderSettingWidget")
+	void SetSliderValue(float NewValue);
+
+	// Sets the default value of the slider widget. The default value should be set when the slider widget is initialized and is used to know whether the value of the slider has been
+	// changed
+	UFUNCTION(BlueprintCallable, Category = "SliderSettingWidget")
+	void SetDefaultSliderValue(float NewDefaultValue);
 
 protected:
 	virtual void NativePreConstruct() override;
 	virtual void NativeOnInitialized() override;
+	bool HasSettingValueChanged() const override;
 
 private:
 	UFUNCTION()
 	void OnSliderHeadButtonClicked(UProject1ButtonBase* ButtonClicked);
 	UFUNCTION()
 	void OnSliderHeadButtonReleased(UProject1ButtonBase* ButtonReleased);
+
+	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
+
+	void UpdateSliderHeadButtonParentWidgetRenderTranslationOffset() const;
+	double CalculateSliderHeadButtonRenderTranslationXOffset() const;
 };

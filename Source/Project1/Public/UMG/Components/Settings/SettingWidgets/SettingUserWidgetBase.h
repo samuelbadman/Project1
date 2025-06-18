@@ -41,7 +41,7 @@ private:
 public:
 	USettingUserWidgetBase();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "BinarySettingWidget")
+	UFUNCTION(BlueprintImplementableEvent, Category = "SettingUserWidgetBase")
 	UTextBlock* GetSettingLabelTextBlock();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "SettingUserWidgetBase")
