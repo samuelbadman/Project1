@@ -5,10 +5,14 @@
 #include "Components/TextBlock.h"
 #include "Components/Spacer.h"
 #include "Components/HorizontalBoxSlot.h"
+#include "Components/SizeBox.h"
+#include "Components/SizeBoxSlot.h"
 #include "FunctionLibraries/Project1MathLibrary.h"
 
 UListSettingWidget::UListSettingWidget()
-	: LabelMargin(50.0, 0.0, 0.0, 0.0),
+	: LabelMargin(0.0),
+	SettingValueLabelMargin(0.0),
+	ValueLabelTextAreaWidth(25.0f),
 	SettingValueLabels({}),
 	CurrentSettingValueIndex(INDEX_NONE),
 	DefaultSettingValueIndex(CurrentSettingValueIndex)
@@ -51,6 +55,18 @@ void UListSettingWidget::NativePreConstruct()
 	if (const TObjectPtr<USpacer> Spacer = GetLabelSpacer())
 	{
 		CastChecked<UHorizontalBoxSlot>(Spacer->Slot)->SetPadding(LabelMargin);
+	}
+
+	// Update padding of value label text
+	if (const TObjectPtr<UTextBlock> LabelTextBlock = GetSettingValueLabelTextBlock())
+	{
+		CastChecked<USizeBoxSlot>(LabelTextBlock->Slot)->SetPadding(SettingValueLabelMargin);
+	}
+
+	// Update width override of size box wrapping value label text block widget
+	if (const TObjectPtr<USizeBox> LabelSizeBox = GetSettingValueLabelSizeBox())
+	{
+		LabelSizeBox->SetWidthOverride(ValueLabelTextAreaWidth);
 	}
 }
 

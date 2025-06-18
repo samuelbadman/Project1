@@ -8,6 +8,7 @@
 
 class UTextBlock;
 class USpacer;
+class USizeBox;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnListSettingValueChangedDelegate, int32, NewValueIndex);
 
@@ -22,6 +23,12 @@ class PROJECT1_API UListSettingWidget : public USettingUserWidgetBase
 private:
 	UPROPERTY(EditAnywhere)
 	FMargin LabelMargin;
+
+	UPROPERTY(EditAnywhere)
+	FMargin SettingValueLabelMargin;
+
+	UPROPERTY(EditAnywhere)
+	float ValueLabelTextAreaWidth;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FText> SettingValueLabels;
@@ -40,6 +47,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ListSettingWidget")
 	UTextBlock* GetSettingValueLabelTextBlock();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "ListSettingWidget")
+	USizeBox* GetSettingValueLabelSizeBox();
 
 	UFUNCTION(BlueprintCallable, Category = "ListSettingWidget")
 	void SetDefaultSettingValueIndex(int32 Index);

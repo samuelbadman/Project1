@@ -22,7 +22,7 @@ private:
 	// TODO: Move label text and spacer into its own widget that can be added to setting widgets and put this dynamically adjustable spacer padding functionality into the new 
 	// widget to prevent reproducing this code in each setting widget
 	UPROPERTY(EditAnywhere)
-	FMargin LabelMargin{ 50.0, 0.0, 0.0, 0.0 };
+	FMargin LabelMargin{ 0.0 };
 
 	UPROPERTY(EditAnywhere)
 	float SliderBarSize{ 100.0f };

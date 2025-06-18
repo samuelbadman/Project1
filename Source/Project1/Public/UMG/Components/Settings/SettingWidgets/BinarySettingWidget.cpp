@@ -7,7 +7,7 @@
 #include "Components/HorizontalBoxSlot.h"
 
 UBinarySettingWidget::UBinarySettingWidget()
-	: LabelMargin(50.0, 0.0, 0.0, 0.0),
+	: LabelMargin(0.0),
 	SettingValue1Label(TEXT("Default Value 1 Label")),
 	SettingValue2Label(TEXT("Default Value 2 Label")),
 	OnSettingValueChangedDelegate({}),
