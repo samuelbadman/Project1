@@ -112,8 +112,15 @@ void USettingsPageWidget::BuildPageSettingWidgetsArray()
 
 void USettingsPageWidget::FocusSetting(int32 SettingIndex)
 {
+
 	// Cannot focus setting with invalid index
 	if (!PageSettingWidgets.IsValidIndex(SettingIndex))
+	{
+		return;
+	}
+
+	// Do not attempt to focus the setting if it is already focused
+	if (PageSettingWidgets[SettingIndex]->IsSettingFocused())
 	{
 		return;
 	}

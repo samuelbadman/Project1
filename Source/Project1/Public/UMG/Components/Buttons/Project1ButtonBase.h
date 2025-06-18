@@ -88,6 +88,7 @@ private:
 	bool bCursorOver{ false };
 
 	bool bClickInputHeld{ false };
+	bool bEnableMouseVisibilityChangedEvents{ true };
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
@@ -106,6 +107,8 @@ public:
 	void MakeUnhovered();
 
 	void PressButton();
+
+	void SetEnableMouseVisibilityChangedEventsFlag(const bool NewEnable) { bEnableMouseVisibilityChangedEvents = NewEnable; }
 
 	FORCEINLINE bool AreMouseInputsActivated() const { return bMouseInputsActivated; }
 	FORCEINLINE bool IsHovered() const { return bHovered; }

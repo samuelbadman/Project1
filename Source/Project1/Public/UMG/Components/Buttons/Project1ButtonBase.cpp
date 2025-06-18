@@ -123,6 +123,11 @@ void UProject1ButtonBase::PressButton()
 
 void UProject1ButtonBase::OnMouseCursorVisibilityChanged(EMouseCursorVisibility NewVisibility, const FVector2D& MousePosition)
 {
+	if (!bEnableMouseVisibilityChangedEvents)
+	{
+		return;
+	}
+
 	// Generate mouse enter/leave events
 	const bool bNewCursorOver{ IsMouseCursorOverWidgetGeometry(MousePosition) };
 
@@ -141,10 +146,10 @@ void UProject1ButtonBase::OnMouseCursorVisibilityChanged(EMouseCursorVisibility 
 void UProject1ButtonBase::OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
 {
 	// Only attempt to update hovered state when the cursor is shown
-	if (!Project1PlayerController->IsMouseCursorVisible())
-	{
-		return;
-	}
+	//if (!Project1PlayerController->IsMouseCursorVisible())
+	//{
+	//	return;
+	//}
 
 	if (IsMouseCursorOverWidgetGeometry(NewMousePosition))
 	{
@@ -165,10 +170,10 @@ void UProject1ButtonBase::OnMouseMoved(const FVector2D& NewMousePosition, const 
 void UProject1ButtonBase::OnInputKey(const FInputKeyEventArgs& EventArgs)
 {
 	// Only accept click events when the mouse cursor is visible
-	if (!Project1PlayerController->IsMouseCursorVisible())
-	{
-		return;
-	}
+	//if (!Project1PlayerController->IsMouseCursorVisible())
+	//{
+	//	return;
+	//}
 
 	// Generate click event, otherwise 
 	// Is the input the click key

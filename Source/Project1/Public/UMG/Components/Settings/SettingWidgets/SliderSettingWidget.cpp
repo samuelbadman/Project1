@@ -63,6 +63,14 @@ void USliderSettingWidget::OnSliderHeadButtonClicked(UProject1ButtonBase* Button
 	// Get game viewport client and subscribe to mouse moved event
 	MouseMovedDelegateHandle = CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient())->MouseMoved.AddUObject(this,
 		&USliderSettingWidget::OnMouseMoved);
+
+	const TObjectPtr<AProject1PlayerControllerBase> PlayerController{ CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0)) };
+	// Flag to the player controller that it should not handle mouse events
+	PlayerController->SetIgnoreMouseEventsFlag(true);
+	// Do not let the button listen to mouse visibility changed events
+	SliderHeadButtonWidget->SetEnableMouseVisibilityChangedEventsFlag(false);
+	// Hide the cursor while the slider is being held
+	PlayerController->SetMouseCursorVisibility(EMouseCursorVisibility::Hidden, false, false);
 }
 
 void USliderSettingWidget::OnSliderHeadButtonReleased(UProject1ButtonBase* ButtonReleased)
@@ -72,6 +80,14 @@ void USliderSettingWidget::OnSliderHeadButtonReleased(UProject1ButtonBase* Butto
 	// Get game viewport client and unsubscribe from mouse moved event
 	CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient())->MouseMoved.Remove(MouseMovedDelegateHandle);
 	MouseMovedDelegateHandle.Reset();
+
+	const TObjectPtr<AProject1PlayerControllerBase> PlayerController{ CastChecked<AProject1PlayerControllerBase>(UGameplayStatics::GetPlayerController(this, 0)) };
+	// Flag to the player controller that it should handle mouse events
+	PlayerController->SetIgnoreMouseEventsFlag(false);
+	// Allow the button listen to mouse visibility changed events
+	SliderHeadButtonWidget->SetEnableMouseVisibilityChangedEventsFlag(true);
+	// Show the cursor now that the slider has been released
+	PlayerController->SetMouseCursorVisibility(EMouseCursorVisibility::Visible, false, false);
 }
 
 void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta)
@@ -80,7 +96,7 @@ void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const
 
 	// Get the position of the slider head button parent widget in the viewport
 	const FGeometry& SliderHeadButtonParentWidgetGeometry = SliderHeadButtonParentWidget->GetCachedGeometry();
-	FVector2D SliderHeadButtonParentWidgetTopLeftPixel{}, SliderHeadButtonParentWidgetTopLeftViewport{}; 
+	FVector2D SliderHeadButtonParentWidgetTopLeftPixel{}, SliderHeadButtonParentWidgetTopLeftViewport{};
 	USlateBlueprintLibrary::LocalToViewport(GetWorld(), SliderHeadButtonParentWidgetGeometry, FVector2D(0.0, 0.0),
 		SliderHeadButtonParentWidgetTopLeftPixel, SliderHeadButtonParentWidgetTopLeftViewport);
 
@@ -108,10 +124,10 @@ void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const
 		const FVector2D Size{ SliderBarPortionParentWidgetGeometry.GetAbsoluteSize() };
 
 		FVector2D SliderBarPortionParentWidgetTopLeftPixel{}, SliderBarPortionParentWidgetTopLeftViewport{};
-		USlateBlueprintLibrary::LocalToViewport(GetWorld(), SliderBarPortionParentWidgetGeometry, FVector2D(0.0, 0.0), 
+		USlateBlueprintLibrary::LocalToViewport(GetWorld(), SliderBarPortionParentWidgetGeometry, FVector2D(0.0, 0.0),
 			SliderBarPortionParentWidgetTopLeftPixel, SliderBarPortionParentWidgetTopLeftViewport);
 
-		const FVector2D SliderBarPortionParentWidgetBottomRightPixel = FVector2D(SliderBarPortionParentWidgetTopLeftPixel.X + Size.X, 
+		const FVector2D SliderBarPortionParentWidgetBottomRightPixel = FVector2D(SliderBarPortionParentWidgetTopLeftPixel.X + Size.X,
 			SliderBarPortionParentWidgetTopLeftPixel.Y + Size.Y);
 
 		UGameplayStatics::GetPlayerController(this, 0)->SetMouseLocation(

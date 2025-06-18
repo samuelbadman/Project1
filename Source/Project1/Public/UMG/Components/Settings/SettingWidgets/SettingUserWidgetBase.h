@@ -38,6 +38,9 @@ private:
 	// The settings page widget that owns this setting
 	TObjectPtr<USettingsPageWidget> OwningSettingsPage;
 
+	// Flags whether the setting is focused
+	bool bFocused{ false };
+
 public:
 	USettingUserWidgetBase();
 
@@ -76,6 +79,8 @@ public:
 	virtual ESettingInputResult ProcessNavigationInput(const FVector2D& NavigationInput);
 
 	void InitializeSetting(TObjectPtr<USettingsPageWidget> OwningPage);
+
+	FORCEINLINE bool IsSettingFocused() const { return bFocused; }
 
 protected:
 	virtual void NativePreConstruct() override;

@@ -15,6 +15,11 @@ void ATitleScreenPlayerController::BeginPlay()
 	// Bind to on input device changed events
 	OnMouseMovedDelegateHandle = Project1GameViewportClient->MouseMoved.AddWeakLambda(this,
 		[this](const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta) {
+			if (ShouldIgnoreMouseEvents())
+			{
+				return;
+			}
+
 			const EMouseCursorVisibility NewCursorVisibility{ EMouseCursorVisibility::Visible };
 
 			if (GetMouseCursorVisibility() != NewCursorVisibility)
@@ -25,6 +30,11 @@ void ATitleScreenPlayerController::BeginPlay()
 
 	OnInputKeyDelegateHandle = Project1GameViewportClient->OnInputKey.AddWeakLambda(this,
 		[this](const FInputKeyEventArgs& EventArgs) {
+			if (ShouldIgnoreMouseEvents())
+			{
+				return;
+			}
+
 			EMouseCursorVisibility NewCursorVisibility{ ((EventArgs.Key == EKeys::LeftMouseButton) ||
 				(EventArgs.Key == EKeys::MiddleMouseButton) ||
 				(EventArgs.Key == EKeys::RightMouseButton) ||

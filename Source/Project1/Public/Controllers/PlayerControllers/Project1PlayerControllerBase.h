@@ -45,6 +45,9 @@ private:
 
 	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> EnhancedInputLocalPlayerSubsystem{ nullptr };
 
+	// Flag used to allow controllers to ignore mouse events subscribed to when it is desired for other code to manage mouse events
+	bool bIgnoreMouseEvents{ false };
+
 public:
 	AProject1PlayerControllerBase();
 
@@ -60,8 +63,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsMouseCursorVisible() const { return bShowMouseCursor; }
 
+	void SetIgnoreMouseEventsFlag(bool Ignore) { bIgnoreMouseEvents = Ignore; }
+
 	FORCEINLINE TObjectPtr<UEnhancedInputLocalPlayerSubsystem> GetEnhancedInputLocalPlayerSubsystem() const { return EnhancedInputLocalPlayerSubsystem; }
 	FORCEINLINE TObjectPtr<UUIInputComponent> GetUIInputComponent() const { return UIInputComponent; }
+	FORCEINLINE bool ShouldIgnoreMouseEvents() const { return bIgnoreMouseEvents; }
 
 protected:
 	void SetupInputComponent() override;

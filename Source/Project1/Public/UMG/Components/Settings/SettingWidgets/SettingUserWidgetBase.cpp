@@ -20,11 +20,13 @@ bool USettingUserWidgetBase::HasSettingValueChanged() const
 
 void USettingUserWidgetBase::FocusSetting()
 {
+	bFocused = true;
 	OnSettingFocused();
 }
 
 void USettingUserWidgetBase::UnfocusSetting()
 {
+	bFocused = false;
 	OnSettingUnfocused();
 }
 
