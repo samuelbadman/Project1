@@ -75,8 +75,11 @@ public:
 
 	virtual void FocusSetting();
 	virtual void UnfocusSetting();
+	virtual void NativeOnSettingFocused();
+	virtual void NativeOnSettingUnfocused();
 	virtual ESettingInputResult ProcessConfirmInput();
 	virtual ESettingInputResult ProcessNavigationInput(const FVector2D& NavigationInput);
+	virtual ESettingInputResult ProcessContinuousNavigationInput(const FVector2D& NavigationInput);
 
 	void InitializeSetting(TObjectPtr<USettingsPageWidget> OwningPage);
 

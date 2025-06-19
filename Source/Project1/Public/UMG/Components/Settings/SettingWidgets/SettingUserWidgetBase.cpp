@@ -21,13 +21,25 @@ bool USettingUserWidgetBase::HasSettingValueChanged() const
 void USettingUserWidgetBase::FocusSetting()
 {
 	bFocused = true;
+	NativeOnSettingFocused();
 	OnSettingFocused();
 }
 
 void USettingUserWidgetBase::UnfocusSetting()
 {
 	bFocused = false;
+	NativeOnSettingUnfocused();
 	OnSettingUnfocused();
+}
+
+void USettingUserWidgetBase::NativeOnSettingFocused()
+{
+	// Base class implementation is empty
+}
+
+void USettingUserWidgetBase::NativeOnSettingUnfocused()
+{
+	// Base class implementation is empty
 }
 
 ESettingInputResult USettingUserWidgetBase::ProcessConfirmInput()
@@ -37,6 +49,12 @@ ESettingInputResult USettingUserWidgetBase::ProcessConfirmInput()
 }
 
 ESettingInputResult USettingUserWidgetBase::ProcessNavigationInput(const FVector2D& NavigationInput)
+{
+	// Base class implementation is empty and does not handle the input
+	return ESettingInputResult::Unhandled;
+}
+
+ESettingInputResult USettingUserWidgetBase::ProcessContinuousNavigationInput(const FVector2D& NavigationInput)
 {
 	// Base class implementation is empty and does not handle the input
 	return ESettingInputResult::Unhandled;

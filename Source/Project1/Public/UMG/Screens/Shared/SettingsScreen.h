@@ -34,6 +34,7 @@ private:
 	FDelegateHandle TabInputDelegateHandle;
 	FDelegateHandle CancelInputDelegateHandle;
 	FDelegateHandle NavigateInputDelegateHandle;
+	FDelegateHandle NavigateContinuousInputDelegateHandle;
 	FDelegateHandle ConfirmInputDelegateHandle;
 	TObjectPtr<USettingsPageWidget> CurrentSettingsPage;
 
@@ -50,5 +51,6 @@ private:
 	void OnTabInput(const FInputActionValue& Value);
 	void OnCancelInput(const FInputActionValue& Value);
 	void OnNavigateInput(const FInputActionValue& Value);
+	void OnNavigateContinuousInput(const FInputActionValue& Value);
 	void OnConfirmInput(const FInputActionValue& Value);
 };

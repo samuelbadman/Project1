@@ -6,6 +6,7 @@ void USettingsScreenUIInput::SetupInput(TObjectPtr<UEnhancedInputComponent> Inpu
 	InputComponent->BindAction(TabInputAction, ETriggerEvent::Triggered, this, &USettingsScreenUIInput::OnTabTriggered);
 	InputComponent->BindAction(CancelInputAction, ETriggerEvent::Triggered, this, &USettingsScreenUIInput::OnCancelTriggered);
 	InputComponent->BindAction(NavigateInputAction, ETriggerEvent::Triggered, this, &USettingsScreenUIInput::OnNavigateTriggered);
+	InputComponent->BindAction(NavigateContinuousInputAction, ETriggerEvent::Triggered, this, &USettingsScreenUIInput::OnNavigateContinuousTriggered);
 	InputComponent->BindAction(ConfirmInputAction, ETriggerEvent::Triggered, this, &USettingsScreenUIInput::OnConfirmTriggered);
 }
 
@@ -22,6 +23,11 @@ void USettingsScreenUIInput::OnCancelTriggered(const FInputActionValue& Value)
 void USettingsScreenUIInput::OnNavigateTriggered(const FInputActionValue& Value)
 {
 	NavigateTriggeredDelegate.Broadcast(Value);
+}
+
+void USettingsScreenUIInput::OnNavigateContinuousTriggered(const FInputActionValue& Value)
+{
+	NavigateContinuousTriggeredDelegate.Broadcast(Value);
 }
 
 void USettingsScreenUIInput::OnConfirmTriggered(const FInputActionValue& Value)

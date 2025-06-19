@@ -41,6 +41,7 @@ void USettingsScreen::NativeOnPushedToLayerStack()
 	TabInputDelegateHandle = SettingsScreenUIInput->TabTriggeredDelegate.AddUObject(this, &USettingsScreen::OnTabInput);
 	CancelInputDelegateHandle = SettingsScreenUIInput->CancelTriggeredDelegate.AddUObject(this, &USettingsScreen::OnCancelInput);
 	NavigateInputDelegateHandle = SettingsScreenUIInput->NavigateTriggeredDelegate.AddUObject(this, &USettingsScreen::OnNavigateInput);
+	NavigateContinuousInputDelegateHandle = SettingsScreenUIInput->NavigateContinuousTriggeredDelegate.AddUObject(this, &USettingsScreen::OnNavigateContinuousInput);
 	ConfirmInputDelegateHandle = SettingsScreenUIInput->ConfirmTriggeredDelegate.AddUObject(this, &USettingsScreen::OnConfirmInput);
 
 	SettingsScreenUIInput->Add(Project1PlayerController->GetEnhancedInputLocalPlayerSubsystem());
@@ -56,6 +57,9 @@ void USettingsScreen::NativeOnPoppedFromLayerStack()
 
 	SettingsScreenUIInput->NavigateTriggeredDelegate.Remove(NavigateInputDelegateHandle);
 	NavigateInputDelegateHandle.Reset();
+
+	SettingsScreenUIInput->NavigateContinuousTriggeredDelegate.Remove(NavigateContinuousInputDelegateHandle);
+	NavigateContinuousInputDelegateHandle.Reset();
 
 	SettingsScreenUIInput->ConfirmTriggeredDelegate.Remove(ConfirmInputDelegateHandle);
 	ConfirmInputDelegateHandle.Reset();
@@ -86,6 +90,17 @@ void USettingsScreen::OnNavigateInput(const FInputActionValue& Value)
 		if (IsValid(CurrentSettingsPage))
 		{
 			CurrentSettingsPage->OnNavigationInput(Value.Get<FVector2D>());
+		}
+	}
+}
+
+void USettingsScreen::OnNavigateContinuousInput(const FInputActionValue& Value)
+{
+	if (CanReceiveInput())
+	{
+		if (IsValid(CurrentSettingsPage))
+		{
+			CurrentSettingsPage->OnContinuousNavigationInput(Value.Get<FVector2D>());
 		}
 	}
 }

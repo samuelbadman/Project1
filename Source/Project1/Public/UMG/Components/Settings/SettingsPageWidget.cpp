@@ -76,6 +76,19 @@ void USettingsPageWidget::OnNavigationInput(const FVector2D& NavigationInput)
 	}
 }
 
+void USettingsPageWidget::OnContinuousNavigationInput(const FVector2D& NavigationInput)
+{
+	// Pass the navigation input to the focused setting
+	if (USettingUserWidgetBase* FocusedSetting = GetFocusedSetting())
+	{
+		// If the setting did not handle the input, handle it in the page widget
+		if (FocusedSetting->ProcessContinuousNavigationInput(NavigationInput) == ESettingInputResult::Unhandled)
+		{
+			// Handle unhandled continuous navigation input in the screen widget here
+		}
+	}
+}
+
 void USettingsPageWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();

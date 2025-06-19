@@ -39,6 +39,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	float SliderMaxValue{ 100.0f };
 
+	UPROPERTY(EditAnywhere)
+	float GamepadSliderAdjustmentRate{ 60.0f };
+
+	TObjectPtr<UWorld> World{ nullptr };
 	TObjectPtr<UGameViewportClient> GameViewportClient{ nullptr };
 	TObjectPtr<UWidget> SliderHeadButtonParentWidget{ nullptr };
 	TObjectPtr<UProject1ButtonBase> SliderHeadButtonWidget{ nullptr };
@@ -86,6 +90,8 @@ protected:
 	bool HasSettingValueChanged() const override;
 
 private:
+	virtual ESettingInputResult ProcessContinuousNavigationInput(const FVector2D& NavigationInput) override;
+
 	UFUNCTION()
 	void OnSliderHeadButtonClicked(UProject1ButtonBase* ButtonClicked);
 	UFUNCTION()
@@ -94,4 +100,5 @@ private:
 	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
 
 	float GetSliderValueFromRenderTranslation(const double XTranslation) const;
+	void UpdateSliderValue(const float NewValue);
 };

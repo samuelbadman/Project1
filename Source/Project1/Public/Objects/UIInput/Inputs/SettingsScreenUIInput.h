@@ -11,6 +11,7 @@ struct FInputActionValue;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnTabTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCancelTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnNavigateTriggeredDelegate, const FInputActionValue& /* Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnNavigateContinuousTriggeredDelegate, const FInputActionValue& /* Value */);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnConfirmTriggeredDelegate, const FInputActionValue& /* Value */);
 
 UCLASS()
@@ -22,6 +23,7 @@ public:
 	FOnCancelTriggeredDelegate TabTriggeredDelegate{};
 	FOnCancelTriggeredDelegate CancelTriggeredDelegate{};
 	FOnNavigateTriggeredDelegate NavigateTriggeredDelegate{};
+	FOnNavigateContinuousTriggeredDelegate NavigateContinuousTriggeredDelegate{};
 	FOnConfirmTriggeredDelegate ConfirmTriggeredDelegate{};
 
 private:
@@ -35,6 +37,9 @@ private:
 	TObjectPtr<UInputAction> NavigateInputAction{ nullptr };
 
 	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> NavigateContinuousInputAction{ nullptr };
+
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> ConfirmInputAction{ nullptr };
 
 private:
@@ -43,5 +48,6 @@ private:
 	void OnTabTriggered(const FInputActionValue& Value);
 	void OnCancelTriggered(const FInputActionValue& Value);
 	void OnNavigateTriggered(const FInputActionValue& Value);
+	void OnNavigateContinuousTriggered(const FInputActionValue& Value);
 	void OnConfirmTriggered(const FInputActionValue& Value);
 };

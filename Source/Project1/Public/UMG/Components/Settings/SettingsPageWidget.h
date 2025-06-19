@@ -41,6 +41,8 @@ public:
 
 	void OnConfirmInput();
 	void OnNavigationInput(const FVector2D& NavigationInput);
+	// Input triggers every frame the input is pressed
+	void OnContinuousNavigationInput(const FVector2D& NavigationInput);
 
 private:
 	void NativeOnInitialized() override;

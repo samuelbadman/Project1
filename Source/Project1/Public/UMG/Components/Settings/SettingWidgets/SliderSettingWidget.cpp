@@ -15,7 +15,7 @@
 
 void USliderSettingWidget::SetDefaultSliderValue(float NewDefaultValue)
 {
-	SetSliderValue(NewDefaultValue);
+	UpdateSliderValue(NewDefaultValue);
 	DefaultSliderValue = SliderValue;
 }
 
@@ -40,6 +40,9 @@ void USliderSettingWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	// Save reference to the world
+	World = GetWorld();
+
 	// Save reference to the game viewport client
 	GameViewportClient = UGameplayStatics::GetGameInstance(this)->GetGameViewportClient();
 
@@ -54,14 +57,28 @@ void USliderSettingWidget::NativeOnInitialized()
 
 bool USliderSettingWidget::HasSettingValueChanged() const
 {
+	// NOTE: Not using IsNearlyEqual() here as these should only equal when directly set using SetDefaultSliderValue()
 	return SliderValue != DefaultSliderValue;
 	//return !FMath::IsNearlyEqual(SliderValue, DefaultSliderValue);
 }
 
+ESettingInputResult USliderSettingWidget::ProcessContinuousNavigationInput(const FVector2D& NavigationInput)
+{
+	// NOTE: This event gets called every frame the navigation input is pressed
+
+	// Only care about horizontal input on the X axis here
+	if (NavigationInput.X == 0.0)
+	{
+		return ESettingInputResult::Unhandled;
+	}
+
+	// Add slider value at rate each frame scaled by the sign of the navigation input. Left inputs will result in a negative value and right inputs will result in a positive value
+	SetSliderValue(SliderValue + (World->GetDeltaSeconds() * GamepadSliderAdjustmentRate * FMath::Sign(NavigationInput.X)));
+	return ESettingInputResult::Handled;
+}
+
 void USliderSettingWidget::OnSliderHeadButtonClicked(UProject1ButtonBase* ButtonClicked)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Slider head button clicked")));
-
 	// Get game viewport client and subscribe to mouse moved event
 	MouseMovedDelegateHandle = CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient())->MouseMoved.AddUObject(this,
 		&USliderSettingWidget::OnMouseMoved);
@@ -77,8 +94,6 @@ void USliderSettingWidget::OnSliderHeadButtonClicked(UProject1ButtonBase* Button
 
 void USliderSettingWidget::OnSliderHeadButtonReleased(UProject1ButtonBase* ButtonReleased)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White, FString::Printf(TEXT("Slider head button released")));
-
 	// Get game viewport client and unsubscribe from mouse moved event
 	CastChecked<UProject1GameViewportClientBase>(UGameplayStatics::GetGameInstance(this)->GetGameViewportClient())->MouseMoved.Remove(MouseMovedDelegateHandle);
 	MouseMovedDelegateHandle.Reset();
@@ -151,13 +166,7 @@ float USliderSettingWidget::GetSliderValueFromRenderTranslation(const double XTr
 	return UKismetMathLibrary::MapRangeClamped(StaticCast<float>(XTranslation), 0.0f, SliderBarSize, SliderMinValue, SliderMaxValue);
 }
 
-float USliderSettingWidget::GetSliderValue() const
-{
-	// Get current render translation of the slider head button widget
-	return GetSliderValueFromRenderTranslation(SliderHeadButtonWidget->GetRenderTransform().Translation.X);
-}
-
-void USliderSettingWidget::SetSliderValue(float NewValue)
+void USliderSettingWidget::UpdateSliderValue(const float NewValue)
 {
 	SliderValue = FMath::Clamp(NewValue, SliderMinValue, SliderMaxValue);
 
@@ -166,4 +175,18 @@ void USliderSettingWidget::SetSliderValue(float NewValue)
 	FWidgetTransform Transform{};
 	Transform.Translation.X = StaticCast<double>(UKismetMathLibrary::MapRangeClamped(NewValue, SliderMinValue, SliderMaxValue, 0.0f, SliderBarSize));
 	SliderHeadButtonWidget->SetRenderTransform(Transform);
+}
+
+float USliderSettingWidget::GetSliderValue() const
+{
+	// Get current render translation of the slider head button widget
+	return GetSliderValueFromRenderTranslation(SliderHeadButtonWidget->GetRenderTransform().Translation.X);
+}
+
+void USliderSettingWidget::SetSliderValue(float NewValue)
+{
+	UpdateSliderValue(NewValue);
+
+	// Broadcast slider setting value changed
+	OnSliderValueChangedDelegate.Broadcast(SliderValue);
 }
