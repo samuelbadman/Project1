@@ -10,6 +10,8 @@ class USpacer;
 class USizeBox;
 class UProject1ButtonBase;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSliderValueChangedDelegate, float, NewValue);
+
 /**
  * 
  */
@@ -18,6 +20,10 @@ class USliderSettingWidget : public USettingUserWidgetBase
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(BlueprintAssignable, Category = "SliderSettingWidget")
+	FOnSliderValueChangedDelegate OnSliderValueChangedDelegate{};
+
 private:
 	// TODO: Move label text and spacer into its own widget that can be added to setting widgets and put this dynamically adjustable spacer padding functionality into the new 
 	// widget to prevent reproducing this code in each setting widget

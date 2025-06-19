@@ -116,8 +116,6 @@ void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const
 
 		SliderHeadButtonWidget->SetRenderTransform(Transform);
 
-		// TODO: On slider value changed. Report new value here
-
 		// Keep mouse cursor on the same Y axis and inside slider bar X range
 		// Below is copied from project1 user widget base
 		const FGeometry& SliderBarPortionParentWidgetGeometry = SliderBarPortionParentWidget->GetCachedGeometry();
@@ -131,9 +129,14 @@ void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const
 			SliderBarPortionParentWidgetTopLeftPixel.Y + Size.Y);
 
 		UGameplayStatics::GetPlayerController(this, 0)->SetMouseLocation(
-			FMath::Clamp(NewMousePosition.X, SliderBarPortionParentWidgetTopLeftPixel.X, SliderBarPortionParentWidgetBottomRightPixel.X),
-			SliderBarPortionParentWidgetTopLeftPixel.Y + (GetSliderHeadButtonDimensions().X * 0.5 * UWidgetLayoutLibrary::GetViewportScale(GameViewportClient))
+			FMath::Clamp(NewMousePosition.X, 
+				SliderBarPortionParentWidgetTopLeftPixel.X, 
+				SliderBarPortionParentWidgetBottomRightPixel.X + (GetSliderHeadButtonDimensions().X * 0.5 * UWidgetLayoutLibrary::GetViewportScale(GameViewportClient))),
+			SliderBarPortionParentWidgetTopLeftPixel.Y + (GetSliderHeadButtonDimensions().Y * 0.5 * UWidgetLayoutLibrary::GetViewportScale(GameViewportClient))
 		);
+
+		// Broadcast slider setting value changed
+		OnSliderValueChangedDelegate.Broadcast(GetSliderValue());
 	}
 }
 
