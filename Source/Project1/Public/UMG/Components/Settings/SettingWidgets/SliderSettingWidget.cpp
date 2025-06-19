@@ -15,7 +15,8 @@
 
 void USliderSettingWidget::SetDefaultSliderValue(float NewDefaultValue)
 {
-	DefaultSliderValue = FMath::Clamp(NewDefaultValue, SliderMinValue, SliderMaxValue);
+	SetSliderValue(NewDefaultValue);
+	DefaultSliderValue = SliderValue;
 }
 
 void USliderSettingWidget::NativePreConstruct()
@@ -54,6 +55,7 @@ void USliderSettingWidget::NativeOnInitialized()
 bool USliderSettingWidget::HasSettingValueChanged() const
 {
 	return SliderValue != DefaultSliderValue;
+	//return !FMath::IsNearlyEqual(SliderValue, DefaultSliderValue);
 }
 
 void USliderSettingWidget::OnSliderHeadButtonClicked(UProject1ButtonBase* ButtonClicked)
@@ -135,18 +137,24 @@ void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const
 			SliderBarPortionParentWidgetTopLeftPixel.Y + (GetSliderHeadButtonDimensions().Y * 0.5 * UWidgetLayoutLibrary::GetViewportScale(GameViewportClient))
 		);
 
+		// Update slider setting value
+		SliderValue = GetSliderValue();
+
 		// Broadcast slider setting value changed
-		OnSliderValueChangedDelegate.Broadcast(GetSliderValue());
+		OnSliderValueChangedDelegate.Broadcast(SliderValue);
 	}
+}
+
+float USliderSettingWidget::GetSliderValueFromRenderTranslation(const double XTranslation) const
+{
+	// Map render translation value from the min and max render translation range to the min and max slider value range to obtain the current value of the slider
+	return UKismetMathLibrary::MapRangeClamped(StaticCast<float>(XTranslation), 0.0f, SliderBarSize, SliderMinValue, SliderMaxValue);
 }
 
 float USliderSettingWidget::GetSliderValue() const
 {
 	// Get current render translation of the slider head button widget
-	const float RenderTranslation{ StaticCast<float>(SliderHeadButtonWidget->GetRenderTransform().Translation.X) };
-
-	// Map render translation value from the min and max render translation range to the min and max slider value range to obtain the current value of the slider
-	return UKismetMathLibrary::MapRangeClamped(RenderTranslation, 0.0f, SliderBarSize, SliderMinValue, SliderMaxValue);
+	return GetSliderValueFromRenderTranslation(SliderHeadButtonWidget->GetRenderTransform().Translation.X);
 }
 
 void USliderSettingWidget::SetSliderValue(float NewValue)

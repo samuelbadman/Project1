@@ -92,4 +92,6 @@ private:
 	void OnSliderHeadButtonReleased(UProject1ButtonBase* ButtonReleased);
 
 	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
+
+	float GetSliderValueFromRenderTranslation(const double XTranslation) const;
 };

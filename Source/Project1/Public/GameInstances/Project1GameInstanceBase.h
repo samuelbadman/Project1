@@ -27,6 +27,8 @@ public:
 	bool TestSetting3Value = false;
 	UPROPERTY(BlueprintReadWrite)
 	FString TestSettingValue4{ TEXT("Value3") };
+	UPROPERTY(BlueprintReadWrite)
+	float TestSettingValue5{ 27.5f };
 
 private:
 	UPROPERTY()
