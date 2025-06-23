@@ -17,6 +17,7 @@ void USliderSettingWidget::SetDefaultSliderValue(float NewDefaultValue)
 {
 	UpdateSliderValue(NewDefaultValue);
 	DefaultSliderValue = SliderValue;
+	TargetSliderHeadButtonRenderTranslationOffsetX = GetRenderTranslationFromSliderValue(SliderValue);
 }
 
 void USliderSettingWidget::NativePreConstruct()
@@ -74,7 +75,20 @@ ESettingInputResult USliderSettingWidget::ProcessContinuousNavigationInput(const
 
 	// Add slider value at rate each frame scaled by the sign of the navigation input. Left inputs will result in a negative value and right inputs will result in a positive value
 	SetSliderValue(SliderValue + (World->GetDeltaSeconds() * GamepadSliderAdjustmentRate * FMath::Sign(NavigationInput.X)));
+
 	return ESettingInputResult::Handled;
+}
+
+void USliderSettingWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	// Update render transform of slider head button widget
+	FWidgetTransform Transform{};
+	Transform.Translation.X = FMath::FInterpTo(SliderHeadButtonWidget->GetRenderTransform().Translation.X,
+		TargetSliderHeadButtonRenderTranslationOffsetX, InDeltaTime, SliderHeadButtonInterpSpeed);
+
+	SliderHeadButtonWidget->SetRenderTransform(Transform);
 }
 
 void USliderSettingWidget::OnSliderHeadButtonClicked(UProject1ButtonBase* ButtonClicked)
@@ -128,14 +142,21 @@ void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const
 		// Calculate the DPI scaled offset between the mouse cursor position and the viewport position of the slider head button parent widget and use this as the 
 		// render translation offset to align the slider head button with the mouse cursor. An offset is added to align the center of the slider head button widget
 		// with the mouse cursor instead of the left edge of the widget
-		FWidgetTransform Transform{};
-		Transform.Translation.X = FMath::Clamp(
+		//FWidgetTransform Transform{};
+		//Transform.Translation.X = FMath::Clamp(
+		//	(MouseXScaledByDPI - (SliderHeadButtonParentWidgetTopLeftViewport.X + (GetSliderHeadButtonDimensions().X * 0.5))),
+		//	0.0,
+		//	StaticCast<double>(SliderBarSize)
+		//);
+
+		//SliderHeadButtonWidget->SetRenderTransform(Transform);
+
+		// Set target slider head button widget render transform here. Render transform changes are applied over time each frame in NativeTick to apply a lag visual effect
+		TargetSliderHeadButtonRenderTranslationOffsetX = FMath::Clamp(
 			(MouseXScaledByDPI - (SliderHeadButtonParentWidgetTopLeftViewport.X + (GetSliderHeadButtonDimensions().X * 0.5))),
 			0.0,
 			StaticCast<double>(SliderBarSize)
 		);
-
-		SliderHeadButtonWidget->SetRenderTransform(Transform);
 
 		// Keep mouse cursor on the same Y axis and inside slider bar X range
 		// Below widget geometry size calculation is copied from project1 user widget base
@@ -156,8 +177,8 @@ void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const
 		//	SliderBarPortionParentWidgetTopLeftPixel.Y + (GetSliderHeadButtonDimensions().Y * 0.5 * UWidgetLayoutLibrary::GetViewportScale(GameViewportClient))
 		//);
 
-		// Update slider setting value
-		SliderValue = GetSliderValue();
+		// Update slider setting value immediately. The render transform of the widget lags as visual polish but the actual value of the setting is changed immediately
+		SliderValue = GetSliderValueFromRenderTranslation(TargetSliderHeadButtonRenderTranslationOffsetX);
 
 		// Broadcast slider setting value changed
 		OnSliderValueChangedDelegate.Broadcast(SliderValue);
@@ -170,6 +191,11 @@ float USliderSettingWidget::GetSliderValueFromRenderTranslation(const double XTr
 	return UKismetMathLibrary::MapRangeClamped(StaticCast<float>(XTranslation), 0.0f, SliderBarSize, SliderMinValue, SliderMaxValue);
 }
 
+float USliderSettingWidget::GetRenderTranslationFromSliderValue(const float InSliderValue) const
+{
+	return StaticCast<double>(UKismetMathLibrary::MapRangeClamped(InSliderValue, SliderMinValue, SliderMaxValue, 0.0f, SliderBarSize));
+}
+
 void USliderSettingWidget::UpdateSliderValue(const float NewValue)
 {
 	SliderValue = FMath::Clamp(NewValue, SliderMinValue, SliderMaxValue);
@@ -177,19 +203,24 @@ void USliderSettingWidget::UpdateSliderValue(const float NewValue)
 	// Update the slider head button render translation to match new value
 	// Map slider value to render translation range set render translation of the slider head button widget
 	FWidgetTransform Transform{};
-	Transform.Translation.X = StaticCast<double>(UKismetMathLibrary::MapRangeClamped(NewValue, SliderMinValue, SliderMaxValue, 0.0f, SliderBarSize));
+	Transform.Translation.X = GetRenderTranslationFromSliderValue(NewValue);
 	SliderHeadButtonWidget->SetRenderTransform(Transform);
 }
 
 float USliderSettingWidget::GetSliderValue() const
 {
+	return SliderValue;
 	// Get current render translation of the slider head button widget
-	return GetSliderValueFromRenderTranslation(SliderHeadButtonWidget->GetRenderTransform().Translation.X);
+	//return GetSliderValueFromRenderTranslation(SliderHeadButtonWidget->GetRenderTransform().Translation.X);
 }
 
 void USliderSettingWidget::SetSliderValue(float NewValue)
 {
 	UpdateSliderValue(NewValue);
+
+	// Update the target slider head button widget's render translation X offset so that it does not get interpolated each frame to the new value when directly setting 
+	// the value here
+	TargetSliderHeadButtonRenderTranslationOffsetX = GetRenderTranslationFromSliderValue(NewValue);
 
 	// Broadcast slider setting value changed
 	OnSliderValueChangedDelegate.Broadcast(SliderValue);

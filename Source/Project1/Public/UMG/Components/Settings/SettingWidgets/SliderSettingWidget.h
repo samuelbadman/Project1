@@ -39,6 +39,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	float SliderMaxValue{ 100.0f };
 
+	// The speed the slider head button widget is interpolated at when making adjustments to it. This is a visual only effect and does not affect the actual value of the slider setting
+	UPROPERTY(EditAnywhere)
+	float SliderHeadButtonInterpSpeed{ 7.5f };
+
 	UPROPERTY(EditAnywhere)
 	float GamepadSliderAdjustmentRate{ 60.0f };
 
@@ -51,6 +55,7 @@ private:
 
 	float SliderValue{ 0.0f };
 	float DefaultSliderValue{ 0.0f };
+	float TargetSliderHeadButtonRenderTranslationOffsetX{ 0.0f };
 
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "SliderSettingWidget")
@@ -91,6 +96,7 @@ protected:
 
 private:
 	virtual ESettingInputResult ProcessContinuousNavigationInput(const FVector2D& NavigationInput) override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UFUNCTION()
 	void OnSliderHeadButtonClicked(UProject1ButtonBase* ButtonClicked);
@@ -100,5 +106,6 @@ private:
 	void OnMouseMoved(const FVector2D& NewMousePosition, const FVector2D& OldMousePosition, const FVector2D& MouseMoveDelta);
 
 	float GetSliderValueFromRenderTranslation(const double XTranslation) const;
+	float GetRenderTranslationFromSliderValue(const float SliderValue) const;
 	void UpdateSliderValue(const float NewValue);
 };
