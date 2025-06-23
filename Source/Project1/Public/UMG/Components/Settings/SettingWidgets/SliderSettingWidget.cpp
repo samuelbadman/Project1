@@ -88,8 +88,10 @@ void USliderSettingWidget::OnSliderHeadButtonClicked(UProject1ButtonBase* Button
 	PlayerController->SetIgnoreMouseEventsFlag(true);
 	// Do not let the button listen to mouse visibility changed events
 	SliderHeadButtonWidget->SetEnableMouseVisibilityChangedEventsFlag(false);
-	// Hide the cursor while the slider is being held
-	PlayerController->SetMouseCursorVisibility(EMouseCursorVisibility::Hidden, false, false);
+	// Hide the cursor while the slider is being held (disabled here in favour of showing the cursor but locking it to the game window)
+	//PlayerController->SetMouseCursorVisibility(EMouseCursorVisibility::Hidden, false, false);
+	// Show the cursor and lock it to the game viewport
+	PlayerController->SetMouseCursorVisibility(EMouseCursorVisibility::Visible, true, false);
 }
 
 void USliderSettingWidget::OnSliderHeadButtonReleased(UProject1ButtonBase* ButtonReleased)
@@ -103,7 +105,9 @@ void USliderSettingWidget::OnSliderHeadButtonReleased(UProject1ButtonBase* Butto
 	PlayerController->SetIgnoreMouseEventsFlag(false);
 	// Allow the button listen to mouse visibility changed events
 	SliderHeadButtonWidget->SetEnableMouseVisibilityChangedEventsFlag(true);
-	// Show the cursor now that the slider has been released
+	// Show the cursor now that the slider has been released (disabled here in favour of showing the cursor but locking it to the game window)
+	//PlayerController->SetMouseCursorVisibility(EMouseCursorVisibility::Visible, false, false);
+	// Show the cursor and unlock it from the game viewport
 	PlayerController->SetMouseCursorVisibility(EMouseCursorVisibility::Visible, false, false);
 }
 
@@ -134,23 +138,23 @@ void USliderSettingWidget::OnMouseMoved(const FVector2D& NewMousePosition, const
 		SliderHeadButtonWidget->SetRenderTransform(Transform);
 
 		// Keep mouse cursor on the same Y axis and inside slider bar X range
-		// Below is copied from project1 user widget base
-		const FGeometry& SliderBarPortionParentWidgetGeometry = SliderBarPortionParentWidget->GetCachedGeometry();
-		const FVector2D Size{ SliderBarPortionParentWidgetGeometry.GetAbsoluteSize() };
+		// Below widget geometry size calculation is copied from project1 user widget base
+		//const FGeometry& SliderBarPortionParentWidgetGeometry = SliderBarPortionParentWidget->GetCachedGeometry();
+		//const FVector2D Size{ SliderBarPortionParentWidgetGeometry.GetAbsoluteSize() };
 
-		FVector2D SliderBarPortionParentWidgetTopLeftPixel{}, SliderBarPortionParentWidgetTopLeftViewport{};
-		USlateBlueprintLibrary::LocalToViewport(GetWorld(), SliderBarPortionParentWidgetGeometry, FVector2D(0.0, 0.0),
-			SliderBarPortionParentWidgetTopLeftPixel, SliderBarPortionParentWidgetTopLeftViewport);
+		//FVector2D SliderBarPortionParentWidgetTopLeftPixel{}, SliderBarPortionParentWidgetTopLeftViewport{};
+		//USlateBlueprintLibrary::LocalToViewport(GetWorld(), SliderBarPortionParentWidgetGeometry, FVector2D(0.0, 0.0),
+		//	SliderBarPortionParentWidgetTopLeftPixel, SliderBarPortionParentWidgetTopLeftViewport);
 
-		const FVector2D SliderBarPortionParentWidgetBottomRightPixel = FVector2D(SliderBarPortionParentWidgetTopLeftPixel.X + Size.X,
-			SliderBarPortionParentWidgetTopLeftPixel.Y + Size.Y);
+		//const FVector2D SliderBarPortionParentWidgetBottomRightPixel = FVector2D(SliderBarPortionParentWidgetTopLeftPixel.X + Size.X,
+		//	SliderBarPortionParentWidgetTopLeftPixel.Y + Size.Y);
 
-		UGameplayStatics::GetPlayerController(this, 0)->SetMouseLocation(
-			FMath::Clamp(NewMousePosition.X, 
-				SliderBarPortionParentWidgetTopLeftPixel.X, 
-				SliderBarPortionParentWidgetBottomRightPixel.X + (GetSliderHeadButtonDimensions().X * 0.5 * UWidgetLayoutLibrary::GetViewportScale(GameViewportClient))),
-			SliderBarPortionParentWidgetTopLeftPixel.Y + (GetSliderHeadButtonDimensions().Y * 0.5 * UWidgetLayoutLibrary::GetViewportScale(GameViewportClient))
-		);
+		//UGameplayStatics::GetPlayerController(this, 0)->SetMouseLocation(
+		//	FMath::Clamp(NewMousePosition.X, 
+		//		SliderBarPortionParentWidgetTopLeftPixel.X, 
+		//		SliderBarPortionParentWidgetBottomRightPixel.X + (GetSliderHeadButtonDimensions().X * 0.5 * UWidgetLayoutLibrary::GetViewportScale(GameViewportClient))),
+		//	SliderBarPortionParentWidgetTopLeftPixel.Y + (GetSliderHeadButtonDimensions().Y * 0.5 * UWidgetLayoutLibrary::GetViewportScale(GameViewportClient))
+		//);
 
 		// Update slider setting value
 		SliderValue = GetSliderValue();
