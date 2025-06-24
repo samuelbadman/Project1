@@ -14,10 +14,10 @@ class PROJECT1_API AProject1CharacterBase : public ACharacter, public IViewLockO
 
 private:
 	UPROPERTY(EditAnywhere)
-	float CharacterLinearWalkSpeed;
+	float LinearWalkSpeed;
 
 	UPROPERTY(EditAnywhere)
-	float CharacterLinearRunSpeed;
+	float LinearRunSpeed;
 
 	UPROPERTY(EditAnywhere)
 	float CapsuleRotationRate;
@@ -39,8 +39,8 @@ public:
 	void SetTargetWorldOrientation(const FQuat& TargetOrientation, bool Instant);
 	void SetMovementSpeed(float Speed);
 
-	FORCEINLINE float GetLinearWalkSpeed() const { return CharacterLinearWalkSpeed; }
-	FORCEINLINE float GetLinearRunSpeed() const { return CharacterLinearRunSpeed; }
+	FORCEINLINE float GetLinearWalkSpeed() const { return LinearWalkSpeed; }
+	FORCEINLINE float GetLinearRunSpeed() const { return LinearRunSpeed; }
 	FORCEINLINE float GetCapsuleRotationRate() const { return CapsuleRotationRate; }
 
 protected:
